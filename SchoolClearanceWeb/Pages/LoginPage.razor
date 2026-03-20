@@ -1,0 +1,109 @@
+﻿@page "/"
+<div class="auth-bg">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+    <div class="auth-card">
+        <!-- Left Panel -->
+        <div class="auth-left">
+            <div class="logo-ring">
+                <img src="aclc_logo.png" alt="ACLC Logo" class="logo-img" />
+            </div>
+            <MudText Typo="Typo.h5" Class="app-title">School Clearance</MudText>
+            <MudText Typo="Typo.caption" Class="app-subtitle">Student Portal</MudText>
+            <div class="divider"></div>
+            <MudText Typo="Typo.body2" Class="app-desc">
+                Manage your school clearance requests efficiently and securely.
+            </MudText>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="auth-right">
+            <MudText Typo="Typo.h4" Class="form-title">Welcome Back</MudText>
+            <MudText Typo="Typo.body2" Class="form-desc">Sign in to your account to continue</MudText>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">
+                    @errorMessage
+                </MudAlert>
+            }
+
+            <div class="field-gap">
+                <MudTextField @bind-Value="username"
+                              Placeholder="Username"
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Person"
+                              FullWidth="true" />
+            </div>
+
+            <div class="field-gap">
+                <div class="custom-input-wrapper">
+                    <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                    <MudTextField @bind-Value="password"
+                                  Placeholder="Password"
+                                  Variant="Variant.Outlined"
+                                  InputType="@passwordInput"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@passwordIcon"
+                                  OnAdornmentClick="TogglePassword"
+                                  FullWidth="true"
+                                  Class="custom-padded" />
+                </div>
+            </div>
+
+            <MudButton Variant="Variant.Filled"
+                       FullWidth="true"
+                       Size="Size.Large"
+                       Class="auth-btn"
+                       OnClick="HandleLogin"
+                       Disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                    <span>Signing in...</span>
+                }
+                else
+                {
+                    <span>Sign In</span>
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Class="ml-2" />
+                }
+            </MudButton>
+
+            <MudText Align="Align.Center" Typo="Typo.body2" Class="mt-4 switch-link">
+                Don't have an account?
+                <MudLink Href="/register" Class="auth-link">Register here</MudLink>
+            </MudText>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private bool showPassword = false;
+    private bool isLoading = false;
+    private string errorMessage = "";
+
+    private InputType passwordInput => showPassword ? InputType.Text : InputType.Password;
+    private string passwordIcon => showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+    private void TogglePassword() => showPassword = !showPassword;
+
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Please enter your username and password.";
+            return;
+        }
+        isLoading = true;
+        errorMessage = "";
+        await Task.Delay(500);
+        isLoading = false;
+        Console.WriteLine($"Login: {username}");
+    }
+}
