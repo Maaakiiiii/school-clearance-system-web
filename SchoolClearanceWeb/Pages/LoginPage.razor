@@ -1,4 +1,7 @@
 ﻿@page "/"
+@inject UserService UserService
+@inject NavigationManager Navigation
+
 <div class="auth-bg">
     <div class="floating-shapes">
         <div class="shape shape-1"></div>
@@ -27,8 +30,13 @@
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {
-                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">
-                    @errorMessage
+                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">@errorMessage</MudAlert>
+            }
+
+            @if (loginSuccess)
+            {
+                <MudAlert Severity="Severity.Success" Class="mb-3" Dense="true">
+                    Login successful! Welcome, <strong>@loggedInName</strong> 🎉
                 </MudAlert>
             }
 
@@ -87,7 +95,9 @@
     private string password = "";
     private bool showPassword = false;
     private bool isLoading = false;
+    private bool loginSuccess = false;
     private string errorMessage = "";
+    private string loggedInName = "";
 
     private InputType passwordInput => showPassword ? InputType.Text : InputType.Password;
     private string passwordIcon => showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
@@ -95,15 +105,29 @@
 
     private async Task HandleLogin()
     {
+        errorMessage = "";
+        loginSuccess = false;
+
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             errorMessage = "Please enter your username and password.";
             return;
         }
+
         isLoading = true;
-        errorMessage = "";
         await Task.Delay(500);
+
+        var user = UserService.Login(username, password);
+        if (user != null)
+        {
+            loginSuccess = true;
+            loggedInName = $"{user.FirstName} {user.LastName}";
+        }
+        else
+        {
+            errorMessage = "Invalid username or password.";
+        }
+
         isLoading = false;
-        Console.WriteLine($"Login: {username}");
     }
 }

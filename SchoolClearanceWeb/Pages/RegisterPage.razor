@@ -1,4 +1,7 @@
 ﻿@page "/register"
+@inject UserService UserService
+@inject NavigationManager Navigation
+
 <div class="auth-bg">
     <div class="floating-shapes">
         <div class="shape shape-1"></div>
@@ -123,6 +126,8 @@
 </div>
 
 @code {
+  
+
     private string firstName = "";
     private string lastName = "";
     private string username = "";
@@ -163,6 +168,17 @@
         isLoading = true;
         await Task.Delay(500);
         isLoading = false;
-        successMessage = "Account created successfully! You can now sign in.";
+
+        bool registered = UserService.Register(firstName, lastName, username, password);
+        if (registered)
+        {
+            successMessage = "Account created successfully! You can now sign in.";
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/"); // redirect to login
+        }
+        else
+        {
+            errorMessage = "Username already taken. Please choose another.";
+        }
     }
 }
