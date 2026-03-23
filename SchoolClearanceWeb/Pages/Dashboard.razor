@@ -1,0 +1,341 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+
+<div class="dash-page">
+
+    <!-- BG SHAPES -->
+    <div class="bg-shapes">
+        <div class="bg-shape bg-s1"></div>
+        <div class="bg-shape bg-s2"></div>
+        <div class="bg-shape bg-s3"></div>
+    </div>
+
+    <!-- TOP NAVBAR -->
+    <div class="dash-navbar">
+        <div class="navbar-left">
+            <button class="hamburger-btn" @onclick="ToggleDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+            </button>
+            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
+            <span class="nav-brand">School Clearance</span>
+        </div>
+
+        <div class="navbar-center">
+            <div class="search-wrapper">
+                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
+                <input @bind="searchQuery"
+                       @bind:event="oninput"
+                       @onkeyup="HandleSearch"
+                       placeholder="Search staff..."
+                       class="search-input" />
+                @if (showSearchResults && searchResults.Any())
+                {
+                    <div class="search-dropdown">
+                        @foreach (var staff in searchResults)
+                        {
+                            <div class="search-item" @onclick="() => GoToStaff(staff.StaffId)">
+                                <div class="search-item-info">
+                                    <span class="search-item-name">@staff.FullName</span>
+                                    <span class="search-item-pos">@staff.Position — @staff.Department</span>
+                                </div>
+                                <span class="status-dot @GetStatusDotClass(staff.StaffStatus)"></span>
+                            </div>
+                        }
+                    </div>
+                }
+                @if (showSearchResults && !searchResults.Any() && searchQuery.Length >= 2)
+                {
+                    <div class="search-dropdown">
+                        <div class="search-empty">No staff found</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="navbar-right">
+            <div class="nav-avatar" @onclick="ToggleProfileMenu">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
+            </div>
+            @if (showProfileMenu)
+            {
+                <div class="profile-dropdown">
+                    <div class="profile-menu-item" @onclick="GoToProfile">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-menu-icon" />
+                        <span>Profile</span>
+                    </div>
+                    <div class="profile-menu-divider"></div>
+                    <div class="profile-menu-item logout" @onclick="HandleLogout">
+                        <MudIcon Icon="@Icons.Material.Filled.Logout" Class="profile-menu-icon" />
+                        <span>Logout</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- DRAWER OVERLAY -->
+    @if (drawerOpen)
+    {
+        <div class="drawer-overlay" @onclick="CloseDrawer"></div>
+    }
+
+    <!-- SIDE DRAWER -->
+    <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
+        <div class="drawer-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
+            <div class="drawer-brand-wrap">
+                <span class="drawer-brand">School Clearance</span>
+                <span class="drawer-sub">Student Portal</span>
+            </div>
+            <button class="drawer-close-btn" @onclick="CloseDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Close" Class="drawer-close-icon" />
+            </button>
+        </div>
+        <nav class="drawer-nav">
+            <div class="drawer-nav-item @(currentPage == "dashboard" ? "active" : "")"
+                 @onclick='() => NavigateTo("/dashboard", "dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="drawer-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="drawer-section-label">OFFICES</div>
+            <div class="drawer-nav-item @(currentPage == "registrar" ? "active" : "")"
+                 @onclick='() => NavigateTo("/office/registrar", "registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
+                <span>Registrar Office</span>
+            </div>
+            <div class="drawer-nav-item @(currentPage == "cashier" ? "active" : "")"
+                 @onclick='() => NavigateTo("/office/cashier", "cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="drawer-nav-item @(currentPage == "grade" ? "active" : "")"
+                 @onclick='() => NavigateTo("/office/grade-release", "grade")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="drawer-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="drawer-nav-item @(currentPage == "announcements" ? "active" : "")"
+                 @onclick='() => NavigateTo("/announcements", "announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="drawer-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="drawer-section-label">ACCOUNT</div>
+            <div class="drawer-nav-item @(currentPage == "settings" ? "active" : "")"
+                 @onclick='() => NavigateTo("/settings", "settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="drawer-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="dash-content">
+
+        <!-- GREETING -->
+        <div class="greeting-card">
+            <div class="greeting-left">
+                <div class="greeting-time-row">
+                    <MudIcon Icon="@GetGreetingIcon()" Class="greeting-time-icon" />
+                    <span class="greeting-time">@GetGreetingTime()</span>
+                </div>
+                <span class="greeting-name">Hello, Student!</span>
+                <span class="greeting-sub">Here's your clearance status today.</span>
+            </div>
+            <div class="greeting-badge">
+                <span class="greeting-pct">@ClearancePercent%</span>
+                <span class="greeting-pct-label">Cleared</span>
+            </div>
+        </div>
+
+        <!-- CLEARANCE PROGRESS -->
+        <div class="glass-card">
+            <div class="section-header">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="section-icon" />
+                <MudText Typo="Typo.h6" Class="section-title">My Clearance Progress</MudText>
+            </div>
+
+            <div class="progress-row">
+                <div class="progress-bar-wrap">
+                    <div class="water-progress-wrap">
+                        <div class="water-progress-bar" style="width: @ClearancePercent%">
+                            <div class="water-fill"></div>
+                            <div class="water-wave"></div>
+                            <div class="water-wave-2"></div>
+                            <div class="bubble b1"></div>
+                            <div class="bubble b2"></div>
+                            <div class="bubble b3"></div>
+                            <div class="bubble b4"></div>
+                            <div class="bubble b5"></div>
+                        </div>     
+                    </div>
+                </div>
+                <div class="progress-stat">
+                    <span class="progress-pct">@ClearancePercent%</span>
+                    <span class="progress-label">@clearedCount of @mockClearanceItems.Count done</span>
+                </div>
+            </div>
+
+            <div class="checklist">
+                @foreach (var item in mockClearanceItems)
+                {
+                    <div class="checklist-item @(item.IsCleared ? "cleared" : "")">
+                        <MudCheckBox @bind-Value="item.IsCleared" Color="Color.Success" />
+                        <div class="checklist-info">
+                            <span class="checklist-name">@item.Name</span>
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <span class="checklist-desc">@item.Description</span>
+                            }
+                        </div>
+                        @if (item.IsCleared && item.ClearedAt.HasValue)
+                        {
+                            <span class="checklist-date">@item.ClearedAt.Value.ToString("MMM dd")</span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- OFFICE QUICK ACCESS -->
+        <div class="glass-card">
+            <div class="section-header">
+                <MudIcon Icon="@Icons.Material.Filled.Business" Class="section-icon" />
+                <MudText Typo="Typo.h6" Class="section-title">Office Quick Access</MudText>
+            </div>
+            <div class="office-grid">
+                <div class="office-card" @onclick='() => Navigation.NavigateTo("/office/registrar")'>
+                    <div class="office-icon-wrap">
+                        <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="office-icon" />
+                    </div>
+                    <div class="office-info">
+                        <span class="office-name">Registrar</span>
+                        <span class="office-status-badge badge-open">Open</span>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+                </div>
+                <div class="office-card" @onclick='() => Navigation.NavigateTo("/office/cashier")'>
+                    <div class="office-icon-wrap">
+                        <MudIcon Icon="@Icons.Material.Filled.Payments" Class="office-icon" />
+                    </div>
+                    <div class="office-info">
+                        <span class="office-name">Cashier</span>
+                        <span class="office-status-badge badge-lunch">Lunch Break</span>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+                </div>
+                <div class="office-card" @onclick='() => Navigation.NavigateTo("/office/grade-release")'>
+                    <div class="office-icon-wrap">
+                        <MudIcon Icon="@Icons.Material.Filled.Grade" Class="office-icon" />
+                    </div>
+                    <div class="office-info">
+                        <span class="office-name">Grade Release</span>
+                        <span class="office-status-badge badge-open">Open</span>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+@code {
+    private string searchQuery = "";
+    private bool showSearchResults = false;
+    private bool drawerOpen = false;
+    private bool showProfileMenu = false;
+    private string currentPage = "dashboard";
+    private List<StaffListModel> searchResults = new();
+
+    private int clearedCount => mockClearanceItems.Count(x => x.IsCleared);
+    private int ClearancePercent => mockClearanceItems.Count == 0 ? 0
+        : (int)Math.Round((double)clearedCount / mockClearanceItems.Count * 100);
+
+    private List<ClearanceItemModel> mockClearanceItems = new()
+    {
+        new() { ItemId = 1, Name = "Registrar", Description = "Submit enrollment form", IsCleared = true, ClearedAt = DateTime.Now.AddDays(-3) },
+        new() { ItemId = 2, Name = "Cashier", Description = "Settle all outstanding fees", IsCleared = true, ClearedAt = DateTime.Now.AddDays(-2) },
+        new() { ItemId = 3, Name = "Library", Description = "Return all borrowed books", IsCleared = false },
+        new() { ItemId = 4, Name = "Grade Release", Description = "Claim report card", IsCleared = false },
+        new() { ItemId = 5, Name = "Guidance Office", Description = "Attend exit interview", IsCleared = false },
+    };
+
+    private List<StaffListModel> mockAllStaff = new()
+    {
+        new() { StaffId = 1, FullName = "Maria Santos", Position = "Registrar", Department = "College", StaffStatus = "Available", OfficeStatus = "Open", CrowdStatus = "Open" },
+        new() { StaffId = 2, FullName = "Juan dela Cruz", Position = "Cashier", Department = "College", StaffStatus = "On Break", OfficeStatus = "Lunch Break", CrowdStatus = "Busy" },
+        new() { StaffId = 3, FullName = "Ana Reyes", Position = "Teacher", Department = "Senior High School", StaffStatus = "Available", OfficeStatus = "Open", CrowdStatus = "Open" },
+        new() { StaffId = 4, FullName = "Carlos Mendoza", Position = "Grade Release", Department = "College", StaffStatus = "Available", OfficeStatus = "Open", CrowdStatus = "Open" },
+    };
+
+
+
+    private void ToggleDrawer() => drawerOpen = !drawerOpen;
+    private void CloseDrawer() => drawerOpen = false;
+    private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
+
+    private void NavigateTo(string url, string page)
+    {
+        currentPage = page;
+        drawerOpen = false;
+        Navigation.NavigateTo(url);
+    }
+
+    private void GoToProfile()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/profile");
+    }
+
+    private void HandleLogout()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/");
+    }
+
+    private void HandleSearch()
+    {
+        if (searchQuery.Length >= 2)
+        {
+            searchResults = mockAllStaff
+                .Where(s => s.FullName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            showSearchResults = true;
+        }
+        else
+        {
+            showSearchResults = false;
+            searchResults = new();
+        }
+    }
+
+    private void GoToStaff(int staffId)
+    {
+        showSearchResults = false;
+        searchQuery = "";
+        Navigation.NavigateTo($"/staff/{staffId}");
+    }
+
+    private string GetGreetingTime()
+    {
+        var hour = DateTime.Now.Hour;
+        return hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+    }
+
+    private string GetGreetingIcon()
+    {
+        var hour = DateTime.Now.Hour;
+        return hour < 12 ? Icons.Material.Filled.WbSunny
+             : hour < 17 ? Icons.Material.Filled.WbCloudy
+             : Icons.Material.Filled.Bedtime;
+    }
+
+    private string GetStatusDotClass(string status) => status switch
+    {
+        "Available" => "dot-green",
+        "On Break" => "dot-yellow",
+        "Absent" => "dot-red",
+        _ => "dot-grey"
+    };
+}
