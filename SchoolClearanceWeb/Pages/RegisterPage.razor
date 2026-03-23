@@ -1,5 +1,6 @@
 ﻿@page "/register"
 @inject NavigationManager Navigation
+@inject AuthService AuthService
 
 <div class="auth-bg">
     <div class="floating-shapes">
@@ -68,7 +69,7 @@
                         </MudSelect>
                     </MudItem>
                     <MudItem xs="12" sm="6">
-                        <MudSelect @bind-Value="course"
+                        <MudSelect @bind-Value="courseStrand"
                                    Label="Course / Strand"
                                    Variant="Variant.Outlined"
                                    FullWidth="true"
@@ -168,7 +169,7 @@
     private string fullName = "";
     private string studentNo = "";
     private string department = "";
-    private string course = "";
+    private string courseStrand = "";
     private string yearLevel = "";
     private string username = "";
     private string password = "";
@@ -214,7 +215,7 @@
     private void OnDepartmentChanged(string val)
     {
         department = val;
-        course = "";
+        courseStrand = "";
         yearLevel = "";
 
         if (department == "College")
@@ -233,7 +234,7 @@
             yearOptions = new();
         }
     }
-
+    @code {
     private bool PasswordMismatch =>
         !string.IsNullOrEmpty(confirmPassword) && password != confirmPassword;          
 
@@ -245,28 +246,52 @@
     private void TogglePassword() => showPassword = !showPassword;
     private void ToggleConfirmPassword() => showConfirmPassword = !showConfirmPassword;
 
+
     private async Task HandleRegister()
+{
+    errorMessage = "";
+    successMessage = "";
+
+    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(studentNo) ||
+        string.IsNullOrWhiteSpace(department) || string.IsNullOrWhiteSpace(courseStrand) ||
+        string.IsNullOrWhiteSpace(yearLevel) || string.IsNullOrWhiteSpace(username) ||
+        string.IsNullOrWhiteSpace(password))
     {
-        errorMessage = "";
-        successMessage = "";
+        errorMessage = "All fields are required.";
+        return;
+    }
 
-        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(studentNo) ||
-            string.IsNullOrWhiteSpace(department) || string.IsNullOrWhiteSpace(course) ||
-            string.IsNullOrWhiteSpace(yearLevel) || string.IsNullOrWhiteSpace(username) ||
-            string.IsNullOrWhiteSpace(password))
-        {
-            errorMessage = "All fields are required.";
-            return;
-        }
+    if (username.Length < 4) { errorMessage = "Username must be at least 4 characters."; return; }
+    if (password.Length < 8) { errorMessage = "Password must be at least 8 characters."; return; }
+    if (PasswordMismatch) { errorMessage = "Passwords do not match."; return; }
 
-        if (username.Length < 4) { errorMessage = "Username must be at least 4 characters."; return; }
-        if (password.Length < 8) { errorMessage = "Password must be at least 8 characters."; return; }
-        if (PasswordMismatch) { errorMessage = "Passwords do not match."; return; }
+    isLoading = true;
 
-        isLoading = true;
-        await Task.Delay(500); // TODO: replace with AuthService.RegisterStudent()
-        isLoading = false;
+    var result = await AuthService.RegisterStudent(new StudentRegisterRequest
+    {
+        StudentNo = studentNo,
+        Username = username,
+        Password = password,
+        FullName = fullName,
+        Department = department,
+        CourseStrand = courseStrand,
+        YearLevel = yearLevel
+    });
 
-        // TODO: show success + Navigation.NavigateTo("/");
+    isLoading = false;
+
+    if (result.Status == 1)
+    {
+        successMessage = "Account created! Redirecting to login...";
+        await Task.Delay(1500);
+        Navigation.NavigateTo("/");
+    }
+    else
+    {
+        errorMessage = result.Message;
     }
 }
+
+        }
+    }
+        

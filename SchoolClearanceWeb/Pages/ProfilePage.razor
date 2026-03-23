@@ -1,0 +1,421 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+
+<div class="dash-page">
+    <div class="bg-shapes">
+        <div class="bg-shape bg-s1"></div>
+        <div class="bg-shape bg-s2"></div>
+        <div class="bg-shape bg-s3"></div>
+    </div>
+
+    <!-- TOP NAVBAR -->
+    <div class="dash-navbar">
+        <div class="navbar-left">
+            <button class="hamburger-btn" @onclick="ToggleDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+            </button>
+            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
+            <span class="nav-brand">School Clearance</span>
+        </div>
+        <div class="navbar-center">
+            <div class="search-wrapper">
+                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
+                <input placeholder="Search staff..." class="search-input" />
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="nav-avatar active-avatar">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
+            </div>
+        </div>
+    </div>
+
+    <!-- DRAWER OVERLAY -->
+    @if (drawerOpen)
+    {
+        <div class="drawer-overlay" @onclick="CloseDrawer"></div>
+    }
+
+    <!-- SIDE DRAWER -->
+    <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
+        <div class="drawer-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
+            <div class="drawer-brand-wrap">
+                <span class="drawer-brand">School Clearance</span>
+                <span class="drawer-sub">Student Portal</span>
+            </div>
+            <button class="drawer-close-btn" @onclick="CloseDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Close" Class="drawer-close-icon" />
+            </button>
+        </div>
+        <nav class="drawer-nav">
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="drawer-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="drawer-section-label">OFFICES</div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/office/registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
+                <span>Registrar Office</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/office/cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/office/grade-release")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="drawer-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="drawer-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="drawer-section-label">ACCOUNT</div>
+            <div class="drawer-nav-item active" @onclick='() => NavigateTo("/profile")'>
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="drawer-nav-icon" />
+                <span>Profile</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="drawer-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="dash-content">
+
+        <!-- PAGE TITLE -->
+        <div class="profile-page-title">
+            <MudText Typo="Typo.h5" Class="page-title-text">Profile</MudText>
+            <MudText Typo="Typo.body2" Class="page-title-sub">Manage your personal information and account details.</MudText>
+        </div>
+
+        <!-- PROFILE CARD -->
+        <div class="profile-main-card">
+            <!-- COVER -->
+            <div class="profile-cover"></div>
+
+            <!-- AVATAR + ACTIONS -->
+            <div class="profile-card-body">
+                <div class="profile-avatar-row">
+                    <div class="profile-avatar">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-avatar-icon" />
+                    </div>
+                    <div class="profile-header-actions">
+                        <MudButton Variant="Variant.Outlined"
+                                   Class="change-password-btn"
+                                   StartIcon="@Icons.Material.Filled.Key"
+                                   OnClick="TogglePasswordSection">
+                            Change Password
+                        </MudButton>
+                    </div>
+                </div>
+
+                <!-- NAME + CHIPS -->
+                <div class="profile-identity">
+                    <span class="profile-fullname">Juan dela Cruz</span>
+                    <div class="profile-chips-row">
+                        <div class="profile-chip">
+                            <MudIcon Icon="@Icons.Material.Filled.School" Class="chip-icon" />
+                            <span>@course</span>
+                        </div>
+                        <div class="profile-chip">
+                            <MudIcon Icon="@Icons.Material.Filled.Badge" Class="chip-icon" />
+                            <span>2024-00123</span>
+                        </div>
+                        <div class="profile-chip">
+                            <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Class="chip-icon" />
+                            <span>Joined Mar 2026</span>
+                        </div>
+                        <div class="profile-chip clearance-chip">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="chip-icon" />
+                            <span>40% Cleared</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERSONAL INFORMATION -->
+        <div class="glass-card">
+            <div class="section-header">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="section-icon" />
+                <MudText Typo="Typo.subtitle1" Class="section-label">PERSONAL INFORMATION</MudText>
+            </div>
+
+            @if (infoSaved)
+            {
+                <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">
+                    Information updated successfully!
+                </MudAlert>
+            }
+
+            <div class="profile-form">
+                <div class="profile-field-row">
+                    <div class="profile-field">
+                        <span class="profile-field-label">Department</span>
+                        <MudSelect Value="@department"
+                                   ValueChanged="@((string val) => OnDepartmentChanged(val))"
+                                   Variant="Variant.Outlined"
+                                   T="string"
+                                   FullWidth="true">
+                            <MudSelectItem Value="@("College")">College</MudSelectItem>
+                            <MudSelectItem Value="@("Senior High School")">Senior High School</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                    <div class="profile-field">
+                        <span class="profile-field-label">Course / Strand</span>
+                        <MudSelect @bind-Value="course"
+                                   Variant="Variant.Outlined"
+                                   T="string"
+                                   FullWidth="true"
+                                   Disabled="@(string.IsNullOrEmpty(department))">
+                            @foreach (var c in courseOptions)
+                            {
+                                <MudSelectItem Value="@c">@c</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                </div>
+                <div class="profile-field">
+                    <span class="profile-field-label">Year Level</span>
+                    <MudSelect @bind-Value="yearLevel"
+                               Variant="Variant.Outlined"
+                               T="string"
+                               FullWidth="true"
+                               Disabled="@(string.IsNullOrEmpty(department))">
+                        @foreach (var y in yearOptions)
+                        {
+                            <MudSelectItem Value="@y">@y</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+
+                <div class="profile-form-actions">
+                    <MudButton Variant="Variant.Filled"
+                               Class="profile-save-btn"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               OnClick="SaveInfo"
+                               Disabled="@isSavingInfo">
+                        @if (isSavingInfo)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Save Changes</span>
+                        }
+                    </MudButton>
+                    <MudButton Variant="Variant.Outlined"
+                               Class="profile-back-btn"
+                               StartIcon="@Icons.Material.Filled.ArrowBack"
+                               OnClick='() => Navigation.NavigateTo("/dashboard")'>
+                        Back
+                    </MudButton>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHANGE PASSWORD -->
+        @if (showPasswordSection)
+        {
+            <div class="glass-card">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Lock" Class="section-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="section-label">CHANGE PASSWORD</MudText>
+                </div>
+
+                @if (!string.IsNullOrEmpty(passwordError))
+                {
+                    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-4">@passwordError</MudAlert>
+                }
+                @if (passwordSaved)
+                {
+                    <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">
+                        Password changed successfully!
+                    </MudAlert>
+                }
+
+                <div class="profile-form">
+                    <div class="profile-field">
+                        <span class="profile-field-label">Current Password</span>
+                        <div class="custom-input-wrapper">
+                            <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                            <MudTextField @bind-Value="currentPassword"
+                                          Variant="Variant.Outlined"
+                                          InputType="@currentPwInput"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@currentPwIcon"
+                                          OnAdornmentClick="ToggleCurrentPw"
+                                          FullWidth="true"
+                                          Class="custom-padded" />
+                        </div>
+                    </div>
+                    <div class="profile-field-row">
+                        <div class="profile-field">
+                            <span class="profile-field-label">New Password</span>
+                            <div class="custom-input-wrapper">
+                                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                                <MudTextField @bind-Value="newPassword"
+                                              Variant="Variant.Outlined"
+                                              InputType="@newPwInput"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@newPwIcon"
+                                              OnAdornmentClick="ToggleNewPw"
+                                              FullWidth="true"
+                                              Class="custom-padded" />
+                            </div>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-field-label">Confirm New Password</span>
+                            <div class="custom-input-wrapper">
+                                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                                <MudTextField @bind-Value="confirmPassword"
+                                              Variant="Variant.Outlined"
+                                              InputType="@confirmPwInput"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@confirmPwIcon"
+                                              OnAdornmentClick="ToggleConfirmPw"
+                                              Error="@PasswordMismatch"
+                                              ErrorText="Passwords do not match"
+                                              FullWidth="true"
+                                              Class="custom-padded" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-form-actions">
+                        <MudButton Variant="Variant.Filled"
+                                   Class="profile-save-btn"
+                                   StartIcon="@Icons.Material.Filled.Lock"
+                                   OnClick="SavePassword"
+                                   Disabled="@isSavingPassword">
+                            @if (isSavingPassword)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                                <span>Saving...</span>
+                            }
+                            else
+                            {
+                                <span>Change Password</span>
+                            }
+                        </MudButton>
+                        <MudButton Variant="Variant.Outlined"
+                                   Class="profile-back-btn"
+                                   OnClick="TogglePasswordSection">
+                            Cancel
+                        </MudButton>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- CLEARANCE SUMMARY -->
+        <div class="glass-card">
+            <div class="section-header">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="section-icon" />
+                <MudText Typo="Typo.subtitle1" Class="section-label">CLEARANCE SUMMARY</MudText>
+            </div>
+            <div class="clearance-summary-grid">
+                <div class="clearance-summary-item cleared">
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="summary-icon" />
+                    <span class="summary-count">2</span>
+                    <span class="summary-label">Cleared</span>
+                </div>
+                <div class="clearance-summary-item pending">
+                    <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" Class="summary-icon" />
+                    <span class="summary-count">3</span>
+                    <span class="summary-label">Pending</span>
+                </div>
+                <div class="clearance-summary-item total">
+                    <MudIcon Icon="@Icons.Material.Filled.ListAlt" Class="summary-icon" />
+                    <span class="summary-count">5</span>
+                    <span class="summary-label">Total</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private bool drawerOpen = false;
+    private bool showPasswordSection = false;
+
+    private string department = "College";
+    private string course = "BS Information Technology";
+    private string yearLevel = "2nd Year";
+    private bool isSavingInfo = false;
+    private bool infoSaved = false;
+
+    private string currentPassword = "";
+    private string newPassword = "";
+    private string confirmPassword = "";
+    private bool showCurrentPw = false;
+    private bool showNewPw = false;
+    private bool showConfirmPw = false;
+    private bool isSavingPassword = false;
+    private bool passwordSaved = false;
+    private string passwordError = "";
+
+    private List<string> courseOptions = new() { "BS Information Technology", "BS Computer Science", "BS Business Administration", "BS Accountancy", "BS Hospitality Management", "BS Tourism Management" };
+    private List<string> yearOptions = new() { "1st Year", "2nd Year", "3rd Year", "4th Year" };
+
+    private void OnDepartmentChanged(string val)
+    {
+        department = val;
+        course = "";
+        yearLevel = "";
+        if (val == "College")
+        {
+            courseOptions = new() { "BS Information Technology", "BS Computer Science", "BS Business Administration", "BS Accountancy", "BS Hospitality Management", "BS Tourism Management" };
+            yearOptions = new() { "1st Year", "2nd Year", "3rd Year", "4th Year" };
+        }
+        else
+        {
+            courseOptions = new() { "ABM", "HUMSS", "STEM", "TVL", "GAS" };
+            yearOptions = new() { "Grade 11", "Grade 12" };
+        }
+    }
+
+    private bool PasswordMismatch => !string.IsNullOrEmpty(confirmPassword) && newPassword != confirmPassword;
+
+    private InputType currentPwInput => showCurrentPw ? InputType.Text : InputType.Password;
+    private string currentPwIcon => showCurrentPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+    private InputType newPwInput => showNewPw ? InputType.Text : InputType.Password;
+    private string newPwIcon => showNewPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+    private InputType confirmPwInput => showConfirmPw ? InputType.Text : InputType.Password;
+    private string confirmPwIcon => showConfirmPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+
+    private void ToggleCurrentPw() => showCurrentPw = !showCurrentPw;
+    private void ToggleNewPw() => showNewPw = !showNewPw;
+    private void ToggleConfirmPw() => showConfirmPw = !showConfirmPw;
+    private void TogglePasswordSection() => showPasswordSection = !showPasswordSection;
+    private void ToggleDrawer() => drawerOpen = !drawerOpen;
+    private void CloseDrawer() => drawerOpen = false;
+    private void NavigateTo(string url) { drawerOpen = false; Navigation.NavigateTo(url); }
+
+    private async Task SaveInfo()
+    {
+        isSavingInfo = true;
+        infoSaved = false;
+        await Task.Delay(600);
+        isSavingInfo = false;
+        infoSaved = true;
+    }
+
+    private async Task SavePassword()
+    {
+        passwordError = "";
+        passwordSaved = false;
+        if (string.IsNullOrWhiteSpace(currentPassword)) { passwordError = "Current password is required."; return; }
+        if (newPassword.Length < 8) { passwordError = "New password must be at least 8 characters."; return; }
+        if (PasswordMismatch) { passwordError = "Passwords do not match."; return; }
+        isSavingPassword = true;
+        await Task.Delay(600);
+        isSavingPassword = false;
+        passwordSaved = true;
+        currentPassword = ""; newPassword = ""; confirmPassword = "";
+    }
+}

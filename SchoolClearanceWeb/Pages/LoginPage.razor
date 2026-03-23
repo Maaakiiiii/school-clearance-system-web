@@ -1,5 +1,6 @@
 ﻿@page "/loginpage"
 @inject NavigationManager Navigation
+@inject AuthService AuthService
 
 <div class="auth-bg">
     <div class="floating-shapes">
@@ -104,9 +105,23 @@
         }
 
         isLoading = true;
-        await Task.Delay(500); // TODO: replace with AuthService.LoginStudent()
+
+        var result = await AuthService.LoginStudent(new StudentLoginRequest
+            {
+                Username = username,
+                Password = password
+            });
+
         isLoading = false;
 
-        // TODO: Navigation.NavigateTo("/dashboard");
+        if (result.Status == 1)
+        {
+            Navigation.NavigateTo("/dashboard");
+        }
+        else
+        {
+            errorMessage = result.Message;
+        }
     }
-}
+
+    }
