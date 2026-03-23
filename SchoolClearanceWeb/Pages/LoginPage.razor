@@ -1,4 +1,7 @@
-﻿@page "/"
+﻿@page "/loginpage"
+@inject NavigationManager Navigation
+@inject AuthService AuthService
+
 <div class="auth-bg">
     <div class="floating-shapes">
         <div class="shape shape-1"></div>
@@ -27,9 +30,7 @@
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {
-                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">
-                    @errorMessage
-                </MudAlert>
+                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">@errorMessage</MudAlert>
             }
 
             <div class="field-gap">
@@ -95,15 +96,32 @@
 
     private async Task HandleLogin()
     {
+        errorMessage = "";
+
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             errorMessage = "Please enter your username and password.";
             return;
         }
+
         isLoading = true;
-        errorMessage = "";
-        await Task.Delay(500);
+
+        var result = await AuthService.LoginStudent(new StudentLoginRequest
+            {
+                Username = username,
+                Password = password
+            });
+
         isLoading = false;
-        Console.WriteLine($"Login: {username}");
+
+        if (result.Status == 1)
+        {
+            Navigation.NavigateTo("/dashboard");
+        }
+        else
+        {
+            errorMessage = result.Message;
+        }
     }
-}
+
+    }

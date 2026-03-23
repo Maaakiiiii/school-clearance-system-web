@@ -1,4 +1,7 @@
 ﻿@page "/register"
+@inject NavigationManager Navigation
+@inject AuthService AuthService
+
 <div class="auth-bg">
     <div class="floating-shapes">
         <div class="shape shape-1"></div>
@@ -6,7 +9,7 @@
         <div class="shape shape-3"></div>
         <div class="shape shape-4"></div>
     </div>
-    <div class="auth-card">
+    <div class="auth-card register-card">
         <!-- Left Panel -->
         <div class="auth-left">
             <div class="logo-ring">
@@ -27,32 +30,72 @@
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {
-                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">
-                    @errorMessage
-                </MudAlert>
+                <MudAlert Severity="Severity.Error" Class="mb-3" Dense="true">@errorMessage</MudAlert>
             }
             @if (!string.IsNullOrEmpty(successMessage))
             {
-                <MudAlert Severity="Severity.Success" Class="mb-3" Dense="true">
-                    @successMessage
-                </MudAlert>
+                <MudAlert Severity="Severity.Success" Class="mb-3" Dense="true">@successMessage</MudAlert>
             }
 
             <div class="field-gap">
+                <MudTextField @bind-Value="fullName"
+                              Placeholder="Full Name"
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Person"
+                              FullWidth="true" />
+            </div>
+
+            <div class="field-gap">
+                <MudTextField @bind-Value="studentNo"
+                              Placeholder="Student No. (e.g. 2024-00123)"
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Badge"
+                              FullWidth="true" />
+            </div>
+
+            <div class="field-gap">
                 <MudGrid Spacing="2">
-                    <MudItem xs="6">
-                        <MudTextField @bind-Value="firstName"
-                                      Placeholder="First Name"
-                                      Variant="Variant.Outlined"
-                                      FullWidth="true" />
+                    <MudItem xs="12" sm="6">
+                        <MudSelect Value="@department"
+                                   ValueChanged="@((string val) => OnDepartmentChanged(val))"
+                                   Label="Department"
+                                   Variant="Variant.Outlined"
+                                   FullWidth="true"
+                                   T="string">
+                            <MudSelectItem Value="@("College")">College</MudSelectItem>
+                            <MudSelectItem Value="@("Senior High School")">Senior High School</MudSelectItem>
+                        </MudSelect>
                     </MudItem>
-                    <MudItem xs="6">
-                        <MudTextField @bind-Value="lastName"
-                                      Placeholder="Last Name"
-                                      Variant="Variant.Outlined"
-                                      FullWidth="true" />
+                    <MudItem xs="12" sm="6">
+                        <MudSelect @bind-Value="courseStrand"
+                                   Label="Course / Strand"
+                                   Variant="Variant.Outlined"
+                                   FullWidth="true"
+                                   Disabled="@(string.IsNullOrEmpty(department))"
+                                   T="string">
+                            @foreach (var c in courseOptions)
+                            {
+                                <MudSelectItem Value="@c">@c</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudItem>
                 </MudGrid>
+            </div>
+
+            <div class="field-gap">
+                <MudSelect @bind-Value="yearLevel"
+                           Label="Year Level"
+                           Variant="Variant.Outlined"
+                           FullWidth="true"
+                           Disabled="@(string.IsNullOrEmpty(department))"
+                           T="string">
+                    @foreach (var y in yearOptions)
+                    {
+                        <MudSelectItem Value="@y">@y</MudSelectItem>
+                    }
+                </MudSelect>
             </div>
 
             <div class="field-gap">
@@ -60,7 +103,7 @@
                               Placeholder="Username"
                               Variant="Variant.Outlined"
                               Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Person"
+                              AdornmentIcon="@Icons.Material.Filled.AlternateEmail"
                               FullWidth="true" />
             </div>
 
@@ -123,8 +166,11 @@
 </div>
 
 @code {
-    private string firstName = "";
-    private string lastName = "";
+    private string fullName = "";
+    private string studentNo = "";
+    private string department = "";
+    private string courseStrand = "";
+    private string yearLevel = "";
     private string username = "";
     private string password = "";
     private string confirmPassword = "";
@@ -134,8 +180,63 @@
     private string errorMessage = "";
     private string successMessage = "";
 
+    private List<string> courseOptions = new();
+    private List<string> yearOptions = new();
+
+    private static readonly List<string> CollegeCourses = new()
+    {
+        "BS Information Technology",
+        "BS Computer Science",
+        "BS Business Administration",
+        "BS Accountancy",
+        "BS Hospitality Management",
+        "BS Tourism Management"
+    };
+
+    private static readonly List<string> SHSStrands = new()
+    {
+        "ABM — Accountancy, Business & Management",
+        "HUMSS — Humanities & Social Sciences",
+        "STEM — Science, Technology, Engineering & Math",
+        "TVL — Technical-Vocational-Livelihood",
+        "GAS — General Academic Strand"
+    };
+
+    private static readonly List<string> CollegeYears = new()
+    {
+        "1st Year", "2nd Year", "3rd Year", "4th Year"
+    };
+
+    private static readonly List<string> SHSYears = new()
+    {
+        "Grade 11", "Grade 12"
+    };
+
+    private void OnDepartmentChanged(string val)
+    {
+        department = val;
+        courseStrand = "";
+        yearLevel = "";
+
+        if (department == "College")
+        {
+            courseOptions = CollegeCourses;
+            yearOptions = CollegeYears;
+        }
+        else if (department == "Senior High School")
+        {
+            courseOptions = SHSStrands;
+            yearOptions = SHSYears;
+        }
+        else
+        {
+            courseOptions = new();
+            yearOptions = new();
+        }
+    }
+    @code {
     private bool PasswordMismatch =>
-        !string.IsNullOrEmpty(confirmPassword) && password != confirmPassword;
+        !string.IsNullOrEmpty(confirmPassword) && password != confirmPassword;          
 
     private InputType passwordInput => showPassword ? InputType.Text : InputType.Password;
     private string passwordIcon => showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
@@ -145,24 +246,52 @@
     private void TogglePassword() => showPassword = !showPassword;
     private void ToggleConfirmPassword() => showConfirmPassword = !showConfirmPassword;
 
+
     private async Task HandleRegister()
+{
+    errorMessage = "";
+    successMessage = "";
+
+    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(studentNo) ||
+        string.IsNullOrWhiteSpace(department) || string.IsNullOrWhiteSpace(courseStrand) ||
+        string.IsNullOrWhiteSpace(yearLevel) || string.IsNullOrWhiteSpace(username) ||
+        string.IsNullOrWhiteSpace(password))
     {
-        errorMessage = "";
-        successMessage = "";
+        errorMessage = "All fields are required.";
+        return;
+    }
 
-        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName) ||
-            string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-        {
-            errorMessage = "All fields are required.";
-            return;
-        }
-        if (username.Length < 4) { errorMessage = "Username must be at least 4 characters."; return; }
-        if (password.Length < 8) { errorMessage = "Password must be at least 8 characters."; return; }
-        if (PasswordMismatch) { errorMessage = "Passwords do not match."; return; }
+    if (username.Length < 4) { errorMessage = "Username must be at least 4 characters."; return; }
+    if (password.Length < 8) { errorMessage = "Password must be at least 8 characters."; return; }
+    if (PasswordMismatch) { errorMessage = "Passwords do not match."; return; }
 
-        isLoading = true;
-        await Task.Delay(500);
-        isLoading = false;
-        successMessage = "Account created successfully! You can now sign in.";
+    isLoading = true;
+
+    var result = await AuthService.RegisterStudent(new StudentRegisterRequest
+    {
+        StudentNo = studentNo,
+        Username = username,
+        Password = password,
+        FullName = fullName,
+        Department = department,
+        CourseStrand = courseStrand,
+        YearLevel = yearLevel
+    });
+
+    isLoading = false;
+
+    if (result.Status == 1)
+    {
+        successMessage = "Account created! Redirecting to login...";
+        await Task.Delay(1500);
+        Navigation.NavigateTo("/");
+    }
+    else
+    {
+        errorMessage = result.Message;
     }
 }
+
+        }
+    }
+        
