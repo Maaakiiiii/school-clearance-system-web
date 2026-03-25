@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/profile"
 @inject NavigationManager Navigation
 
 <div class="dash-page">
@@ -24,9 +24,24 @@
             </div>
         </div>
         <div class="navbar-right">
-            <div class="nav-avatar active-avatar">
+            <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
+            @if (showProfileMenu)
+            {
+                <div style="position:fixed;inset:0;z-index:99;" @onclick="() => showProfileMenu = false"></div>
+                <div class="profile-dropdown" style="z-index:100;">
+                    <div class="profile-menu-item" @onclick="GoToProfile">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-menu-icon" />
+                        <span>Profile</span>
+                    </div>
+                    <div class="profile-menu-divider"></div>
+                    <div class="profile-menu-item logout" @onclick="HandleLogout">
+                        <MudIcon Icon="@Icons.Material.Filled.Logout" Class="profile-menu-icon" />
+                        <span>Logout</span>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -54,15 +69,15 @@
                 <span>Dashboard</span>
             </div>
             <div class="drawer-section-label">OFFICES</div>
-            <div class="drawer-nav-item" @onclick='() => NavigateTo("/office/registrar")'>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/registrar")'>
                 <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
                 <span>Registrar Office</span>
             </div>
-            <div class="drawer-nav-item" @onclick='() => NavigateTo("/office/cashier")'>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/cashier")'>
                 <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
                 <span>Cashier Office</span>
             </div>
-            <div class="drawer-nav-item" @onclick='() => NavigateTo("/office/grade-release")'>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/grade-release")'>
                 <MudIcon Icon="@Icons.Material.Filled.Grade" Class="drawer-nav-icon" />
                 <span>Grade Release</span>
             </div>
@@ -71,10 +86,6 @@
                 <span>Announcements</span>
             </div>
             <div class="drawer-section-label">ACCOUNT</div>
-            <div class="drawer-nav-item active" @onclick='() => NavigateTo("/profile")'>
-                <MudIcon Icon="@Icons.Material.Filled.Person" Class="drawer-nav-icon" />
-                <span>Profile</span>
-            </div>
             <div class="drawer-nav-item" @onclick='() => NavigateTo("/settings")'>
                 <MudIcon Icon="@Icons.Material.Filled.Settings" Class="drawer-nav-icon" />
                 <span>Settings</span>
@@ -218,99 +229,6 @@
             </div>
         </div>
 
-        <!-- CHANGE PASSWORD -->
-        @if (showPasswordSection)
-        {
-            <div class="glass-card">
-                <div class="section-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Lock" Class="section-icon" />
-                    <MudText Typo="Typo.subtitle1" Class="section-label">CHANGE PASSWORD</MudText>
-                </div>
-
-                @if (!string.IsNullOrEmpty(passwordError))
-                {
-                    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-4">@passwordError</MudAlert>
-                }
-                @if (passwordSaved)
-                {
-                    <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">
-                        Password changed successfully!
-                    </MudAlert>
-                }
-
-                <div class="profile-form">
-                    <div class="profile-field">
-                        <span class="profile-field-label">Current Password</span>
-                        <div class="custom-input-wrapper">
-                            <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
-                            <MudTextField @bind-Value="currentPassword"
-                                          Variant="Variant.Outlined"
-                                          InputType="@currentPwInput"
-                                          Adornment="Adornment.End"
-                                          AdornmentIcon="@currentPwIcon"
-                                          OnAdornmentClick="ToggleCurrentPw"
-                                          FullWidth="true"
-                                          Class="custom-padded" />
-                        </div>
-                    </div>
-                    <div class="profile-field-row">
-                        <div class="profile-field">
-                            <span class="profile-field-label">New Password</span>
-                            <div class="custom-input-wrapper">
-                                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
-                                <MudTextField @bind-Value="newPassword"
-                                              Variant="Variant.Outlined"
-                                              InputType="@newPwInput"
-                                              Adornment="Adornment.End"
-                                              AdornmentIcon="@newPwIcon"
-                                              OnAdornmentClick="ToggleNewPw"
-                                              FullWidth="true"
-                                              Class="custom-padded" />
-                            </div>
-                        </div>
-                        <div class="profile-field">
-                            <span class="profile-field-label">Confirm New Password</span>
-                            <div class="custom-input-wrapper">
-                                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
-                                <MudTextField @bind-Value="confirmPassword"
-                                              Variant="Variant.Outlined"
-                                              InputType="@confirmPwInput"
-                                              Adornment="Adornment.End"
-                                              AdornmentIcon="@confirmPwIcon"
-                                              OnAdornmentClick="ToggleConfirmPw"
-                                              Error="@PasswordMismatch"
-                                              ErrorText="Passwords do not match"
-                                              FullWidth="true"
-                                              Class="custom-padded" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="profile-form-actions">
-                        <MudButton Variant="Variant.Filled"
-                                   Class="profile-save-btn"
-                                   StartIcon="@Icons.Material.Filled.Lock"
-                                   OnClick="SavePassword"
-                                   Disabled="@isSavingPassword">
-                            @if (isSavingPassword)
-                            {
-                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                                <span>Saving...</span>
-                            }
-                            else
-                            {
-                                <span>Change Password</span>
-                            }
-                        </MudButton>
-                        <MudButton Variant="Variant.Outlined"
-                                   Class="profile-back-btn"
-                                   OnClick="TogglePasswordSection">
-                            Cancel
-                        </MudButton>
-                    </div>
-                </div>
-            </div>
-        }
-
         <!-- CLEARANCE SUMMARY -->
         <div class="glass-card">
             <div class="section-header">
@@ -337,11 +255,110 @@
         </div>
 
     </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    @if (showPasswordSection)
+    {
+        <div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:1000;" @onclick="ClosePasswordModal"></div>
+        <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;background:#1e2a45;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,0.4);" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <MudIcon Icon="@Icons.Material.Filled.Lock" Class="modal-title-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="modal-title-text">CHANGE PASSWORD</MudText>
+                </div>
+                <button class="modal-close-btn" @onclick="ClosePasswordModal">
+                    <MudIcon Icon="@Icons.Material.Filled.Close" Class="modal-close-icon" />
+                </button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(passwordError))
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mb-4">@passwordError</MudAlert>
+            }
+            @if (passwordSaved)
+            {
+                <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">
+                    Password changed successfully!
+                </MudAlert>
+            }
+
+            <div class="profile-form">
+                <div class="profile-field">
+                    <span class="profile-field-label">Current Password</span>
+                    <div class="custom-input-wrapper">
+                        <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                        <MudTextField @bind-Value="currentPassword"
+                                      Variant="Variant.Outlined"
+                                      InputType="@currentPwInput"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@currentPwIcon"
+                                      OnAdornmentClick="ToggleCurrentPw"
+                                      FullWidth="true"
+                                      Class="custom-padded" />
+                    </div>
+                </div>
+                <div class="profile-field">
+                    <span class="profile-field-label">New Password</span>
+                    <div class="custom-input-wrapper">
+                        <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                        <MudTextField @bind-Value="newPassword"
+                                      Variant="Variant.Outlined"
+                                      InputType="@newPwInput"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@newPwIcon"
+                                      OnAdornmentClick="ToggleNewPw"
+                                      FullWidth="true"
+                                      Class="custom-padded" />
+                    </div>
+                </div>
+                <div class="profile-field">
+                    <span class="profile-field-label">Confirm New Password</span>
+                    <div class="custom-input-wrapper">
+                        <MudIcon Icon="@Icons.Material.Filled.Lock" Class="custom-icon-left" />
+                        <MudTextField @bind-Value="confirmPassword"
+                                      Variant="Variant.Outlined"
+                                      InputType="@confirmPwInput"
+                                      Adornment="Adornment.End"
+                                      AdornmentIcon="@confirmPwIcon"
+                                      OnAdornmentClick="ToggleConfirmPw"
+                                      Error="@PasswordMismatch"
+                                      ErrorText="Passwords do not match"
+                                      FullWidth="true"
+                                      Class="custom-padded" />
+                    </div>
+                </div>
+                <div class="profile-form-actions">
+                    <MudButton Variant="Variant.Filled"
+                               Class="profile-save-btn"
+                               StartIcon="@Icons.Material.Filled.Lock"
+                               OnClick="SavePassword"
+                               Disabled="@isSavingPassword">
+                        @if (isSavingPassword)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Change Password</span>
+                        }
+                    </MudButton>
+                    <MudButton Variant="Variant.Outlined"
+                               Class="profile-back-btn"
+                               OnClick="ClosePasswordModal">
+                        Cancel
+                    </MudButton>
+                </div>
+            </div>
+        </div>
+    }
+
 </div>
 
 @code {
     private bool drawerOpen = false;
     private bool showPasswordSection = false;
+    private bool showProfileMenu = false;
 
     private string department = "College";
     private string course = "BS Information Technology";
@@ -391,10 +408,50 @@
     private void ToggleCurrentPw() => showCurrentPw = !showCurrentPw;
     private void ToggleNewPw() => showNewPw = !showNewPw;
     private void ToggleConfirmPw() => showConfirmPw = !showConfirmPw;
-    private void TogglePasswordSection() => showPasswordSection = !showPasswordSection;
+    private void TogglePasswordSection()
+    {
+        showPasswordSection = !showPasswordSection;
+        if (!showPasswordSection) ResetPasswordFields();
+    }
+
+    private void ClosePasswordModal()
+    {
+        showPasswordSection = false;
+        ResetPasswordFields();
+    }
+
+    private void ResetPasswordFields()
+    {
+        currentPassword = "";
+        newPassword = "";
+        confirmPassword = "";
+        passwordError = "";
+        passwordSaved = false;
+        showCurrentPw = false;
+        showNewPw = false;
+        showConfirmPw = false;
+    }
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;
-    private void NavigateTo(string url) { drawerOpen = false; Navigation.NavigateTo(url); }
+    private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
+
+    private void NavigateTo(string url)
+    {
+        drawerOpen = false;
+        Navigation.NavigateTo(url);
+    }
+
+    private void GoToProfile()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/profile");
+    }
+
+    private void HandleLogout()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/loginpage");
+    }
 
     private async Task SaveInfo()
     {
@@ -416,6 +473,7 @@
         await Task.Delay(600);
         isSavingPassword = false;
         passwordSaved = true;
-        currentPassword = ""; newPassword = ""; confirmPassword = "";
+        await Task.Delay(1200);
+        ClosePasswordModal();
     }
 }

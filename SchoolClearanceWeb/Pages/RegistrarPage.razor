@@ -1,0 +1,421 @@
+﻿@page "/registrar"
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<div class="dash-page">
+    <div class="bg-shapes">
+        <div class="bg-shape bg-s1"></div>
+        <div class="bg-shape bg-s2"></div>
+        <div class="bg-shape bg-s3"></div>
+    </div>
+
+    <!-- TOP NAVBAR -->
+    <div class="dash-navbar">
+        <div class="navbar-left">
+            <button class="hamburger-btn" @onclick="ToggleDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+            </button>
+            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
+            <span class="nav-brand">School Clearance</span>
+        </div>
+        <div class="navbar-center">
+            <div class="search-wrapper">
+                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
+                <input placeholder="Search staff..." class="search-input" />
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="nav-avatar" @onclick="ToggleProfileMenu">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
+            </div>
+            @if (showProfileMenu)
+            {
+                <div style="position:fixed;inset:0;z-index:99;" @onclick="() => showProfileMenu = false"></div>
+                <div class="profile-dropdown" style="z-index:100;">
+                    <div class="profile-menu-item" @onclick="GoToProfile">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-menu-icon" />
+                        <span>Profile</span>
+                    </div>
+                    <div class="profile-menu-divider"></div>
+                    <div class="profile-menu-item logout" @onclick="HandleLogout">
+                        <MudIcon Icon="@Icons.Material.Filled.Logout" Class="profile-menu-icon" />
+                        <span>Logout</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- DRAWER OVERLAY -->
+    @if (drawerOpen)
+    {
+        <div class="drawer-overlay" @onclick="CloseDrawer"></div>
+    }
+
+    <!-- SIDE DRAWER -->
+    <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
+        <div class="drawer-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
+            <div class="drawer-brand-wrap">
+                <span class="drawer-brand">School Clearance</span>
+                <span class="drawer-sub">Student Portal</span>
+            </div>
+            <button class="drawer-close-btn" @onclick="CloseDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Close" Class="drawer-close-icon" />
+            </button>
+        </div>
+        <nav class="drawer-nav">
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="drawer-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="drawer-section-label">OFFICES</div>
+            <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
+                <span>Registrar Office</span>   
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/grade-release")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="drawer-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="drawer-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="drawer-section-label">ACCOUNT</div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="drawer-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="dash-content">
+
+        <!-- PAGE TITLE -->
+        <div class="profile-page-title">
+            <div class="page-title-row">
+                <button class="back-btn" @onclick='() => Navigation.NavigateTo("/dashboard")'>
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Class="back-icon" />
+                </button>
+                <div>
+                    <MudText Typo="Typo.h5" Class="page-title-text">Registrar Office</MudText>
+                    <MudText Typo="Typo.body2" Class="page-title-sub">View office status and registrar staff availability.</MudText>
+                </div>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <!-- LOADING STATE -->
+            <div class="loading-wrapper">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.body1" Class="loading-text">Loading office data...</MudText>
+            </div>
+        }
+        else
+        {
+            <!-- OFFICE STATUS CARD -->
+            <div class="glass-card office-status-card">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Business" Class="section-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="section-label">OFFICE STATUS</MudText>
+                </div>
+
+                @if (officeStaff != null)
+                {
+                    <div class="office-status-body">
+                        <!-- Status Badges Row -->
+                        <div class="office-badges-row">
+                            <div class="office-badge-wrap">
+                                <span class="badge-label">Office</span>
+                                <span class="office-status-badge @GetOfficeStatusClass(officeStaff.OfficeStatus)">
+                                    <MudIcon Icon="@GetOfficeStatusIcon(officeStaff.OfficeStatus)" Class="badge-icon" />
+                                    @officeStaff.OfficeStatus
+                                </span>
+                            </div>
+                            <div class="office-badge-wrap">
+                                <span class="badge-label">Crowd</span>
+                                <span class="crowd-status-badge @GetCrowdStatusClass(officeStaff.CrowdStatus)">
+                                    @GetCrowdStatusEmoji(officeStaff.CrowdStatus) @GetCrowdStatusLabel(officeStaff.CrowdStatus)
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Staff Note -->
+                        @if (!string.IsNullOrEmpty(officeStaff.StaffNote))
+                        {
+                            <div class="office-note-row">
+                                <MudIcon Icon="@Icons.Material.Filled.StickyNote2" Class="note-icon" />
+                                <span class="office-note-text">@officeStaff.StaffNote</span>
+                            </div>
+                        }
+
+                        <!-- Acceptance Window -->
+                        @if (!string.IsNullOrEmpty(officeStaff.AcceptanceWindow))
+                        {
+                            <div class="office-window-row">
+                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="window-icon" />
+                                <div>
+                                    <span class="window-label">Acceptance Window</span>
+                                    <span class="window-value">@officeStaff.AcceptanceWindow</span>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Last Updated -->
+                        @if (officeStaff.LastUpdatedAt.HasValue)
+                        {
+                            <div class="last-updated-row">
+                                <MudIcon Icon="@Icons.Material.Filled.Update" Class="updated-icon" />
+                                <span class="last-updated-text">Last updated: @GetTimeAgo(officeStaff.LastUpdatedAt.Value)</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <MudIcon Icon="@Icons.Material.Filled.Business" Class="empty-icon" />
+                        <span class="empty-text">Office status not available</span>
+                    </div>
+                }
+            </div>
+
+            <!-- REGISTRAR STAFF LIST -->
+            <div class="glass-card">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.People" Class="section-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="section-label">REGISTRAR STAFF</MudText>
+                    <span class="staff-count-badge">@registrarStaff.Count</span>
+                </div>
+
+                @if (registrarStaff.Count == 0)
+                {
+                    <div class="empty-state">
+                        <MudIcon Icon="@Icons.Material.Filled.PersonOff" Class="empty-icon" />
+                        <span class="empty-text">No registrar staff available</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="staff-list">
+                        @foreach (var staff in registrarStaff)
+                        {
+                            <div class="staff-list-item" @onclick="() => GoToStaffProfile(staff.StaffId)">
+                                <div class="staff-avatar-wrap">
+                                    <div class="staff-avatar">
+                                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="staff-avatar-icon" />
+                                    </div>
+                                    <span class="staff-status-dot @GetStaffStatusDotClass(staff.StaffStatus)"></span>
+                                </div>
+                                <div class="staff-info">
+                                    <span class="staff-name">@staff.FullName</span>
+                                    <span class="staff-position">@staff.Position • @staff.Department</span>
+                                    @if (!string.IsNullOrEmpty(staff.CurrentLocation))
+                                    {
+                                        <div class="staff-location">
+                                            <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="location-icon" />
+                                            <span>@staff.CurrentLocation</span>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="staff-status-wrap">
+                                    <span class="staff-status-chip @GetStaffStatusClass(staff.StaffStatus)">
+                                        @staff.StaffStatus
+                                    </span>
+                                </div>
+                                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="staff-chevron" />
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private bool drawerOpen = false;
+    private bool showProfileMenu = false;
+    private bool isLoading = true;
+
+    private List<StaffListModel> registrarStaff = new();
+    private StaffListModel? officeStaff = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            await Task.Delay(600); // simulate API call
+
+            // Mock data — replace with real StaffService.GetAllStaff() call
+            var allStaff = new List<StaffListModel>
+            {
+                new StaffListModel
+                {
+                    StaffId = 1,
+                    FullName = "Maria Santos",
+                    Position = "Registrar",
+                    Department = "College",
+                    CurrentLocation = "Room 101, Main Building",
+                    StaffStatus = "Available",
+                    OfficeStatus = "Open",
+                    CrowdStatus = "Busy",
+                    StaffNote = "Please bring your student ID and enrollment form.",
+                    AcceptanceWindow = "8:00 AM – 12:00 PM, 1:00 PM – 5:00 PM",
+                    LastUpdatedAt = DateTime.Now.AddMinutes(-15)
+                },
+                new StaffListModel
+                {
+                    StaffId = 2,
+                    FullName = "Jose Reyes",
+                    Position = "Registrar",
+                    Department = "Senior High School",
+                    CurrentLocation = "Room 102, Main Building",
+                    StaffStatus = "On Break",
+                    OfficeStatus = "Open",
+                    CrowdStatus = "Open",
+                    StaffNote = null,
+                    AcceptanceWindow = null,
+                    LastUpdatedAt = DateTime.Now.AddMinutes(-30)
+                },
+                new StaffListModel
+                {
+                    StaffId = 3,
+                    FullName = "Ana Lim",
+                    Position = "Registrar",
+                    Department = "College",
+                    CurrentLocation = null,
+                    StaffStatus = "Absent",
+                    OfficeStatus = "Closed",
+                    CrowdStatus = "Open",
+                    StaffNote = null,
+                    AcceptanceWindow = null,
+                    LastUpdatedAt = DateTime.Now.AddHours(-2)
+                }
+            };
+
+            registrarStaff = allStaff.Where(s => s.Position == "Registrar").ToList();
+
+            // Use first available registrar for office status
+            officeStaff = registrarStaff.FirstOrDefault(s => s.OfficeStatus != null);
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Failed to load office data. Please try again.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // ── Helpers ──────────────────────────────────────────
+
+    private string GetOfficeStatusClass(string status) => status switch
+    {
+        "Open" => "status-open",
+        "Lunch Break" => "status-lunch",
+        "Closed" => "status-closed",
+        _ => "status-closed"
+    };
+
+    private string GetOfficeStatusIcon(string status) => status switch
+    {
+        "Open" => Icons.Material.Filled.CheckCircle,
+        "Lunch Break" => Icons.Material.Filled.RestaurantMenu,
+        "Closed" => Icons.Material.Filled.Cancel,
+        _ => Icons.Material.Filled.Cancel
+    };
+
+    private string GetCrowdStatusClass(string status) => status switch
+    {
+        "Open" => "crowd-open",
+        "Busy" => "crowd-busy",
+        "VeryBusy" => "crowd-very-busy",
+        _ => "crowd-open"
+    };
+
+    private string GetCrowdStatusEmoji(string status) => status switch
+    {
+        "Open" => "🟢",
+        "Busy" => "🟡",
+        "VeryBusy" => "🔴",
+        _ => "🟢"
+    };
+
+    private string GetCrowdStatusLabel(string status) => status switch
+    {
+        "Open" => "Come On In",
+        "Busy" => "Short Wait Expected",
+        "VeryBusy" => "Expect a Long Wait",
+        _ => "Come On In"
+    };
+
+    private string GetStaffStatusClass(string status) => status switch
+    {
+        "Available" => "staff-available",
+        "On Break" => "staff-break",
+        "Absent" => "staff-absent",
+        _ => "staff-absent"
+    };
+
+    private string GetStaffStatusDotClass(string status) => status switch
+    {
+        "Available" => "dot-available",
+        "On Break" => "dot-break",
+        "Absent" => "dot-absent",
+        _ => "dot-absent"
+    };
+
+    private string GetTimeAgo(DateTime dt)
+    {
+        var diff = DateTime.Now - dt;
+        if (diff.TotalMinutes < 1) return "just now";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes} min ago";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours} hr ago";
+        return $"{(int)diff.TotalDays} day(s) ago";
+    }
+
+    // ── Navigation ────────────────────────────────────────
+
+    private void ToggleDrawer() => drawerOpen = !drawerOpen;
+    private void CloseDrawer() => drawerOpen = false;
+    private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
+
+    private void NavigateTo(string url)
+    {
+        drawerOpen = false;
+        Navigation.NavigateTo(url);
+    }
+
+    private void GoToProfile()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/profile");
+    }
+
+    private void HandleLogout()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/loginpage");
+    }
+
+    private void GoToStaffProfile(int staffId)
+    {
+        Navigation.NavigateTo($"/staff/{staffId}");
+    }
+}

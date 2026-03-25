@@ -67,9 +67,34 @@ html, body {
 }
 
 /* ─────────────────────────────────────────
+   AUTH BUTTON OVERRIDE
+───────────────────────────────────────── */
+
+.auth-btn {
+    background: linear-gradient(135deg, #1a2f6e, #243b77) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    text-transform: none !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    margin-top: 8px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+}
+
+    .auth-btn.mud-button-root {
+        height: 52px !important;
+        min-height: 52px !important;
+    }
+
+    .auth-btn:hover {
+        box-shadow: 0 8px 24px rgba(36, 59, 119, 0.4) !important;
+        transform: translateY(-2px) !important;
+    }
+
+/* ─────────────────────────────────────────
    PASSWORD FIELD OVERRIDES
-   Must live in app.css — cannot pierce
-   MudBlazor internals from isolated CSS
 ───────────────────────────────────────── */
 
 .custom-input-wrapper {
@@ -92,34 +117,10 @@ html, body {
 }
 
 /* ─────────────────────────────────────────
-   AUTH BUTTON OVERRIDE
-───────────────────────────────────────── */
-.auth-btn {
-    background: linear-gradient(135deg, #1a2f6e, #243b77) !important;
-    color: white !important;
-    border-radius: 12px !important;
-    text-transform: none !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.3px !important;
-    margin-top: 8px !important;
-    height: 48px !important;
-}
-
-    .auth-btn:hover {
-        box-shadow: 0 8px 24px rgba(36, 59, 119, 0.4) !important;
-        transform: translateY(-2px) !important;
-    }
-
-    .auth-btn.mud-button-root {
-        height: 52px !important;
-        min-height: 52px !important;
-    }
-/* ─────────────────────────────────────────
    LEFT PANEL TEXT OVERRIDES
 ───────────────────────────────────────── */
-.app-title {
 
+.app-title {
     color: white !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-weight: 800 !important;
@@ -128,15 +129,6 @@ html, body {
     margin-bottom: 6px !important;
 }
 
-
-
-
-.app-desc {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-family: 'DM Sans', sans-serif !important;
-    line-height: 1.8 !important;
-    font-size: 13px !important;
-}
 .app-subtitle {
     color: white !important;
     font-family: 'DM Sans', sans-serif !important;
@@ -145,9 +137,18 @@ html, body {
     font-size: 11px !important;
     font-weight: 500 !important;
 }
+
+.app-desc {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    line-height: 1.8 !important;
+    font-size: 13px !important;
+}
+
 /* ─────────────────────────────────────────
-   DASHBOARD NAVBAR OVERRIDES
+   DASHBOARD NAVBAR
 ───────────────────────────────────────── */
+
 .dash-navbar {
     position: fixed;
     top: 0;
@@ -163,72 +164,6 @@ html, body {
     box-shadow: 0 2px 16px rgba(0,0,0,0.3);
 }
 
-.nav-brand {
-    color: white !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 16px !important;
-}
-
-.search-input {
-    width: 100%;
-    height: 40px;
-    background: rgba(255,255,255,0.12) !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    border-radius: 10px !important;
-    padding: 0 16px 0 40px !important;
-    color: white !important;
-}
-
-    .search-input::placeholder {
-        color: rgba(255,255,255,0.45) !important;
-    }
-
-.search-icon {
-    position: absolute !important;
-    left: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    color: rgba(255,255,255,0.5) !important;
-    pointer-events: none !important;
-    z-index: 2 !important;
-}
-.dash-navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    background: linear-gradient(135deg, #0f1f4b 0%, #243b77 50%, #1a5276 100%) !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    z-index: 100;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
-}
-.nav-logo {
-    width: 36px !important;
-    height: 36px !important;
-    object-fit: contain !important;
-}
-
-.hamburger-btn {
-    background: rgba(255,255,255,0.1);
-    border: none;
-    border-radius: 8px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.hamburger-icon {
-    color: white !important;
-    font-size: 22px !important;
-}
 .navbar-left {
     display: flex !important;
     align-items: center !important;
@@ -258,15 +193,11 @@ html, body {
     margin: 0 24px !important;
 }
 
-.search-input {
-    width: 100% !important;
-    height: 42px !important;
-    background: rgba(255,255,255,0.12) !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    border-radius: 10px !important;
-    padding: 0 16px 0 40px !important;
-    color: white !important;
-    font-size: 14px !important;
+.navbar-right {
+    position: relative;
+    min-width: 200px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .nav-avatar {
@@ -279,166 +210,142 @@ html, body {
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
+    transition: all 0.2s !important;
 }
+
+    .nav-avatar:hover {
+        background: rgba(255,255,255,0.25) !important;
+    }
 
 .avatar-icon {
     color: white !important;
     font-size: 22px !important;
 }
-.dash-content {
-    padding-top: 88px !important;
-    padding: 24px !important;
-    max-width: 860px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 20px !important;
-}
-/* ─────────────────────────────────────────
-   DASHBOARD ICON & TEXT WHITE OVERRIDES
-───────────────────────────────────────── */
-.glass-card .mud-icon-root,
-.greeting-card .mud-icon-root,
-.checklist-item .mud-icon-root,
-.office-card .mud-icon-root,
-.post-card .mud-icon-root,
-.section-header .mud-icon-root {
-    color: white !important;
+
+.active-avatar {
+    border-color: #4ade80 !important;
+    background: rgba(74, 222, 128, 0.15) !important;
 }
 
-.glass-card .mud-typography,
-.greeting-card .mud-typography {
-    color: white !important;
-}
-/* ─────────────────────────────────────────
-   WATER FILL PROGRESS BAR
-───────────────────────────────────────── */
-.water-progress-wrap {
-    width: 100%;
-    height: 40px !important;
+.hamburger-btn {
     background: rgba(255,255,255,0.1);
-    border-radius: 16px !important;
-    overflow: hidden;
-    position: relative;
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
 }
 
-
-.water-progress-bar {
-    height: 100%;
-    border-radius: 999px;
-    position: relative;
-    overflow: hidden;
-    transition: width 1s ease;
-    background: transparent;
-}
-
-.water-fill {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #22c55e 60%, #16a34a 100%);
-}
-
-.water-wave {
-    position: absolute;
-    top: -12px !important;
-    left: 0;
-    width: 200%;
-    height: 24px !important;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40'%3E%3Cpath d='M0,20 C150,38 350,2 600,20 C850,38 1050,2 1200,20 L1200,40 L0,40 Z' fill='%2322c55e'/%3E%3C/svg%3E") repeat-x;
-    background-size: 50% 100%;
-    animation: waveMove 1.8s linear infinite;
-}
-
-.water-wave-2 {
-    position: absolute;
-    top: -8px !important;
-    left: 0;
-    width: 200%;
-    height: 24px !important;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40'%3E%3Cpath d='M0,20 C150,2 350,38 600,20 C850,2 1050,38 1200,20 L1200,40 L0,40 Z' fill='%234ade80'/%3E%3C/svg%3E") repeat-x;
-    background-size: 50% 100%;
-    animation: waveMove 2.4s linear infinite reverse;
-    opacity: 0.6;
-}
-@keyframes waveMove {
-    0% {
-        transform: translateX(0);
+    .hamburger-btn:hover {
+        background: rgba(255,255,255,0.2);
     }
 
-    100% {
-        transform: translateX(-50%);
-    }
+.hamburger-icon {
+    color: white !important;
+    font-size: 22px !important;
 }
 
-.bubble {
-    position: absolute;
-    background: rgba(255,255,255,0.4);
-    border-radius: 50%;
-    animation: bubbleRise 2s ease-in infinite;
-}
-
-.b1 {
-    left: 10%;
-    width: 4px;
-    height: 4px;
-    animation-delay: 0s;
-}
-
-.b2 {
-    left: 25%;
-    width: 3px;
-    height: 3px;
-    animation-delay: 0.5s;
-}
-
-.b3 {
-    left: 45%;
-    width: 5px;
-    height: 5px;
-    animation-delay: 1s;
-}
-
-.b4 {
-    left: 65%;
-    width: 3px;
-    height: 3px;
-    animation-delay: 1.4s;
-}
-
-.b5 {
-    left: 80%;
-    width: 4px;
-    height: 4px;
-    animation-delay: 1.8s;
-}
-
-@keyframes bubbleRise {
-    0% {
-        bottom: 4px;
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    100% {
-        bottom: 36px;
-        opacity: 0;
-        transform: scale(0.4);
-    }
-}
-.side-drawer {
-    transform: translateX(-100%) !important;
-}
-
-    .side-drawer.drawer-open {
-        transform: translateX(0) !important;
-    }
 /* ─────────────────────────────────────────
-   DRAWER — GLOBAL
+   SEARCH
 ───────────────────────────────────────── */
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: rgba(255,255,255,0.5) !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+}
+
+.search-input {
+    width: 100% !important;
+    height: 42px !important;
+    background: rgba(255,255,255,0.12) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 10px !important;
+    padding: 0 16px 0 40px !important;
+    color: white !important;
+    font-size: 14px !important;
+    outline: none !important;
+    font-family: 'DM Sans', sans-serif !important;
+}
+
+    .search-input::placeholder {
+        color: rgba(255,255,255,0.45) !important;
+    }
+
+    .search-input:focus {
+        background: rgba(255,255,255,0.18) !important;
+        border-color: rgba(255,255,255,0.4) !important;
+    }
+
+/* ─────────────────────────────────────────
+   PROFILE DROPDOWN
+───────────────────────────────────────── */
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    background: rgba(255,255,255,0.98);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    overflow: hidden;
+    min-width: 160px;
+    z-index: 300;
+}
+
+.profile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    transition: background 0.15s;
+}
+
+    .profile-menu-item:hover {
+        background: #f0f3ff;
+    }
+
+    .profile-menu-item.logout:hover {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+
+    .profile-menu-item.logout .profile-menu-icon {
+        color: #ef4444 !important;
+    }
+
+.profile-menu-icon {
+    font-size: 18px !important;
+    color: var(--primary) !important;
+}
+
+.profile-menu-divider {
+    height: 1px;
+    background: #e5e7eb;
+}
+
+/* ─────────────────────────────────────────
+   DRAWER
+───────────────────────────────────────── */
+
 .side-drawer {
     position: fixed !important;
     top: 0 !important;
@@ -563,95 +470,162 @@ html, body {
     font-size: 20px !important;
     color: inherit !important;
 }
+
 /* ─────────────────────────────────────────
-   CSS VARIABLES
+   DASH CONTENT
 ───────────────────────────────────────── */
 
-:root {
-    --primary: #243b77;
-    --primary-dark: #1a2f6e;
-    --primary-light: #2e5090;
-    --background: #F4F4F4;
-    --white: #FFFFFF;
-    --grey: #6b7280;
-    --grey-light: #e5e7eb;
-    --error: #ef4444;
-    --success: #22c55e;
-    --warning: #EAB308;
+.dash-content {
+    padding-top: 88px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    padding-bottom: 24px !important;
+    max-width: 860px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    position: relative !important;
+    z-index: 1 !important;
 }
 
 /* ─────────────────────────────────────────
-   RESET
+   DASHBOARD ICON & TEXT WHITE OVERRIDES
 ───────────────────────────────────────── */
 
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+.glass-card .mud-icon-root,
+.greeting-card .mud-icon-root,
+.checklist-item .mud-icon-root,
+.office-card .mud-icon-root,
+.post-card .mud-icon-root,
+.section-header .mud-icon-root {
+    color: white !important;
 }
 
-html, body {
+.glass-card .mud-typography,
+.greeting-card .mud-typography {
+    color: white !important;
+}
+
+/* ─────────────────────────────────────────
+   WATER FILL PROGRESS BAR
+───────────────────────────────────────── */
+
+.water-progress-wrap {
+    width: 100%;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.water-progress-bar {
     height: 100%;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: #111827;
-    background: var(--background);
-    -webkit-font-smoothing: antialiased;
+    border-radius: 999px;
+    position: relative;
+    overflow: hidden;
+    transition: width 1s ease;
+    background: transparent;
 }
 
-/* ─────────────────────────────────────────
-   SCROLLBAR
-───────────────────────────────────────── */
-
-::-webkit-scrollbar {
-    width: 6px;
+.water-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #22c55e 60%, #16a34a 100%);
 }
 
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
+.water-wave {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    width: 200%;
+    height: 24px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40'%3E%3Cpath d='M0,20 C150,38 350,2 600,20 C850,38 1050,2 1200,20 L1200,40 L0,40 Z' fill='%2322c55e'/%3E%3C/svg%3E") repeat-x;
+    background-size: 50% 100%;
+    animation: waveMove 1.8s linear infinite;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #c5cde8;
-    border-radius: 10px;
+.water-wave-2 {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 200%;
+    height: 24px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40'%3E%3Cpath d='M0,20 C150,2 350,38 600,20 C850,2 1050,38 1200,20 L1200,40 L0,40 Z' fill='%234ade80'/%3E%3C/svg%3E") repeat-x;
+    background-size: 50% 100%;
+    animation: waveMove 2.4s linear infinite reverse;
+    opacity: 0.6;
 }
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--primary);
+@keyframes waveMove {
+    0% {
+        transform: translateX(0);
     }
 
-/* ─────────────────────────────────────────
-   SELECTION
-───────────────────────────────────────── */
-
-::selection {
-    background: rgba(36, 59, 119, 0.15);
-    color: var(--primary-dark);
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
-/* ─────────────────────────────────────────
-   PASSWORD FIELD OVERRIDES
-   Must live in app.css — cannot pierce
-   MudBlazor internals from isolated CSS
-───────────────────────────────────────── */
-
-.custom-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.custom-icon-left {
+.bubble {
     position: absolute;
-    left: 12px;
-    z-index: 10;
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 20px;
-    pointer-events: none;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    animation: bubbleRise 2s ease-in infinite;
 }
 
-.custom-padded input {
-    padding-left: 40px !important;
+.b1 {
+    left: 10%;
+    width: 4px;
+    height: 4px;
+    animation-delay: 0s;
+}
+
+.b2 {
+    left: 25%;
+    width: 3px;
+    height: 3px;
+    animation-delay: 0.5s;
+}
+
+.b3 {
+    left: 45%;
+    width: 5px;
+    height: 5px;
+    animation-delay: 1s;
+}
+
+.b4 {
+    left: 65%;
+    width: 3px;
+    height: 3px;
+    animation-delay: 1.4s;
+}
+
+.b5 {
+    left: 80%;
+    width: 4px;
+    height: 4px;
+    animation-delay: 1.8s;
+}
+
+@keyframes bubbleRise {
+    0% {
+        bottom: 4px;
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    100% {
+        bottom: 36px;
+        opacity: 0;
+        transform: scale(0.4);
+    }
 }
 
 /* ─────────────────────────────────────────
@@ -687,10 +661,138 @@ html, body {
     color: white !important;
 }
 
-.profile-save-btn .mud-button-label {
+/* ─────────────────────────────────────────
+   PROFILE PAGE FIXES
+───────────────────────────────────────── */
+
+.profile-cover {
+    height: 110px !important;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 40%, #16213e 70%, #0f3460 100%) !important;
+}
+
+.page-title-text {
     color: white !important;
 }
 
-.profile-save-btn .mud-icon-root {
+.page-title-sub {
+    color: rgba(255,255,255,0.55) !important;
+}
+
+.change-password-btn {
+    color: white !important;
+    border-color: rgba(255,255,255,0.4) !important;
+    border-radius: 8px !important;
+    text-transform: none !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    height: 36px !important;
+    padding: 0 14px !important;
+}
+
+    .change-password-btn .mud-button-label {
+        color: white !important;
+    }
+
+    .change-password-btn .mud-icon-root {
+        color: white !important;
+        font-size: 16px !important;
+    }
+
+.profile-back-btn {
+    color: rgba(255,255,255,0.7) !important;
+    border-color: rgba(255,255,255,0.25) !important;
+    border-radius: 8px !important;
+    text-transform: none !important;
+    font-size: 13px !important;
+    height: 36px !important;
+    padding: 0 14px !important;
+}
+
+    .profile-back-btn .mud-button-label {
+        color: rgba(255,255,255,0.7) !important;
+    }
+
+    .profile-back-btn .mud-icon-root {
+        color: rgba(255,255,255,0.7) !important;
+        font-size: 16px !important;
+    }
+
+.profile-save-btn {
+    background: linear-gradient(135deg, #1a2f6e, #243b77) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    height: 36px !important;
+    padding: 0 18px !important;
+}
+
+    .profile-save-btn:hover {
+        background: linear-gradient(135deg, #243b77, #2e5090) !important;
+        box-shadow: 0 6px 20px rgba(36,59,119,0.4) !important;
+    }
+
+    .profile-save-btn .mud-button-label {
+        color: white !important;
+    }
+
+    .profile-save-btn .mud-icon-root {
+        color: white !important;
+        font-size: 16px !important;
+    }
+
+/* ── Change Password Modal Icons & Text ── */
+.modal-card .mud-icon-root {
+    color: white !important;
+}
+
+    .modal-card .mud-icon-root path {
+        fill: white !important;
+    }
+
+.modal-card .mud-input-adornment .mud-icon-button .mud-icon-root path {
+    fill: white !important;
+}
+
+.modal-card .mud-input input {
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+}
+
+.modal-card .profile-field-label {
+    color: white !important;
+}
+/* ─── Modal Lock Icon (header) ─── */
+.modal-title-icon {
+    color: white !important;
+    fill: white !important;
+}
+
+/* ─── All icons inside modal ─── */
+.modal .mud-icon-root {
+    color: white !important;
+}
+
+/* ─── Eye toggle icons in password fields ─── */
+.modal .mud-input-adornment .mud-icon-root {
+    color: white !important;
+}
+.mud-icon-button-label .mud-icon-root {
+    color: white !important;
+    fill: white !important;
+}
+/* Lock icons inside password fields */
+.custom-icon-left {
+    color: white !important;
+    fill: white !important;
+}
+
+/* Eye toggle icons */
+.mud-icon-button-label .mud-icon-root {
+    color: white !important;
+    fill: white !important;
+}
+.modal-title-text {
     color: white !important;
 }

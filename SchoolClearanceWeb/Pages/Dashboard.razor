@@ -1,4 +1,4 @@
-﻿@page "/dashboard"
+﻿@page "/"
 @inject NavigationManager Navigation
 
 <div class="dash-page">
@@ -99,17 +99,17 @@
             </div>
             <div class="drawer-section-label">OFFICES</div>
             <div class="drawer-nav-item @(currentPage == "registrar" ? "active" : "")"
-                 @onclick='() => NavigateTo("/office/registrar", "registrar")'>
+                 @onclick='() => NavigateTo("/registrar", "registrar")'>
                 <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
                 <span>Registrar Office</span>
             </div>
             <div class="drawer-nav-item @(currentPage == "cashier" ? "active" : "")"
-                 @onclick='() => NavigateTo("/office/cashier", "cashier")'>
+                 @onclick='() => NavigateTo("/cashier", "cashier")'>
                 <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
                 <span>Cashier Office</span>
             </div>
             <div class="drawer-nav-item @(currentPage == "grade" ? "active" : "")"
-                 @onclick='() => NavigateTo("/office/grade-release", "grade")'>
+                 @onclick='() => NavigateTo("/grade-release", "grade")'>
                 <MudIcon Icon="@Icons.Material.Filled.Grade" Class="drawer-nav-icon" />
                 <span>Grade Release</span>
             </div>
@@ -291,7 +291,7 @@
     private void HandleLogout()
     {
         showProfileMenu = false;
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/loginpage");
     }
 
     private void HandleSearch()
