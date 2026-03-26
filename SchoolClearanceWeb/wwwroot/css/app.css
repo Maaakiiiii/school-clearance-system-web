@@ -796,3 +796,75 @@ html, body {
 .modal-title-text {
     color: white !important;
 }
+.dash-content {
+    max-width: 1100px !important;
+}
+
+/* ── Registrar Page Font Sizes ── */
+.badge-label {
+    font-size: 0.95rem !important;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.office-status-badge {
+    font-size: 1.1rem !important;
+}
+
+.crowd-status-badge {
+    font-size: 1.1rem !important;
+}
+
+.office-note-text {
+    font-size: 1.1rem !important;
+}
+
+.window-label {
+    font-size: 0.85rem !important;
+}
+
+.window-value {
+    font-size: 1.2rem !important;
+}
+
+.last-updated-text {
+    font-size: 0.95rem !important;
+}
+
+.staff-name {
+    font-size: 1.2rem !important;
+}
+
+.staff-position {
+    font-size: 1rem !important;
+}
+
+.staff-location span {
+    font-size: 0.95rem !important;
+}
+
+.staff-status-chip {
+    font-size: 0.95rem !important;
+}
+
+.staff-count-badge {
+    font-size: 0.95rem !important;
+}
+
+.empty-text {
+    font-size: 1rem !important;
+}
+
+.page-title-text {
+    color: white !important;
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.page-title-sub {
+    color: rgba(255,255,255,0.55) !important;
+    font-size: 15px !important;
+}

@@ -410,46 +410,19 @@
 ───────────────────────────────────────── */
 
 .profile-page-title {
-    margin-bottom: 4px;
-}
-
-.page-title-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    margin-bottom: 8px;
 }
 
 ::deep .page-title-text {
     color: white !important;
     font-weight: 700 !important;
+    font-size: 2rem !important;
 }
 
 ::deep .page-title-sub {
-    color: rgba(255,255,255,0.55) !important;
-    font-size: 0.85rem !important;
-}
-
-.back-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 10px;
-    width: 38px;
-    height: 38px;
-    cursor: pointer;
-    transition: background 0.2s;
-    flex-shrink: 0;
-}
-
-    .back-btn:hover {
-        background: rgba(255,255,255,0.15);
-    }
-
-::deep .back-icon {
-    color: white !important;
-    font-size: 1.2rem !important;
+    color: rgba(255,255,255,0.6) !important;
+    font-size: 1rem !important;
+    margin-top: 4px !important;
 }
 
 /* ─────────────────────────────────────────
@@ -461,8 +434,8 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 20px;
-    padding: 24px;
+    border-radius: 24px;
+    padding: 32px;
 }
 
     .glass-card ::deep .mud-typography {
@@ -476,18 +449,20 @@
 .section-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 ::deep .section-icon {
     color: rgba(255,255,255,0.85) !important;
-    font-size: 22px !important;
+    font-size: 26px !important;
 }
 
 ::deep .section-label {
     color: white !important;
     font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    letter-spacing: 0.04em !important;
 }
 
 /* ─────────────────────────────────────────
@@ -531,7 +506,7 @@
 }
 
 .badge-label {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: rgba(255,255,255,0.5);
     text-transform: uppercase;
@@ -541,10 +516,10 @@
 .office-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.85rem;
+    gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -575,10 +550,10 @@
 .crowd-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.85rem;
+    gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -618,9 +593,9 @@
 }
 
 .office-note-text {
-    font-size: 0.88rem;
+    font-size: 1.1rem;
     color: rgba(255,255,255,0.8);
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .office-window-row {
@@ -640,7 +615,7 @@
 
 .window-label {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: rgba(255,255,255,0.45);
     text-transform: uppercase;
@@ -649,10 +624,10 @@
 
 .window-value {
     display: block;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: white;
     font-weight: 500;
-    margin-top: 0.1rem;
+    margin-top: 0.15rem;
 }
 
 .last-updated-row {
@@ -667,7 +642,7 @@
 }
 
 .last-updated-text {
-    font-size: 0.78rem;
+    font-size: 0.95rem;
     color: rgba(255,255,255,0.4);
 }
 
@@ -693,16 +668,16 @@
 .staff-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
     margin-top: 0.5rem;
 }
 
 .staff-list-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border-radius: 12px;
+    gap: 1.25rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 14px;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.09);
     cursor: pointer;
@@ -720,8 +695,8 @@
 }
 
 .staff-avatar {
-    width: 44px;
-    height: 44px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: rgba(36,59,119,0.5);
     border: 2px solid rgba(255,255,255,0.12);
@@ -732,15 +707,15 @@
 
 ::deep .staff-avatar-icon {
     color: rgba(255,255,255,0.7) !important;
-    font-size: 1.3rem !important;
+    font-size: 1.6rem !important;
 }
 
 .staff-status-dot {
     position: absolute;
-    bottom: 1px;
-    right: 1px;
-    width: 11px;
-    height: 11px;
+    bottom: 2px;
+    right: 2px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
     border: 2px solid #1a2f6e;
 }
@@ -761,12 +736,12 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.2rem;
     min-width: 0;
 }
 
 .staff-name {
-    font-size: 0.92rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: white;
     white-space: nowrap;
@@ -775,26 +750,26 @@
 }
 
 .staff-position {
-    font-size: 0.78rem;
+    font-size: 1rem;
     color: rgba(255,255,255,0.5);
 }
 
 .staff-location {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    margin-top: 0.15rem;
+    gap: 0.3rem;
+    margin-top: 0.2rem;
 }
 
 ::deep .location-icon {
     color: #7b9cdf !important;
-    font-size: 0.8rem !important;
-    width: 0.8rem !important;
-    height: 0.8rem !important;
+    font-size: 1rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
 }
 
 .staff-location span {
-    font-size: 0.76rem;
+    font-size: 0.95rem;
     color: #7b9cdf;
 }
 
@@ -803,9 +778,9 @@
 }
 
 .staff-status-chip {
-    padding: 0.25rem 0.7rem;
+    padding: 0.4rem 1rem;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     font-weight: 600;
 }
 
@@ -829,8 +804,23 @@
 
 ::deep .staff-chevron {
     color: rgba(255,255,255,0.25) !important;
-    font-size: 1.2rem !important;
+    font-size: 1.4rem !important;
     flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────
+   STAFF COUNT BADGE
+───────────────────────────────────────── */
+
+.staff-count-badge {
+    margin-left: auto;
+    background: rgba(123,156,223,0.2);
+    color: #7b9cdf;
+    border: 1px solid rgba(123,156,223,0.3);
+    border-radius: 20px;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 /* ─────────────────────────────────────────
@@ -853,6 +843,6 @@
 }
 
 .empty-text {
-    font-size: 0.88rem;
+    font-size: 1rem;
     color: rgba(255,255,255,0.35);
 }

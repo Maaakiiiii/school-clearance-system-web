@@ -72,7 +72,7 @@
             <div class="drawer-section-label">OFFICES</div>
             <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/registrar")'>
                 <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
-                <span>Registrar Office</span>   
+                <span>Registrar Office</span>
             </div>
             <div class="drawer-nav-item" @onclick='() => NavigateTo("/cashier")'>
                 <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
@@ -99,15 +99,8 @@
 
         <!-- PAGE TITLE -->
         <div class="profile-page-title">
-            <div class="page-title-row">
-                <button class="back-btn" @onclick='() => Navigation.NavigateTo("/dashboard")'>
-                    <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Class="back-icon" />
-                </button>
-                <div>
-                    <MudText Typo="Typo.h5" Class="page-title-text">Registrar Office</MudText>
-                    <MudText Typo="Typo.body2" Class="page-title-sub">View office status and registrar staff availability.</MudText>
-                </div>
-            </div>
+            <MudText Typo="Typo.h4" Class="page-title-text">Registrar Office</MudText>
+            <MudText Typo="Typo.body1" Class="page-title-sub">View office status and registrar staff availability.</MudText>
         </div>
 
         @if (isLoading)
