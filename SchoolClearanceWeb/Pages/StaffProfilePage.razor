@@ -1,4 +1,4 @@
-﻿@page "/registrar"
+﻿@page "/staff-profile/{staffId:int}"
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
@@ -70,7 +70,7 @@
                 <span>Dashboard</span>
             </div>
             <div class="drawer-section-label">OFFICES</div>
-            <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/registrar")'>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/registrar")'>
                 <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
                 <span>Registrar Office</span>
             </div>
@@ -97,133 +97,185 @@
     <!-- PAGE CONTENT -->
     <div class="dash-content">
 
-        <!-- PAGE TITLE -->
-        <div class="profile-page-title">
-            <MudText Typo="Typo.h4" Class="page-title-text">Registrar Office</MudText>
-            <MudText Typo="Typo.body1" Class="page-title-sub">View office status and registrar staff availability.</MudText>
-        </div>
-
         @if (isLoading)
         {
-            <!-- LOADING STATE -->
             <div class="loading-wrapper">
                 <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
-                <MudText Typo="Typo.body1" Class="loading-text">Loading office data...</MudText>
+                <MudText Typo="Typo.body1" Class="loading-text">Loading staff profile...</MudText>
+            </div>
+        }
+        else if (staff == null)
+        {
+            <div class="glass-card">
+                <div class="empty-state">
+                    <MudIcon Icon="@Icons.Material.Filled.PersonOff" Class="empty-icon" />
+                    <span class="empty-text">Staff member not found.</span>
+                    <button class="back-btn-inline" @onclick='() => Navigation.NavigateTo("/dashboard")'>
+                        Go back to Dashboard
+                    </button>
+                </div>
             </div>
         }
         else
         {
-            <!-- OFFICE STATUS CARD -->
-            <div class="glass-card office-status-card">
+            <!-- PROFILE HEADER CARD -->
+            <div class="profile-header-card">
+                <!-- Cover Banner -->
+                <div class="profile-cover-banner"></div>
+
+                <!-- Avatar + Info -->
+                <div class="profile-header-body">
+                    <div class="profile-avatar-circle">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-avatar-icon" />
+                    </div>
+                    <div class="profile-header-info">
+                        <span class="profile-fullname">@staff.FullName</span>
+                        <span class="profile-position-dept">@staff.Position &bull; @staff.Department</span>
+                        <div class="profile-header-badges">
+                            <span class="staff-status-chip @GetStaffStatusClass(staff.StaffStatus)">
+                                <span class="status-dot-inline @GetStaffStatusDotClass(staff.StaffStatus)"></span>
+                                @staff.StaffStatus
+                            </span>
+                            @if (IsOfficePosition(staff.Position))
+                            {
+                                <span class="office-status-chip @GetOfficeStatusClass(staff.OfficeStatus)">
+                                    <MudIcon Icon="@GetOfficeStatusIcon(staff.OfficeStatus)" Class="chip-icon" />
+                                    @staff.OfficeStatus
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFO CARD -->
+            <div class="glass-card">
                 <div class="section-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Business" Class="section-icon" />
-                    <MudText Typo="Typo.subtitle1" Class="section-label">OFFICE STATUS</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Class="section-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="section-label">STAFF INFORMATION</MudText>
                 </div>
 
-                @if (officeStaff != null)
+                <div class="info-rows">
+                    <!-- Location -->
+                    <div class="info-row">
+                        <div class="info-icon-wrap">
+                            <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="info-row-icon" />
+                        </div>
+                        <div class="info-row-content">
+                            <span class="info-row-label">Current Location</span>
+                            <span class="info-row-value">
+                                @(string.IsNullOrEmpty(staff.CurrentLocation) ? "No location set" : staff.CurrentLocation)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="info-row">
+                        <div class="info-icon-wrap">
+                            <MudIcon Icon="@Icons.Material.Filled.Business" Class="info-row-icon" />
+                        </div>
+                        <div class="info-row-content">
+                            <span class="info-row-label">Department</span>
+                            <span class="info-row-value">@staff.Department</span>
+                        </div>
+                    </div>
+
+                    <!-- Position -->
+                    <div class="info-row">
+                        <div class="info-icon-wrap">
+                            <MudIcon Icon="@Icons.Material.Filled.Badge" Class="info-row-icon" />
+                        </div>
+                        <div class="info-row-content">
+                            <span class="info-row-label">Position</span>
+                            <span class="info-row-value">@staff.Position</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OFFICE STATUS SECTION (only for Registrar, Cashier, Grade Release) -->
+                @if (IsOfficePosition(staff.Position))
                 {
-                    <div class="office-status-body">
-                        <!-- Status Badges Row -->
+                    <div class="office-status-section">
+                        <div class="office-section-divider">
+                            <MudIcon Icon="@Icons.Material.Filled.Storefront" Class="office-section-icon" />
+                            <span class="office-section-title">OFFICE STATUS</span>
+                        </div>
+
                         <div class="office-badges-row">
                             <div class="office-badge-wrap">
                                 <span class="badge-label">Office</span>
-                                <span class="office-status-badge @GetOfficeStatusClass(officeStaff.OfficeStatus)">
-                                    <MudIcon Icon="@GetOfficeStatusIcon(officeStaff.OfficeStatus)" Class="badge-icon" />
-                                    @officeStaff.OfficeStatus
+                                <span class="office-status-badge @GetOfficeStatusClass(staff.OfficeStatus)">
+                                    <MudIcon Icon="@GetOfficeStatusIcon(staff.OfficeStatus)" Class="badge-icon" />
+                                    @staff.OfficeStatus
                                 </span>
                             </div>
                             <div class="office-badge-wrap">
                                 <span class="badge-label">Crowd</span>
-                                <span class="crowd-status-badge @GetCrowdStatusClass(officeStaff.CrowdStatus)">
-                                    @GetCrowdStatusEmoji(officeStaff.CrowdStatus) @GetCrowdStatusLabel(officeStaff.CrowdStatus)
+                                <span class="crowd-status-badge @GetCrowdStatusClass(staff.CrowdStatus)">
+                                    @GetCrowdStatusEmoji(staff.CrowdStatus) @GetCrowdStatusLabel(staff.CrowdStatus)
                                 </span>
                             </div>
                         </div>
 
-                        <!-- Staff Note -->
-                        @if (!string.IsNullOrEmpty(officeStaff.StaffNote))
+                        @if (!string.IsNullOrEmpty(staff.StaffNote))
                         {
                             <div class="office-note-row">
                                 <MudIcon Icon="@Icons.Material.Filled.StickyNote2" Class="note-icon" />
-                                <span class="office-note-text">@officeStaff.StaffNote</span>
+                                <span class="office-note-text">@staff.StaffNote</span>
                             </div>
                         }
 
-                        <!-- Acceptance Window -->
-                        @if (!string.IsNullOrEmpty(officeStaff.AcceptanceWindow))
+                        @if (!string.IsNullOrEmpty(staff.AcceptanceWindow))
                         {
                             <div class="office-window-row">
                                 <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="window-icon" />
                                 <div>
                                     <span class="window-label">Acceptance Window</span>
-                                    <span class="window-value">@officeStaff.AcceptanceWindow</span>
+                                    <span class="window-value">@staff.AcceptanceWindow</span>
                                 </div>
                             </div>
                         }
 
-                        <!-- Last Updated -->
-                        @if (officeStaff.LastUpdatedAt.HasValue)
+                        @if (staff.LastUpdatedAt.HasValue)
                         {
                             <div class="last-updated-row">
                                 <MudIcon Icon="@Icons.Material.Filled.Update" Class="updated-icon" />
-                                <span class="last-updated-text">Last updated: @GetTimeAgo(officeStaff.LastUpdatedAt.Value)</span>
+                                <span class="last-updated-text">Last updated: @GetTimeAgo(staff.LastUpdatedAt.Value)</span>
                             </div>
                         }
-                    </div>
-                }
-                else
-                {
-                    <div class="empty-state">
-                        <MudIcon Icon="@Icons.Material.Filled.Business" Class="empty-icon" />
-                        <span class="empty-text">Office status not available</span>
                     </div>
                 }
             </div>
 
-            <!-- REGISTRAR STAFF LIST -->
+            <!-- POSTS CARD -->
             <div class="glass-card">
                 <div class="section-header">
-                    <MudIcon Icon="@Icons.Material.Filled.People" Class="section-icon" />
-                    <MudText Typo="Typo.subtitle1" Class="section-label">REGISTRAR STAFF</MudText>
-                    <span class="staff-count-badge">@registrarStaff.Count</span>
+                    <MudIcon Icon="@Icons.Material.Filled.Article" Class="section-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="section-label">ANNOUNCEMENTS</MudText>
+                    @if (posts.Count > 0)
+                    {
+                        <span class="posts-count-badge">@posts.Count</span>
+                    }
                 </div>
 
-                @if (registrarStaff.Count == 0)
+                @if (posts.Count == 0)
                 {
                     <div class="empty-state">
-                        <MudIcon Icon="@Icons.Material.Filled.PersonOff" Class="empty-icon" />
-                        <span class="empty-text">No registrar staff available</span>
+                        <MudIcon Icon="@Icons.Material.Outlined.Article" Class="empty-icon" />
+                        <span class="empty-text">No posts yet from this staff member.</span>
                     </div>
                 }
                 else
                 {
-                    <div class="staff-list">
-                        @foreach (var staff in registrarStaff)
+                    <div class="posts-list">
+                        @foreach (var post in posts)
                         {
-                            <div class="staff-list-item" @onclick="() => GoToStaffProfile(staff.StaffId)">
-                                <div class="staff-avatar-wrap">
-                                    <div class="staff-avatar">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="staff-avatar-icon" />
-                                    </div>
-                                    <span class="staff-status-dot @GetStaffStatusDotClass(staff.StaffStatus)"></span>
+                            <div class="post-card">
+                                <div class="post-header">
+                                    <span class="post-title">@post.Title</span>
+                                    <span class="post-date">@post.PostedAt.ToString("MMM dd, yyyy")</span>
                                 </div>
-                                <div class="staff-info">
-                                    <span class="staff-name">@staff.FullName</span>
-                                    <span class="staff-position">@staff.Position • @staff.Department</span>
-                                    @if (!string.IsNullOrEmpty(staff.CurrentLocation))
-                                    {
-                                        <div class="staff-location">
-                                            <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="location-icon" />
-                                            <span>@staff.CurrentLocation</span>
-                                        </div>
-                                    }
-                                </div>
-                                <div class="staff-status-wrap">
-                                    <span class="staff-status-chip @GetStaffStatusClass(staff.StaffStatus)">
-                                        @staff.StaffStatus
-                                    </span>
-                                </div>
-                                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="staff-chevron" />
+                                <p class="post-content">@post.Content</p>
                             </div>
                         }
                     </div>
@@ -235,12 +287,14 @@
 </div>
 
 @code {
+    [Parameter] public int StaffId { get; set; }
+
     private bool drawerOpen = false;
     private bool showProfileMenu = false;
     private bool isLoading = true;
 
-    private List<StaffListModel> registrarStaff = new();
-    private StaffListModel? officeStaff = null;
+    private StaffListModel? staff = null;
+    private List<StaffPostModel> posts = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -252,12 +306,12 @@
         isLoading = true;
         try
         {
-            await Task.Delay(600); // simulate API call
+            await Task.Delay(600); // ⚠️ MOCK DATA — replace with StaffService.GetStaffById + GetPostsByStaff
 
-            // Mock data — replace with real StaffService.GetAllStaff() call
+            // ⚠️ MOCK DATA
             var allStaff = new List<StaffListModel>
             {
-                new StaffListModel
+              new StaffListModel
                 {
                     StaffId = 1,
                     FullName = "Maria Santos",
@@ -301,14 +355,48 @@
                 }
             };
 
-            registrarStaff = allStaff.Where(s => s.Position == "Registrar").ToList();
+            staff = allStaff.FirstOrDefault(s => s.StaffId == StaffId);
 
-            // Use first available registrar for office status
-            officeStaff = registrarStaff.FirstOrDefault(s => s.OfficeStatus != null);
+            // ⚠️ MOCK POSTS
+            var allPosts = new List<StaffPostModel>
+            {
+                new StaffPostModel
+                {
+                    PostId = 1,
+                    StaffId = 1,
+                    FullName = "Maria Santos",
+                    Position = "Registrar",
+                    Title = "Clearance Requirements Reminder",
+                    Content = "Please make sure to bring your original enrollment form, 2x2 photos, and valid school ID when processing your clearance. Incomplete requirements will not be accepted.",
+                    PostedAt = DateTime.Now.AddDays(-2)
+                },
+                new StaffPostModel
+                {
+                    PostId = 2,
+                    StaffId = 2,
+                    FullName = "Jose Reyes",
+                    Position = "Registrar",
+                    Title = "Office Hours Update",
+                    Content = "Starting next week, the Registrar office will be open from 8:00 AM to 5:00 PM with a lunch break from 12:00 PM to 1:00 PM. No transactions after 4:30 PM.",
+                    PostedAt = DateTime.Now.AddDays(-5)
+                },
+                new StaffPostModel
+                {
+                    PostId = 3,
+                    StaffId = 3,
+                    FullName = "Ana Lim",
+                    Position = "Cashier",
+                    Title = "Payment Deadline",
+                    Content = "All outstanding balances must be settled before clearance can be processed. Please bring official receipts for previously paid fees.",
+                    PostedAt = DateTime.Now.AddDays(-1)
+                }
+            };
+
+            posts = allPosts.Where(p => p.StaffId == StaffId).ToList();
         }
         catch (Exception)
         {
-            Snackbar.Add("Failed to load office data. Please try again.", Severity.Error);
+            Snackbar.Add("Failed to load staff profile. Please try again.", Severity.Error);
         }
         finally
         {
@@ -317,6 +405,25 @@
     }
 
     // ── Helpers ──────────────────────────────────────────
+
+    private bool IsOfficePosition(string position) =>
+        position == "Registrar" || position == "Cashier" || position == "Grade Release";
+
+    private string GetStaffStatusClass(string status) => status switch
+    {
+        "Available" => "chip-available",
+        "On Break" => "chip-break",
+        "Absent" => "chip-absent",
+        _ => "chip-absent"
+    };
+
+    private string GetStaffStatusDotClass(string status) => status switch
+    {
+        "Available" => "dot-available",
+        "On Break" => "dot-break",
+        "Absent" => "dot-absent",
+        _ => "dot-absent"
+    };
 
     private string GetOfficeStatusClass(string status) => status switch
     {
@@ -358,22 +465,6 @@
         _ => "Come On In"
     };
 
-    private string GetStaffStatusClass(string status) => status switch
-    {
-        "Available" => "staff-available",
-        "On Break" => "staff-break",
-        "Absent" => "staff-absent",
-        _ => "staff-absent"
-    };
-
-    private string GetStaffStatusDotClass(string status) => status switch
-    {
-        "Available" => "dot-available",
-        "On Break" => "dot-break",
-        "Absent" => "dot-absent",
-        _ => "dot-absent"
-    };
-
     private string GetTimeAgo(DateTime dt)
     {
         var diff = DateTime.Now - dt;
@@ -405,10 +496,5 @@
     {
         showProfileMenu = false;
         Navigation.NavigateTo("/loginpage");
-    }
-
-    private void GoToStaffProfile(int staffId)
-    {
-        Navigation.NavigateTo($"/staff-profile/{staffId}");
     }
 }

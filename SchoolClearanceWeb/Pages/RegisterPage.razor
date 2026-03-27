@@ -278,13 +278,13 @@
         YearLevel = yearLevel
     });
 
-    isLoading = false;
+    isLoading = false;  
 
     if (result.Status == 1)
     {
         successMessage = "Account created! Redirecting to login...";
         await Task.Delay(1500);
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/loginpage");
     }
     else
     {
