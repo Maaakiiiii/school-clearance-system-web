@@ -120,10 +120,7 @@
         {
             <!-- PROFILE HEADER CARD -->
             <div class="profile-header-card">
-                <!-- Cover Banner -->
                 <div class="profile-cover-banner"></div>
-
-                <!-- Avatar + Info -->
                 <div class="profile-header-body">
                     <div class="profile-avatar-circle">
                         <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-avatar-icon" />
@@ -156,7 +153,6 @@
                 </div>
 
                 <div class="info-rows">
-                    <!-- Location -->
                     <div class="info-row">
                         <div class="info-icon-wrap">
                             <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="info-row-icon" />
@@ -169,7 +165,6 @@
                         </div>
                     </div>
 
-                    <!-- Department -->
                     <div class="info-row">
                         <div class="info-icon-wrap">
                             <MudIcon Icon="@Icons.Material.Filled.Business" Class="info-row-icon" />
@@ -180,7 +175,6 @@
                         </div>
                     </div>
 
-                    <!-- Position -->
                     <div class="info-row">
                         <div class="info-icon-wrap">
                             <MudIcon Icon="@Icons.Material.Filled.Badge" Class="info-row-icon" />
@@ -192,7 +186,6 @@
                     </div>
                 </div>
 
-                <!-- OFFICE STATUS SECTION (only for Registrar, Cashier, Grade Release) -->
                 @if (IsOfficePosition(staff.Position))
                 {
                     <div class="office-status-section">
@@ -306,93 +299,9 @@
         isLoading = true;
         try
         {
-            await Task.Delay(600); // ⚠️ MOCK DATA — replace with StaffService.GetStaffById + GetPostsByStaff
-
-            // ⚠️ MOCK DATA
-            var allStaff = new List<StaffListModel>
-            {
-              new StaffListModel
-                {
-                    StaffId = 1,
-                    FullName = "Maria Santos",
-                    Position = "Registrar",
-                    Department = "College",
-                    CurrentLocation = "Room 101, Main Building",
-                    StaffStatus = "Available",
-                    OfficeStatus = "Open",
-                    CrowdStatus = "Busy",
-                    StaffNote = "Please bring your student ID and enrollment form.",
-                    AcceptanceWindow = "8:00 AM – 12:00 PM, 1:00 PM – 5:00 PM",
-                    LastUpdatedAt = DateTime.Now.AddMinutes(-15)
-                },
-                new StaffListModel
-                {
-                    StaffId = 2,
-                    FullName = "Jose Reyes",
-                    Position = "Registrar",
-                    Department = "Senior High School",
-                    CurrentLocation = "Room 102, Main Building",
-                    StaffStatus = "On Break",
-                    OfficeStatus = "Open",
-                    CrowdStatus = "Open",
-                    StaffNote = null,
-                    AcceptanceWindow = null,
-                    LastUpdatedAt = DateTime.Now.AddMinutes(-30)
-                },
-                new StaffListModel
-                {
-                    StaffId = 3,
-                    FullName = "Ana Lim",
-                    Position = "Registrar",
-                    Department = "College",
-                    CurrentLocation = null,
-                    StaffStatus = "Absent",
-                    OfficeStatus = "Closed",
-                    CrowdStatus = "Open",
-                    StaffNote = null,
-                    AcceptanceWindow = null,
-                    LastUpdatedAt = DateTime.Now.AddHours(-2)
-                }
-            };
-
-            staff = allStaff.FirstOrDefault(s => s.StaffId == StaffId);
-
-            // ⚠️ MOCK POSTS
-            var allPosts = new List<StaffPostModel>
-            {
-                new StaffPostModel
-                {
-                    PostId = 1,
-                    StaffId = 1,
-                    FullName = "Maria Santos",
-                    Position = "Registrar",
-                    Title = "Clearance Requirements Reminder",
-                    Content = "Please make sure to bring your original enrollment form, 2x2 photos, and valid school ID when processing your clearance. Incomplete requirements will not be accepted.",
-                    PostedAt = DateTime.Now.AddDays(-2)
-                },
-                new StaffPostModel
-                {
-                    PostId = 2,
-                    StaffId = 2,
-                    FullName = "Jose Reyes",
-                    Position = "Registrar",
-                    Title = "Office Hours Update",
-                    Content = "Starting next week, the Registrar office will be open from 8:00 AM to 5:00 PM with a lunch break from 12:00 PM to 1:00 PM. No transactions after 4:30 PM.",
-                    PostedAt = DateTime.Now.AddDays(-5)
-                },
-                new StaffPostModel
-                {
-                    PostId = 3,
-                    StaffId = 3,
-                    FullName = "Ana Lim",
-                    Position = "Cashier",
-                    Title = "Payment Deadline",
-                    Content = "All outstanding balances must be settled before clearance can be processed. Please bring official receipts for previously paid fees.",
-                    PostedAt = DateTime.Now.AddDays(-1)
-                }
-            };
-
-            posts = allPosts.Where(p => p.StaffId == StaffId).ToList();
+            // TODO: Replace with actual API calls
+            // staff = await StaffService.GetStaffByIdAsync(StaffId);
+            // posts = await StaffService.GetPostsByStaffIdAsync(StaffId);
         }
         catch (Exception)
         {
@@ -403,8 +312,6 @@
             isLoading = false;
         }
     }
-
-    // ── Helpers ──────────────────────────────────────────
 
     private bool IsOfficePosition(string position) =>
         position == "Registrar" || position == "Cashier" || position == "Grade Release";
@@ -473,8 +380,6 @@
         if (diff.TotalHours < 24) return $"{(int)diff.TotalHours} hr ago";
         return $"{(int)diff.TotalDays} day(s) ago";
     }
-
-    // ── Navigation ────────────────────────────────────────
 
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;

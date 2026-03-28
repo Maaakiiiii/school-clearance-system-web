@@ -25,7 +25,6 @@
                 <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
                 <input @bind="searchQuery"
                        @bind:event="oninput"
-                       @onkeyup="HandleSearch"
                        placeholder="Search staff..."
                        class="search-input" />
                 @if (showSearchResults && searchResults.Any())
@@ -261,14 +260,7 @@
         new() { ItemId = 5, Name = "Guidance Office", Description = "Attend exit interview", IsCleared = false },
     };
 
-    private List<StaffListModel> mockAllStaff = new()
-    {
-        new() { StaffId = 1, FullName = "Maria Santos", Position = "Registrar", Department = "College", StaffStatus = "Available", OfficeStatus = "Open", CrowdStatus = "Open" },
-        new() { StaffId = 2, FullName = "Juan dela Cruz", Position = "Cashier", Department = "College", StaffStatus = "On Break", OfficeStatus = "Lunch Break", CrowdStatus = "Busy" },
-        new() { StaffId = 3, FullName = "Ana Reyes", Position = "Teacher", Department = "Senior High School", StaffStatus = "Available", OfficeStatus = "Open", CrowdStatus = "Open" },
-        new() { StaffId = 4, FullName = "Carlos Mendoza", Position = "Grade Release", Department = "College", StaffStatus = "Available", OfficeStatus = "Open", CrowdStatus = "Open" },
-    };
-
+    
 
 
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
@@ -292,22 +284,6 @@
     {
         showProfileMenu = false;
         Navigation.NavigateTo("/loginpage");
-    }
-
-    private void HandleSearch()
-    {
-        if (searchQuery.Length >= 2)
-        {
-            searchResults = mockAllStaff
-                .Where(s => s.FullName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-            showSearchResults = true;
-        }
-        else
-        {
-            showSearchResults = false;
-            searchResults = new();
-        }
     }
 
     private void GoToStaff(int staffId)

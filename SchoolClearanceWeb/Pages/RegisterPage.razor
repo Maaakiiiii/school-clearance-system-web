@@ -185,58 +185,21 @@
 
     private static readonly List<string> CollegeCourses = new()
     {
-        "BS Information Technology",
-        "BS Computer Science",
-        "BS Business Administration",
-        "BS Accountancy",
-        "BS Hospitality Management",
-        "BS Tourism Management"
+        "BS Information Technology", "BS Computer Science", "BS Business Administration",
+        "BS Accountancy", "BS Hospitality Management", "BS Tourism Management"
     };
 
     private static readonly List<string> SHSStrands = new()
     {
-        "ABM — Accountancy, Business & Management",
-        "HUMSS — Humanities & Social Sciences",
-        "STEM — Science, Technology, Engineering & Math",
-        "TVL — Technical-Vocational-Livelihood",
+        "ABM — Accountancy, Business & Management", "HUMSS — Humanities & Social Sciences",
+        "STEM — Science, Technology, Engineering & Math", "TVL — Technical-Vocational-Livelihood",
         "GAS — General Academic Strand"
     };
 
-    private static readonly List<string> CollegeYears = new()
-    {
-        "1st Year", "2nd Year", "3rd Year", "4th Year"
-    };
+    private static readonly List<string> CollegeYears = new() { "1st Year", "2nd Year", "3rd Year", "4th Year" };
+    private static readonly List<string> SHSYears = new() { "Grade 11", "Grade 12" };
 
-    private static readonly List<string> SHSYears = new()
-    {
-        "Grade 11", "Grade 12"
-    };
-
-    private void OnDepartmentChanged(string val)
-    {
-        department = val;
-        courseStrand = "";
-        yearLevel = "";
-
-        if (department == "College")
-        {
-            courseOptions = CollegeCourses;
-            yearOptions = CollegeYears;
-        }
-        else if (department == "Senior High School")
-        {
-            courseOptions = SHSStrands;
-            yearOptions = SHSYears;
-        }
-        else
-        {
-            courseOptions = new();
-            yearOptions = new();
-        }
-    }
-    @code {
-    private bool PasswordMismatch =>
-        !string.IsNullOrEmpty(confirmPassword) && password != confirmPassword;          
+    private bool PasswordMismatch => !string.IsNullOrEmpty(confirmPassword) && password != confirmPassword;
 
     private InputType passwordInput => showPassword ? InputType.Text : InputType.Password;
     private string passwordIcon => showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
@@ -246,52 +209,58 @@
     private void TogglePassword() => showPassword = !showPassword;
     private void ToggleConfirmPassword() => showConfirmPassword = !showConfirmPassword;
 
+    private void OnDepartmentChanged(string val)
+    {
+        department = val;
+        courseStrand = "";
+        yearLevel = "";
+        if (department == "College") { courseOptions = CollegeCourses; yearOptions = CollegeYears; }
+        else if (department == "Senior High School") { courseOptions = SHSStrands; yearOptions = SHSYears; }
+        else { courseOptions = new(); yearOptions = new(); }
+    }
 
     private async Task HandleRegister()
-{
-    errorMessage = "";
-    successMessage = "";
-
-    if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(studentNo) ||
-        string.IsNullOrWhiteSpace(department) || string.IsNullOrWhiteSpace(courseStrand) ||
-        string.IsNullOrWhiteSpace(yearLevel) || string.IsNullOrWhiteSpace(username) ||
-        string.IsNullOrWhiteSpace(password))
     {
-        errorMessage = "All fields are required.";
-        return;
-    }
+        errorMessage = "";
+        successMessage = "";
 
-    if (username.Length < 4) { errorMessage = "Username must be at least 4 characters."; return; }
-    if (password.Length < 8) { errorMessage = "Password must be at least 8 characters."; return; }
-    if (PasswordMismatch) { errorMessage = "Passwords do not match."; return; }
+        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(studentNo) ||
+            string.IsNullOrWhiteSpace(department) || string.IsNullOrWhiteSpace(courseStrand) ||
+            string.IsNullOrWhiteSpace(yearLevel) || string.IsNullOrWhiteSpace(username) ||
+            string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "All fields are required.";
+            return;
+        }
 
-    isLoading = true;
+        if (username.Length < 4) { errorMessage = "Username must be at least 4 characters."; return; }
+        if (password.Length < 8) { errorMessage = "Password must be at least 8 characters."; return; }
+        if (PasswordMismatch) { errorMessage = "Passwords do not match."; return; }
 
-    var result = await AuthService.RegisterStudent(new StudentRegisterRequest
-    {
-        StudentNo = studentNo,
-        Username = username,
-        Password = password,
-        FullName = fullName,
-        Department = department,
-        CourseStrand = courseStrand,
-        YearLevel = yearLevel
-    });
+        isLoading = true;
 
-    isLoading = false;  
+        var result = await AuthService.RegisterStudent(new StudentRegisterRequest
+            {
+                StudentNo = studentNo,
+                Username = username,
+                Password = password,
+                FullName = fullName,
+                Department = department,
+                CourseStrand = courseStrand,
+                YearLevel = yearLevel
+            });
 
-    if (result.Status == 1)
-    {
-        successMessage = "Account created! Redirecting to login...";
-        await Task.Delay(1500);
-        Navigation.NavigateTo("/loginpage");
-    }
-    else
-    {
-        errorMessage = result.Message;
-    }
-}
+        isLoading = false;
 
+        if (result.Status == 1)
+        {
+            successMessage = "Account created! Redirecting to login...";
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/loginpage");
+        }
+        else
+        {
+            errorMessage = result.Message;
         }
     }
-        
+}

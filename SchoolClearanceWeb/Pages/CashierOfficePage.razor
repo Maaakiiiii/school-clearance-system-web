@@ -1,4 +1,4 @@
-﻿@page "/registrar"
+﻿@page "/cashier"
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
@@ -67,11 +67,11 @@
                 <span>Dashboard</span>
             </div>
             <div class="drawer-section-label">OFFICES</div>
-            <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/registrar")'>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/registrar")'>
                 <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
                 <span>Registrar Office</span>
             </div>
-            <div class="drawer-nav-item" @onclick='() => NavigateTo("/cashier")'>
+            <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/cashier")'>
                 <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
                 <span>Cashier Office</span>
             </div>
@@ -94,8 +94,8 @@
     <div class="dash-content">
 
         <div class="profile-page-title">
-            <MudText Typo="Typo.h4" Class="page-title-text">Registrar Office</MudText>
-            <MudText Typo="Typo.body1" Class="page-title-sub">View office status and registrar staff availability.</MudText>
+            <MudText Typo="Typo.h4" Class="page-title-text">Cashier Office</MudText>
+            <MudText Typo="Typo.body1" Class="page-title-sub">View office status and cashier staff availability.</MudText>
         </div>
 
         @if (isLoading)
@@ -109,7 +109,7 @@
         {
             <div class="glass-card office-status-card">
                 <div class="section-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Business" Class="section-icon" />
+                    <MudIcon Icon="@Icons.Material.Filled.Payments" Class="section-icon" />
                     <MudText Typo="Typo.subtitle1" Class="section-label">OFFICE STATUS</MudText>
                 </div>
                 @if (officeStaff != null)
@@ -159,7 +159,7 @@
                 else
                 {
                     <div class="empty-state">
-                        <MudIcon Icon="@Icons.Material.Filled.Business" Class="empty-icon" />
+                        <MudIcon Icon="@Icons.Material.Filled.Payments" Class="empty-icon" />
                         <span class="empty-text">Office status not available</span>
                     </div>
                 }
@@ -168,20 +168,20 @@
             <div class="glass-card">
                 <div class="section-header">
                     <MudIcon Icon="@Icons.Material.Filled.People" Class="section-icon" />
-                    <MudText Typo="Typo.subtitle1" Class="section-label">REGISTRAR STAFF</MudText>
-                    <span class="staff-count-badge">@registrarStaff.Count</span>
+                    <MudText Typo="Typo.subtitle1" Class="section-label">CASHIER STAFF</MudText>
+                    <span class="staff-count-badge">@cashierStaff.Count</span>
                 </div>
-                @if (registrarStaff.Count == 0)
+                @if (cashierStaff.Count == 0)
                 {
                     <div class="empty-state">
                         <MudIcon Icon="@Icons.Material.Filled.PersonOff" Class="empty-icon" />
-                        <span class="empty-text">No registrar staff available</span>
+                        <span class="empty-text">No cashier staff available</span>
                     </div>
                 }
                 else
                 {
                     <div class="staff-list">
-                        @foreach (var staff in registrarStaff)
+                        @foreach (var staff in cashierStaff)
                         {
                             <div class="staff-list-item" @onclick="() => GoToStaffProfile(staff.StaffId)">
                                 <div class="staff-avatar-wrap">
@@ -222,7 +222,7 @@
     private bool showProfileMenu = false;
     private bool isLoading = true;
 
-    private List<StaffListModel> registrarStaff = new();
+    private List<StaffListModel> cashierStaff = new();
     private StaffListModel? officeStaff = null;
 
     protected override async Task OnInitializedAsync()
@@ -235,10 +235,8 @@
         isLoading = true;
         try
         {
-            // TODO: Replace with actual API calls
-            // var allStaff = await StaffService.GetStaffByPositionAsync("Registrar");
-            // registrarStaff = allStaff;
-            // officeStaff = registrarStaff.FirstOrDefault(s => s.OfficeStatus != null);
+            // TODO: Replace with StaffService.GetAllStaff() filtered by Position == "Cashier"
+            await Task.CompletedTask;
         }
         catch (Exception)
         {

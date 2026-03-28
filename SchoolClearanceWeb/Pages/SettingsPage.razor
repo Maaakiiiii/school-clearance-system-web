@@ -1,0 +1,231 @@
+﻿@page "/settings"
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<div class="page-wrapper">
+
+    <!-- Floating background shapes -->
+    <div class="bg-shapes">
+        <div class="bg-shape bg-s1"></div>
+        <div class="bg-shape bg-s2"></div>
+        <div class="bg-shape bg-s3"></div>
+    </div>
+
+    <div class="inner">
+
+        <!-- Header -->
+        <div class="page-header">
+            <button class="back-btn" @onclick="GoBack">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Class="back-icon" />
+            </button>
+            <div class="header-text">
+                <span class="header-label">System</span>
+                <h1 class="header-title">Settings</h1>
+            </div>
+            <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
+        </div>
+
+        <!-- ── ACCOUNT SECTION ── -->
+        <div class="settings-section">
+            <span class="section-label">ACCOUNT</span>
+            <div class="glass-card">
+
+                <div class="settings-item" @onclick="GoToProfile">
+                    <div class="settings-item-left">
+                        <div class="settings-icon-wrap icon-blue">
+                            <MudIcon Icon="@Icons.Material.Filled.Person"
+                                     Class="settings-icon" />
+                        </div>
+                        <div class="settings-item-text">
+                            <span class="settings-item-title">Edit Profile</span>
+                            <span class="settings-item-sub">Update your name, course, section</span>
+                        </div>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
+                             Class="chevron-icon" />
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-item" @onclick="GoToChangePassword">
+                    <div class="settings-item-left">
+                        <div class="settings-icon-wrap icon-purple">
+                            <MudIcon Icon="@Icons.Material.Filled.Lock"
+                                     Class="settings-icon" />
+                        </div>
+                        <div class="settings-item-text">
+                            <span class="settings-item-title">Change Password</span>
+                            <span class="settings-item-sub">Update your account password</span>
+                        </div>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
+                             Class="chevron-icon" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── APP SECTION ── -->
+        <div class="settings-section">
+            <span class="section-label">APP</span>
+            <div class="glass-card">
+
+                <div class="settings-item" @onclick="OpenAboutDialog">
+                    <div class="settings-item-left">
+                        <div class="settings-icon-wrap icon-teal">
+                            <MudIcon Icon="@Icons.Material.Filled.Info"
+                                     Class="settings-icon" />
+                        </div>
+                        <div class="settings-item-text">
+                            <span class="settings-item-title">About</span>
+                            <span class="settings-item-sub">Learn more about this app</span>
+                        </div>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
+                             Class="chevron-icon" />
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="settings-item non-clickable">
+                    <div class="settings-item-left">
+                        <div class="settings-icon-wrap icon-grey">
+                            <MudIcon Icon="@Icons.Material.Filled.Layers"
+                                     Class="settings-icon" />
+                        </div>
+                        <div class="settings-item-text">
+                            <span class="settings-item-title">Version</span>
+                            <span class="settings-item-sub">Current build</span>
+                        </div>
+                    </div>
+                    <span class="version-badge">v1.0.0</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── DANGER ZONE ── -->
+        <div class="settings-section">
+            <span class="section-label danger-label">DANGER ZONE</span>
+            <div class="glass-card danger-card">
+
+                <div class="settings-item danger-item" @onclick="OpenLogoutDialog">
+                    <div class="settings-item-left">
+                        <div class="settings-icon-wrap icon-red">
+                            <MudIcon Icon="@Icons.Material.Filled.Logout"
+                                     Class="settings-icon" />
+                        </div>
+                        <div class="settings-item-text">
+                            <span class="settings-item-title danger-text">Log Out</span>
+                            <span class="settings-item-sub">Sign out of your account</span>
+                        </div>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
+                             Class="chevron-icon danger-chevron" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="settings-footer">
+            <span>ACLC School Clearance System</span>
+            <span>Made for students, by the IT department</span>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── ABOUT DIALOG ── -->
+<MudDialog @bind-Visible="_showAboutDialog" Options="_dialogOptions">
+    <TitleContent>
+        <div class="dialog-title-row">
+            <MudIcon Icon="@Icons.Material.Filled.School" Class="dialog-title-icon" />
+            <span>About This App</span>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div class="about-content">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="about-logo" />
+            <p class="about-app-name">ACLC Clearance System</p>
+            <p class="about-version">Version 1.0.0</p>
+            <p class="about-desc">
+                A student-facing platform for tracking clearance progress,
+                checking staff availability, and staying updated with
+                office announcements.
+            </p>
+            <div class="about-divider"></div>
+            <p class="about-school">AMA Computer Learning Center</p>
+            <p class="about-year">© 2026 — IT Department</p>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseAboutDialog"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Class="dialog-btn">
+            Got it
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- ── LOGOUT CONFIRMATION DIALOG ── -->
+<MudDialog @bind-Visible="_showLogoutDialog" Options="_dialogOptions">
+    <TitleContent>
+        <div class="dialog-title-row">
+            <MudIcon Icon="@Icons.Material.Filled.Logout" Class="dialog-title-icon danger-icon" />
+            <span>Log Out</span>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <p class="dialog-body">
+            Are you sure you want to log out? You'll need to sign in again to access your clearance.
+        </p>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseLogoutDialog"
+                   Variant="Variant.Text"
+                   Color="Color.Default"
+                   Class="dialog-cancel-btn">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="ConfirmLogout"
+                   Variant="Variant.Filled"
+                   Color="Color.Error"
+                   Class="dialog-btn">
+            Yes, Log Out
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _showAboutDialog = false;
+    private bool _showLogoutDialog = false;
+
+    private DialogOptions _dialogOptions = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            BackdropClick = true,
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true,
+            Position = DialogPosition.Center
+        };
+
+    private void GoBack() => Navigation.NavigateTo("/dashboard");
+    private void GoToProfile() => Navigation.NavigateTo("/profile");
+    private void GoToChangePassword() => Navigation.NavigateTo("/profile");
+
+    private void OpenAboutDialog() => _showAboutDialog = true;
+    private void CloseAboutDialog() => _showAboutDialog = false;
+
+    private void OpenLogoutDialog() => _showLogoutDialog = true;
+    private void CloseLogoutDialog() => _showLogoutDialog = false;
+
+    private void ConfirmLogout()
+    {
+        // TODO: Call AuthService.Logout() / TokenService.Clear() when wired up
+        _showLogoutDialog = false;
+        Navigation.NavigateTo("/");
+    }
+}
+

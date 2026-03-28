@@ -1,0 +1,381 @@
+﻿@page "/announcements"
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<div class="dash-page">
+    <div class="bg-shapes">
+        <div class="bg-shape bg-s1"></div>
+        <div class="bg-shape bg-s2"></div>
+        <div class="bg-shape bg-s3"></div>
+    </div>
+
+    <div class="dash-navbar">
+        <div class="navbar-left">
+            <button class="hamburger-btn" @onclick="ToggleDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+            </button>
+            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
+            <span class="nav-brand">School Clearance</span>
+        </div>
+        <div class="navbar-center">
+            <div class="search-wrapper">
+                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
+                <input placeholder="Search staff..." class="search-input" />
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="nav-avatar" @onclick="ToggleProfileMenu">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
+            </div>
+            @if (showProfileMenu)
+            {
+                <div style="position:fixed;inset:0;z-index:99;" @onclick="() => showProfileMenu = false"></div>
+                <div class="profile-dropdown" style="z-index:100;">
+                    <div class="profile-menu-item" @onclick="GoToProfile">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-menu-icon" />
+                        <span>Profile</span>
+                    </div>
+                    <div class="profile-menu-divider"></div>
+                    <div class="profile-menu-item logout" @onclick="HandleLogout">
+                        <MudIcon Icon="@Icons.Material.Filled.Logout" Class="profile-menu-icon" />
+                        <span>Logout</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (drawerOpen)
+    {
+        <div class="drawer-overlay" @onclick="CloseDrawer"></div>
+    }
+
+    <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
+        <div class="drawer-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
+            <div class="drawer-brand-wrap">
+                <span class="drawer-brand">School Clearance</span>
+                <span class="drawer-sub">Student Portal</span>
+            </div>
+            <button class="drawer-close-btn" @onclick="CloseDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Close" Class="drawer-close-icon" />
+            </button>
+        </div>
+        <nav class="drawer-nav">
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="drawer-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="drawer-section-label">OFFICES</div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="drawer-nav-icon" />
+                <span>Registrar Office</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="drawer-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/grade-release")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="drawer-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="drawer-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="drawer-section-label">ACCOUNT</div>
+            <div class="drawer-nav-item" @onclick='() => NavigateTo("/settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="drawer-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <div class="dash-content">
+
+        <div class="profile-page-title">
+            <MudText Typo="Typo.h4" Class="page-title-text">Announcements</MudText>
+            <MudText Typo="Typo.body1" Class="page-title-sub">Latest updates from staff and offices.</MudText>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="loading-wrapper">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.body1" Class="loading-text">Loading announcements...</MudText>
+            </div>
+        }
+        else if (posts.Count == 0)
+        {
+            <div class="empty-state-page">
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="empty-page-icon" />
+                <span class="empty-page-text">No announcements yet</span>
+                <span class="empty-page-sub">Check back later for updates from staff.</span>
+            </div>
+        }
+        else
+        {
+            <div class="posts-list">
+                @foreach (var post in posts)
+                {
+                    <div class="post-card">
+
+                        <div class="post-card-header">
+                            <div class="post-avatar">@GetInitials(post.FullName)</div>
+                            <div class="post-author-info">
+                                <span class="post-author-name">@post.FullName</span>
+                                <span class="post-author-position">@post.Position</span>
+                            </div>
+                            <div class="post-meta-right">
+                                <span class="post-date-full">@post.PostedAt.ToString("MMM dd, yyyy")</span>
+                                <span class="post-time">@post.PostedAt.ToString("hh:mm tt")</span>
+                            </div>
+                        </div>
+
+                        <div class="post-card-body">
+                            <span class="post-title">@post.Title</span>
+                            <span class="post-content">@post.Content</span>
+                        </div>
+
+                        @if (_reactionSummaries.ContainsKey(post.PostId) && _reactionSummaries[post.PostId].Any())
+                        {
+                            <div class="reaction-summary">
+                                @foreach (var r in _reactionSummaries[post.PostId])
+                                {
+                                    <span class="reaction-bubble">@r.Key @r.Value</span>
+                                }
+                            </div>
+                        }
+
+                        <div class="post-actions">
+                            <div class="action-group">
+                                <button class="action-btn @(IsReacted(post.PostId) ? "reacted" : "")"
+                                        @onclick="() => ToggleReactionPicker(post.PostId)">
+                                    <MudIcon Icon="@Icons.Material.Outlined.EmojiEmotions" Class="action-icon" />
+                                    <span>React</span>
+                                </button>
+                                <button class="action-btn" @onclick="() => ToggleComments(post.PostId)">
+                                    <MudIcon Icon="@Icons.Material.Outlined.ChatBubbleOutline" Class="action-icon" />
+                                    <span>Comment @(_comments.ContainsKey(post.PostId) && _comments[post.PostId].Any() ? $"({_comments[post.PostId].Count})" : "")</span>
+                                </button>
+                                <button class="action-btn" @onclick="() => SharePost(post)">
+                                    <MudIcon Icon="@Icons.Material.Outlined.Share" Class="action-icon" />
+                                    <span>Share</span>
+                                </button>
+                            </div>
+                            <span class="post-timeago">@GetTimeAgo(post.PostedAt)</span>
+                        </div>
+
+                        @if (_activeReactionPicker == post.PostId)
+                        {
+                            <div class="reaction-picker">
+                                @foreach (var emoji in _reactionEmojis)
+                                {
+                                    <button class="emoji-btn @(GetMyReaction(post.PostId) == emoji ? "emoji-active" : "")"
+                                            @onclick="() => ReactToPost(post.PostId, emoji)">
+                                        @emoji
+                                    </button>
+                                }
+                            </div>
+                        }
+
+                        @if (_activeCommentSection == post.PostId)
+                        {
+                            <div class="comments-section">
+                                @if (_comments.ContainsKey(post.PostId) && _comments[post.PostId].Any())
+                                {
+                                    @foreach (var comment in _comments[post.PostId])
+                                    {
+                                        <div class="comment-item">
+                                            <div class="comment-avatar">S</div>
+                                            <div class="comment-body">
+                                                <div class="comment-header">
+                                                    <span class="comment-author">You</span>
+                                                    <span class="comment-time">@GetTimeAgo(comment.PostedAt)</span>
+                                                </div>
+                                                <span class="comment-text">@comment.Text</span>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="no-comments">No comments yet. Be the first!</span>
+                                }
+
+                                <div class="comment-input-row">
+                                    <div class="comment-avatar">S</div>
+                                    <input class="comment-input"
+                                           placeholder="Write a comment..."
+                                           value="@GetDraft(post.PostId)"
+                                           @oninput="e => _commentDrafts[post.PostId] = e.Value?.ToString() ?? string.Empty"
+                                           @onkeyup="e => HandleCommentKey(e, post.PostId)" />
+                                    <button class="comment-send-btn"
+                                            @onclick="() => SubmitComment(post.PostId)"
+                                            disabled="@(string.IsNullOrWhiteSpace(GetDraft(post.PostId)))">
+                                        <MudIcon Icon="@Icons.Material.Filled.Send" Class="send-icon" />
+                                    </button>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private bool drawerOpen = false;
+    private bool showProfileMenu = false;
+    private bool isLoading = true;
+
+    private List<StaffPostModel> posts = new();
+
+    private Dictionary<int, Dictionary<string, int>> _reactionSummaries = new();
+    private Dictionary<int, string> _myReactions = new();
+    private int? _activeReactionPicker = null;
+    private int? _activeCommentSection = null;
+    private Dictionary<int, List<CommentItem>> _comments = new();
+    private Dictionary<int, string> _commentDrafts = new();
+
+    private readonly List<string> _reactionEmojis = new() { "👍", "❤️", "😮", "😂", "😢", "🙏" };
+
+    private record CommentItem(string Text, DateTime PostedAt);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            // TODO: Replace with StaffService.GetAllPosts()
+            await Task.CompletedTask;
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Failed to load announcements. Please try again.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ToggleReactionPicker(int postId)
+    {
+        _activeReactionPicker = _activeReactionPicker == postId ? null : postId;
+    }
+
+    private void ReactToPost(int postId, string emoji)
+    {
+        if (!_reactionSummaries.ContainsKey(postId))
+            _reactionSummaries[postId] = new();
+
+        var previous = _myReactions.GetValueOrDefault(postId);
+
+        if (previous == emoji)
+        {
+            _myReactions.Remove(postId);
+            _reactionSummaries[postId][emoji]--;
+            if (_reactionSummaries[postId][emoji] <= 0)
+                _reactionSummaries[postId].Remove(emoji);
+        }
+        else
+        {
+            if (previous != null)
+            {
+                _reactionSummaries[postId][previous]--;
+                if (_reactionSummaries[postId][previous] <= 0)
+                    _reactionSummaries[postId].Remove(previous);
+            }
+            _myReactions[postId] = emoji;
+            if (!_reactionSummaries[postId].ContainsKey(emoji))
+                _reactionSummaries[postId][emoji] = 0;
+            _reactionSummaries[postId][emoji]++;
+        }
+
+        _activeReactionPicker = null;
+    }
+
+    private void ToggleComments(int postId)
+    {
+        _activeCommentSection = _activeCommentSection == postId ? null : postId;
+        if (!_commentDrafts.ContainsKey(postId))
+            _commentDrafts[postId] = string.Empty;
+    }
+
+    private void SubmitComment(int postId)
+    {
+        var draft = GetDraft(postId);
+        if (string.IsNullOrWhiteSpace(draft)) return;
+
+        if (!_comments.ContainsKey(postId))
+            _comments[postId] = new();
+
+        _comments[postId].Add(new CommentItem(draft.Trim(), DateTime.Now));
+        _commentDrafts[postId] = string.Empty;
+    }
+
+    private async Task HandleCommentKey(KeyboardEventArgs e, int postId)
+    {
+        if (e.Key == "Enter") SubmitComment(postId);
+        await Task.CompletedTask;
+    }
+
+    private void SharePost(StaffPostModel post)
+    {
+        Snackbar.Add($"Link copied: \"{post.Title}\"", Severity.Success);
+    }
+
+    private bool IsReacted(int postId) => _myReactions.ContainsKey(postId);
+    private string? GetMyReaction(int postId) => _myReactions.GetValueOrDefault(postId);
+    private string GetDraft(int postId) => _commentDrafts.GetValueOrDefault(postId, string.Empty);
+
+    private string GetInitials(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "?";
+        var parts = fullName.Trim().Split(' ');
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}".ToUpper()
+            : fullName[..1].ToUpper();
+    }
+
+    private string GetTimeAgo(DateTime dt)
+    {
+        var diff = DateTime.Now - dt;
+        if (diff.TotalMinutes < 1) return "just now";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes} min ago";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours} hr ago";
+        if (diff.TotalDays < 7) return $"{(int)diff.TotalDays} day(s) ago";
+        return dt.ToString("MMM dd, yyyy");
+    }
+
+    private void ToggleDrawer() => drawerOpen = !drawerOpen;
+    private void CloseDrawer() => drawerOpen = false;
+    private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
+
+    private void NavigateTo(string url)
+    {
+        drawerOpen = false;
+        Navigation.NavigateTo(url);
+    }
+
+    private void GoToProfile()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/profile");
+    }
+
+    private void HandleLogout()
+    {
+        showProfileMenu = false;
+        Navigation.NavigateTo("/loginpage");
+    }
+}
