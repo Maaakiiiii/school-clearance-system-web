@@ -788,18 +788,6 @@ html, body {
     fill: white !important;
 }
 
-/* Eye toggle icons */
-.mud-icon-button-label .mud-icon-root {
-    color: white !important;
-    fill: white !important;
-}
-.modal-title-text {
-    color: white !important;
-}
-.dash-content {
-    max-width: 1100px !important;
-}
-
 /* ── Registrar Page Font Sizes ── */
 .badge-label {
     font-size: 0.95rem !important;
@@ -891,4 +879,29 @@ html, body {
     .settings-item {
         padding: 14px 16px;
     }
+}
+
+.auth-right .custom-icon-left {
+    color: rgba(0, 0, 0, 0.54) !important;
+}
+
+.camera-icon {
+    color: white !important;
+    font-size: 20px !important;
+}
+
+.profile-avatar {
+    overflow: hidden !important;
+    width: 88px !important;
+    height: 88px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+}
+
+.profile-img {
+    width: 88px !important;
+    height: 88px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    display: block !important;
 }

@@ -1,5 +1,6 @@
 ﻿@page "/profile"
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="dash-page">
     <div class="bg-shapes">
@@ -86,6 +87,10 @@
                 <span>Announcements</span>
             </div>
             <div class="drawer-section-label">ACCOUNT</div>
+            <div class="drawer-nav-item active" @onclick='() => NavigateTo("/profile")'>
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="drawer-nav-icon" />
+                <span>Profile</span>
+            </div>
             <div class="drawer-nav-item" @onclick='() => NavigateTo("/settings")'>
                 <MudIcon Icon="@Icons.Material.Filled.Settings" Class="drawer-nav-icon" />
                 <span>Settings</span>
@@ -104,15 +109,24 @@
 
         <!-- PROFILE CARD -->
         <div class="profile-main-card">
-            <!-- COVER -->
             <div class="profile-cover"></div>
-
-            <!-- AVATAR + ACTIONS -->
             <div class="profile-card-body">
                 <div class="profile-avatar-row">
-                    <div class="profile-avatar">
-                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-avatar-icon" />
+                    <div class="profile-avatar" @onclick="TriggerFileUpload">
+                        @if (profileImageUrl != null)
+                        {
+                            <img src="@profileImageUrl" alt="Profile" class="profile-img" />
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-avatar-icon" />
+                        }
+                        <div class="avatar-overlay">
+                            <MudIcon Icon="@Icons.Material.Filled.CameraAlt" Class="camera-icon" />
+                            <span class="camera-label">Change</span>
+                        </div>
                     </div>
+                    <InputFile id="profileFileInput" OnChange="OnFileSelected" accept=".jpg,.jpeg,.png" style="display:none;" />
                     <div class="profile-header-actions">
                         <MudButton Variant="Variant.Outlined"
                                    Class="change-password-btn"
@@ -123,7 +137,6 @@
                     </div>
                 </div>
 
-                <!-- NAME + CHIPS -->
                 <div class="profile-identity">
                     <span class="profile-fullname">Juan dela Cruz</span>
                     <div class="profile-chips-row">
@@ -219,12 +232,7 @@
                             <span>Save Changes</span>
                         }
                     </MudButton>
-                    <MudButton Variant="Variant.Outlined"
-                               Class="profile-back-btn"
-                               StartIcon="@Icons.Material.Filled.ArrowBack"
-                               OnClick='() => Navigation.NavigateTo("/dashboard")'>
-                        Back
-                    </MudButton>
+                   
                 </div>
             </div>
         </div>
@@ -277,9 +285,7 @@
             }
             @if (passwordSaved)
             {
-                <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">
-                    Password changed successfully!
-                </MudAlert>
+                <MudAlert Severity="Severity.Success" Dense="true" Class="mb-4">Password changed successfully!</MudAlert>
             }
 
             <div class="profile-form">
@@ -356,6 +362,7 @@
 </div>
 
 @code {
+    private string? profileImageUrl = null;
     private bool drawerOpen = false;
     private bool showPasswordSection = false;
     private bool showProfileMenu = false;
@@ -378,6 +385,21 @@
 
     private List<string> courseOptions = new() { "BS Information Technology", "BS Computer Science", "BS Business Administration", "BS Accountancy", "BS Hospitality Management", "BS Tourism Management" };
     private List<string> yearOptions = new() { "1st Year", "2nd Year", "3rd Year", "4th Year" };
+
+    private async Task TriggerFileUpload()
+    {
+        await JS.InvokeVoidAsync("eval", "document.getElementById('profileFileInput').click()");
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file == null) return;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).ReadAsync(buffer);
+        var base64 = Convert.ToBase64String(buffer);
+        profileImageUrl = $"data:{file.ContentType};base64,{base64}";
+    }
 
     private void OnDepartmentChanged(string val)
     {
@@ -408,6 +430,7 @@
     private void ToggleCurrentPw() => showCurrentPw = !showCurrentPw;
     private void ToggleNewPw() => showNewPw = !showNewPw;
     private void ToggleConfirmPw() => showConfirmPw = !showConfirmPw;
+
     private void TogglePasswordSection()
     {
         showPasswordSection = !showPasswordSection;
@@ -431,27 +454,14 @@
         showNewPw = false;
         showConfirmPw = false;
     }
+
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;
     private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
 
-    private void NavigateTo(string url)
-    {
-        drawerOpen = false;
-        Navigation.NavigateTo(url);
-    }
-
-    private void GoToProfile()
-    {
-        showProfileMenu = false;
-        Navigation.NavigateTo("/profile");
-    }
-
-    private void HandleLogout()
-    {
-        showProfileMenu = false;
-        Navigation.NavigateTo("/loginpage");
-    }
+    private void NavigateTo(string url) { drawerOpen = false; Navigation.NavigateTo(url); }
+    private void GoToProfile() { showProfileMenu = false; Navigation.NavigateTo("/profile"); }
+    private void HandleLogout() { showProfileMenu = false; Navigation.NavigateTo("/"); }
 
     private async Task SaveInfo()
     {
