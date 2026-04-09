@@ -1,0 +1,272 @@
+﻿@page "/admin/staff"
+@inject NavigationManager Navigation
+@using MudBlazor
+
+<div class="page-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <img src="aclc_logo.png" alt="ACLC" class="logo-img" />
+            <div class="brand-text">
+                <span class="brand-name">School Clearance</span>
+                <span class="brand-sub">Admin Panel</span>
+            </div>
+        </div>
+
+        <p class="nav-section">Main</p>
+        <div class="nav-item" @onclick='() => Navigation.NavigateTo("/admin/dashboard")'>
+            <MudIcon Icon="@Icons.Material.Filled.GridView" Class="nav-icon" />
+            <span>Dashboard</span>
+        </div>
+
+        <p class="nav-section">Management</p>
+        <div class="nav-item" @onclick='() => Navigation.NavigateTo("/admin/coupons")'>
+            <MudIcon Icon="@Icons.Material.Filled.CardGiftcard" Class="nav-icon" />
+            <span>Coupons</span>
+        </div>
+        <div class="nav-item nav-active" @onclick='() => Navigation.NavigateTo("/admin/staff")'>
+            <MudIcon Icon="@Icons.Material.Filled.People" Class="nav-icon" />
+            <span>Staff</span>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="nav-item logout-item" @onclick="HandleLogout">
+                <MudIcon Icon="@Icons.Material.Filled.Logout" Class="nav-icon" />
+                <span>Logout</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <MudText Typo="Typo.h5" Class="page-title">Staff Management</MudText>
+            <div class="avatar-circle">A</div>
+        </div>
+
+        <!-- TABS -->
+        <div class="glass-card">
+            <div class="tab-btns-row">
+                <button class="tab-btn @(activeTab == 0 ? "tab-btn-active" : "")" @onclick='() => activeTab = 0'>
+                    <MudIcon Icon="@Icons.Material.Filled.People" Class="tab-btn-icon" />
+                    All Staff
+                </button>
+                <button class="tab-btn @(activeTab == 1 ? "tab-btn-active" : "")" @onclick='() => activeTab = 1'>
+                    <MudIcon Icon="@Icons.Material.Filled.School" Class="tab-btn-icon" />
+                    Teachers
+                </button>
+            </div>
+
+            @if (activeTab == 0)
+            {
+                <!-- ALL STAFF TAB -->
+                <div class="tab-content">
+                    <div class="table-header-row">
+                        <span class="table-section-label">All Staff Members</span>
+                        <button class="refresh-btn">
+                            <MudIcon Icon="@Icons.Material.Filled.Refresh" Class="refresh-icon" />
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="custom-table">
+                        <div class="table-head">
+                            <span>Full Name</span>
+                            <span>Position</span>
+                            <span>Department</span>
+                            <span>Status</span>
+                            <span>Role</span>
+                        </div>
+                        @if (allStaff.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <MudIcon Icon="@Icons.Material.Filled.PeopleAlt" Class="empty-icon" />
+                                <span class="empty-text">No staff records found</span>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var s in allStaff)
+                            {
+                                <div class="table-row">
+                                    <span class="row-name">@s.FullName</span>
+                                    <span class="row-cell">@s.Position</span>
+                                    <span class="row-cell">@s.Department</span>
+                                    <span class="status-chip @GetStatusClass(s.StaffStatus)">@s.StaffStatus</span>
+                                    <span class="role-chip @GetRoleClass(s.Role)">@s.Role</span>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (activeTab == 1)
+            {
+                <!-- TEACHERS TAB -->
+                <div class="tab-content">
+                    <div class="table-header-row">
+                        <span class="table-section-label">Teachers</span>
+                        <button class="refresh-btn">
+                            <MudIcon Icon="@Icons.Material.Filled.Refresh" Class="refresh-icon" />
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="custom-table">
+                        <div class="table-head teachers-head">
+                            <span>Full Name</span>
+                            <span>Department</span>
+                            <span>Role</span>
+                            <span>Action</span>
+                        </div>
+                        @if (teachers.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <MudIcon Icon="@Icons.Material.Filled.School" Class="empty-icon" />
+                                <span class="empty-text">No teachers found</span>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var t in teachers)
+                            {
+                                <div class="table-row">
+                                    <span class="row-name">@t.FullName</span>
+                                    <span class="row-cell">@t.Department</span>
+                                    <span class="role-chip @GetRoleClass(t.Role)">@t.Role</span>
+                                    <div>
+                                        @if (t.Role == "GradeRelease")
+                                        {
+                                            <button class="action-btn revoke-btn" @onclick="() => OpenRevokeDialog(t.StaffId, t.FullName)">
+                                                Revoke
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="action-btn assign-btn" @onclick="() => OpenAssignDialog(t.StaffId, t.FullName)">
+                                                Assign Grade Release
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+@if (showConfirmDialog)
+{
+    <div class="dialog-overlay" @onclick="CloseDialog"></div>
+    <div class="dialog-box" @onclick:stopPropagation="true">
+        <div class="dialog-header">
+            <MudIcon Icon="@(isAssigning ? Icons.Material.Filled.AssignmentInd : Icons.Material.Filled.RemoveCircle)"
+                     Style="@(isAssigning ? "color:#22c55e" : "color:#ef4444")"
+                     Class="dialog-header-icon" />
+            <span class="dialog-title">@(isAssigning ? "Assign Grade Release" : "Revoke Grade Release")</span>
+        </div>
+        <p class="dialog-body">
+            Are you sure you want to <strong>@(isAssigning ? "assign" : "revoke")</strong>
+            Grade Release for <strong>@selectedTeacherName</strong>?
+        </p>
+        <div class="dialog-actions">
+            <button class="dialog-cancel" @onclick="CloseDialog">Cancel</button>
+            <button class="dialog-confirm @(isAssigning ? "confirm-assign" : "confirm-revoke")"
+                    @onclick="ConfirmAction" disabled="@isConfirming">
+                @if (isConfirming)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-1" />
+                    <span>Processing...</span>
+                }
+                else
+                {
+                    <span>@(isAssigning ? "Yes, Assign" : "Yes, Revoke")</span>
+                }
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    private int activeTab = 0;
+    private bool showConfirmDialog = false;
+    private bool isAssigning = false;
+    private bool isConfirming = false;
+    private string selectedTeacherName = "";
+    private int selectedStaffId = 0;
+
+    // ⚠️ MOCK DATA
+    private List<(int StaffId, string FullName, string Position, string Department, string StaffStatus, string Role)> allStaff = new()
+    {
+        (1, "Maria Santos", "Registrar", "College", "Available", "Staff"),
+        (2, "Jose Reyes", "Registrar", "Senior High School", "On Break", "Staff"),
+        (3, "Ana Lim", "Cashier", "College", "Available", "Staff"),
+        (4, "Carlos Mendoza", "Grade Release", "College", "Available", "GradeRelease"),
+        (5, "Rosa dela Cruz", "Teacher", "Senior High School", "Absent", "Staff"),
+        (6, "Juan Santos", "Teacher", "College", "Available", "GradeRelease"),
+    };
+
+    private List<(int StaffId, string FullName, string Department, string Role)> teachers = new()
+    {
+        (5, "Rosa dela Cruz", "Senior High School", "Staff"),
+        (6, "Juan Santos", "College", "GradeRelease"),
+        (7, "Lea Fernandez", "College", "Staff"),
+    };
+
+    private string GetStatusClass(string s) => s switch
+    {
+        "Available" => "chip-available",
+        "On Break" => "chip-break",
+        "Absent" => "chip-absent",
+        _ => "chip-absent"
+    };
+
+    private string GetRoleClass(string r) => r switch
+    {
+        "GradeRelease" => "chip-grade",
+        "Admin" => "chip-admin",
+        _ => "chip-staff"
+    };
+
+    private void OpenAssignDialog(int staffId, string name)
+    {
+        selectedStaffId = staffId;
+        selectedTeacherName = name;
+        isAssigning = true;
+        showConfirmDialog = true;
+    }
+
+    private void OpenRevokeDialog(int staffId, string name)
+    {
+        selectedStaffId = staffId;
+        selectedTeacherName = name;
+        isAssigning = false;
+        showConfirmDialog = true;
+    }
+
+    private void CloseDialog()
+    {
+        showConfirmDialog = false;
+        selectedStaffId = 0;
+        selectedTeacherName = "";
+    }
+
+    private async Task ConfirmAction()
+    {
+        isConfirming = true;
+        await Task.Delay(600); // TODO: AdminService call
+        isConfirming = false;
+        CloseDialog();
+    }
+
+    private void HandleLogout() => Navigation.NavigateTo("/");
+}

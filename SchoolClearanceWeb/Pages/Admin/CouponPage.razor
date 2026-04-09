@@ -1,0 +1,202 @@
+﻿@page "/admin/coupons"
+@using MudBlazor
+
+<PageTitle>Coupon Management</PageTitle>
+
+<div class="admin-root">
+
+    <!-- DECORATIVE BLOBS -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="images/aclc-logo.png" alt="ACLC" class="logo-img" />
+            <span class="logo-text">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="/admin/dashboard">
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="nav-icon" />
+                <span>Dashboard</span>
+            </a>
+            <a class="nav-item active" href="/admin/coupons">
+                <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Class="nav-icon" />
+                <span>Coupons</span>
+            </a>
+            <a class="nav-item" href="/admin/staff">
+                <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Class="nav-icon" />
+                <span>Staff</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-item">
+                <MudIcon Icon="@Icons.Material.Filled.Logout" Class="nav-icon" />
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <p class="page-eyebrow">ADMIN PANEL</p>
+                <h1 class="page-title">Coupon Management</h1>
+            </div>
+        </div>
+
+        <!-- TWO COLUMN LAYOUT -->
+        <div class="coupon-layout">
+
+            <!-- LEFT: GENERATE FORM -->
+            <div class="generate-col">
+                <div class="glass-card section-card">
+                    <div class="section-card-header">
+                        <div class="section-icon-wrap">
+                            <MudIcon Icon="@Icons.Material.Filled.AddCard"
+                                     Style="color: white; font-size: 1.3rem;" />
+                        </div>
+                        <div>
+                            <p class="section-card-title">Generate Coupon</p>
+                            <p class="section-card-sub">Create a one-time registration code</p>
+                        </div>
+                    </div>
+
+                    <div class="form-fields">
+                        <div class="field-group">
+                            <label class="field-label">Full Name</label>
+                            <input class="glass-input" type="text" placeholder="e.g. Juan Dela Cruz" />
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">Position</label>
+                            <div class="glass-select-wrap">
+                                <select class="glass-select">
+                                    <option value="" disabled selected>Select position</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Registrar">Registrar</option>
+                                    <option value="Cashier">Cashier</option>
+                                    <option value="Grade Release">Grade Release</option>
+                                </select>
+                                <MudIcon Icon="@Icons.Material.Filled.ExpandMore"
+                                         Class="select-chevron" />
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">Department</label>
+                            <div class="glass-select-wrap">
+                                <select class="glass-select">
+                                    <option value="" disabled selected>Select department</option>
+                                    <option value="College">College</option>
+                                    <option value="Senior High School">Senior High School</option>
+                                </select>
+                                <MudIcon Icon="@Icons.Material.Filled.ExpandMore"
+                                         Class="select-chevron" />
+                            </div>
+                        </div>
+
+                        <button class="generate-btn">
+                            <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
+                                     Style="font-size: 1rem;" />
+                            Generate Coupon
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: COUPONS TABLE -->
+            <div class="table-col">
+                <div class="glass-card section-card">
+                    <div class="section-card-header">
+                        <div class="section-icon-wrap" style="background: rgba(234,179,8,0.25);">
+                            <MudIcon Icon="@Icons.Material.Filled.ListAlt"
+                                     Style="color: #EAB308; font-size: 1.3rem;" />
+                        </div>
+                        <div>
+                            <p class="section-card-title">All Coupons</p>
+                            <p class="section-card-sub">Browse usage and status</p>
+                        </div>
+                        <button class="refresh-btn">
+                            <MudIcon Icon="@Icons.Material.Filled.Refresh"
+                                     Style="font-size: 1.1rem;" />
+                        </button>
+                    </div>
+
+                    <!-- TABLE -->
+                    <div class="table-wrapper">
+                        <table class="coupon-table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Full Name</th>
+                                    <th>Position</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Used By</th>
+                                    <th>Used At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Empty state -->
+                                <tr class="empty-row">
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber"
+                                                     Style="font-size: 2.5rem; color: rgba(255,255,255,0.2);" />
+                                            <p>No coupons yet. Generate one to get started.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<!-- GENERATED COUPON DIALOG (UI only) -->
+<MudDialog @bind-IsOpen="_showDialog">
+    <TitleContent>
+        <div class="dialog-title-row">
+            <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
+                     Style="color: #22c55e; font-size: 1.4rem;" />
+            <MudText Typo="Typo.h6" Style="color: white; font-family: 'DM Sans', sans-serif; font-weight: 700;">
+                Coupon Generated!
+            </MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div class="dialog-body">
+            <p class="dialog-hint">Share this code with the staff member:</p>
+            <div class="dialog-code">XXXX-XXXX-XXXX</div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined"
+                   StartIcon="@Icons.Material.Filled.ContentCopy"
+                   Style="border-color: rgba(255,255,255,0.3); color: white; border-radius: 10px; text-transform: none; font-family: 'DM Sans', sans-serif;">
+            Copy Code
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Style="background: #243b77; color: white; border-radius: 10px; text-transform: none; font-family: 'DM Sans', sans-serif;"
+                   OnClick="() => _showDialog = false">
+            Close
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _showDialog = false;
+}
