@@ -203,24 +203,39 @@
     private bool isConfirming = false;
     private string selectedTeacherName = "";
     private int selectedStaffId = 0;
+    private string token = "";
+    private string errorMessage = "";
 
-    // ⚠️ MOCK DATA
-    private List<(int StaffId, string FullName, string Position, string Department, string StaffStatus, string Role)> allStaff = new()
-    {
-        (1, "Maria Santos", "Registrar", "College", "Available", "Staff"),
-        (2, "Jose Reyes", "Registrar", "Senior High School", "On Break", "Staff"),
-        (3, "Ana Lim", "Cashier", "College", "Available", "Staff"),
-        (4, "Carlos Mendoza", "Grade Release", "College", "Available", "GradeRelease"),
-        (5, "Rosa dela Cruz", "Teacher", "Senior High School", "Absent", "Staff"),
-        (6, "Juan Santos", "Teacher", "College", "Available", "GradeRelease"),
-    };
+    private List<StaffListModel> allStaff = new();
+    private List<StaffListModel> teachers = new();
 
-    private List<(int StaffId, string FullName, string Department, string Role)> teachers = new()
+    [Inject] AdminService AdminService { get; set; }
+    [Inject] IJSRuntime JS { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        (5, "Rosa dela Cruz", "Senior High School", "Staff"),
-        (6, "Juan Santos", "College", "GradeRelease"),
-        (7, "Lea Fernandez", "College", "Staff"),
-    };
+        token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+        await LoadStaff();
+        await LoadTeachers();
+    }
+
+    private async Task LoadStaff()
+    {
+        var result = await AdminService.GetAllStaff(token);
+        if (result?.Status == 1 && result.Data != null)
+            allStaff = result.Data;
+        else
+            allStaff = new();
+    }
+
+    private async Task LoadTeachers()
+    {
+        var result = await AdminService.GetAllTeachers(token);
+        if (result?.Status == 1 && result.Data != null)
+            teachers = result.Data;
+        else
+            teachers = new();
+    }
 
     private string GetStatusClass(string s) => s switch
     {
@@ -263,9 +278,27 @@
     private async Task ConfirmAction()
     {
         isConfirming = true;
-        await Task.Delay(600); // TODO: AdminService call
+        errorMessage = "";
+
+        ServiceResponse<string>? result;
+
+        if (isAssigning)
+            result = await AdminService.AssignGradeRelease(selectedStaffId, token);
+        else
+            result = await AdminService.RevokeGradeRelease(selectedStaffId, token);
+
         isConfirming = false;
-        CloseDialog();
+
+        if (result?.Status == 1)
+        {
+            CloseDialog();
+            await LoadTeachers();
+            await LoadStaff();
+        }
+        else
+        {
+            errorMessage = result?.Message ?? "Something went wrong.";
+        }
     }
 
     private void HandleLogout() => Navigation.NavigateTo("/");

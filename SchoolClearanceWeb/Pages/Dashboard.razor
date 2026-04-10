@@ -1,5 +1,6 @@
 ﻿@page "/dashboard"
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="dash-page">
 
@@ -136,7 +137,7 @@
                     <MudIcon Icon="@GetGreetingIcon()" Class="greeting-time-icon" />
                     <span class="greeting-time">@GetGreetingTime()</span>
                 </div>
-                <span class="greeting-name">Hello, Student!</span>
+                <span class="greeting-name">Hello, @(dashboardData?.FullName ?? "Student")!</span>
                 <span class="greeting-sub">Here's your clearance status today.</span>
             </div>
             <div class="greeting-badge">
@@ -169,12 +170,12 @@
                 </div>
                 <div class="progress-stat">
                     <span class="progress-pct">@ClearancePercent%</span>
-                    <span class="progress-label">@clearedCount of @mockClearanceItems.Count done</span>
+                    <span class="progress-label">@clearedCount of @clearanceItems.Count done</span>
                 </div>
             </div>
 
             <div class="checklist">
-                @foreach (var item in mockClearanceItems)
+                @foreach (var item in clearanceItems)
                 {
                     <div class="checklist-item @(item.IsCleared ? "cleared" : "")">
                         <MudCheckBox @bind-Value="item.IsCleared" Color="Color.Success" />
@@ -247,21 +248,28 @@
     private string currentPage = "dashboard";
     private List<StaffListModel> searchResults = new();
 
-    private int clearedCount => mockClearanceItems.Count(x => x.IsCleared);
-    private int ClearancePercent => mockClearanceItems.Count == 0 ? 0
-        : (int)Math.Round((double)clearedCount / mockClearanceItems.Count * 100);
+    private StudentDashboardResponse? dashboardData;
+    private List<ClearanceItemModel> clearanceItems = new();
 
-    private List<ClearanceItemModel> mockClearanceItems = new()
+    private int clearedCount => clearanceItems.Count(x => x.IsCleared);
+    private int ClearancePercent => clearanceItems.Count == 0 ? 0
+        : (int)Math.Round((double)clearedCount / clearanceItems.Count * 100);
+
+    [Inject] private StudentService StudentService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
     {
-        new() { ItemId = 1, Name = "Registrar", Description = "Submit enrollment form", IsCleared = true, ClearedAt = DateTime.Now.AddDays(-3) },
-        new() { ItemId = 2, Name = "Cashier", Description = "Settle all outstanding fees", IsCleared = true, ClearedAt = DateTime.Now.AddDays(-2) },
-        new() { ItemId = 3, Name = "Library", Description = "Return all borrowed books", IsCleared = false },
-        new() { ItemId = 4, Name = "Grade Release", Description = "Claim report card", IsCleared = false },
-        new() { ItemId = 5, Name = "Guidance Office", Description = "Attend exit interview", IsCleared = false },
-    };
+        var token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+        var studentIdStr = await JS.InvokeAsync<string>("localStorage.getItem", "studentId");
+        int.TryParse(studentIdStr, out int studentId);
 
-    
-
+        var result = await StudentService.GetDashboard(studentId, token);
+        if (result?.Status == 1 && result.Data != null)
+        {
+            dashboardData = result.Data;
+            clearanceItems = dashboardData.ClearanceItems ?? new();
+        }
+    }
 
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;

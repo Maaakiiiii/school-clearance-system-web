@@ -231,4 +231,15 @@
     color: var(--primary) !important;
     font-weight: 600 !important;
 }
+::deep .mud-input-slot .mud-input-adornment-end .mud-icon-button-label .mud-svg-icon path {
+    fill: #000000 !important;
+}
 
+::deep .mud-input-adornment-end .mud-icon-button-label {
+    color: #000000 !important;
+}
+
+::deep .mud-input-adornment-end svg {
+    fill: #000000 !important;
+    color: #000000 !important;
+}

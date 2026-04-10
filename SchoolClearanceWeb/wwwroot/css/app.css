@@ -1082,3 +1082,242 @@ html, body {
 .mud-main-content {
     background: transparent !important;
 }
+.mud-input-adornment-end .mud-icon-button {
+    color: black !important;
+}
+
+.auth-right .mud-input-adornment .mud-svg-icon path:not([fill="none"]) {
+    fill: #000000 !important;
+}
+
+.auth-right svg.mud-svg-icon path[fill="none"] {
+    fill: none !important;
+}
+
+.auth-right svg.mud-svg-icon {
+    color: #6b7280 !important;
+    fill: currentColor !important;
+}
+
+svg.mud-svg-icon path[fill="none"] {
+    fill: none !important;
+}
+
+.page-title {
+    color: white !important;
+}
+
+.sidebar .nav-item span,
+.sidebar .nav-section,
+.sidebar .brand-name,
+.sidebar .brand-sub,
+.sidebar .logout-item span {
+    color: white !important;
+}
+
+/* ─────────────────────────────────────────
+   ADMIN SHARED LAYOUT
+───────────────────────────────────────── */
+
+.page-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f1f4b 0%, #243b77 50%, #1a5276 100%);
+    display: flex;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: rgba(15,31,75,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 16px;
+}
+
+.sidebar .logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    color: white !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+.brand-sub {
+    color: rgba(255,255,255,0.45) !important;
+    font-size: 10px !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+.nav-section {
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    color: rgba(255,255,255,0.35) !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    padding: 16px 10px 6px !important;
+    margin: 0 !important;
+}
+
+.sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.65) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+    .sidebar .nav-item:hover {
+        background: rgba(255,255,255,0.1) !important;
+        color: white !important;
+    }
+
+    .sidebar .nav-item span {
+        color: inherit !important;
+    }
+
+.sidebar .nav-active {
+    background: rgba(255,255,255,0.15) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border-left: 3px solid rgba(255,255,255,0.6) !important;
+}
+
+.sidebar .nav-icon {
+    color: inherit !important;
+    font-size: 20px !important;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 12px;
+}
+
+.sidebar .logout-item {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+    .sidebar .logout-item:hover {
+        color: #f87171 !important;
+        background: rgba(239,68,68,0.1) !important;
+    }
+
+.main-content {
+    margin-left: 220px;
+    flex: 1;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+/* ─────────────────────────────────────────
+   ADMIN PAGE BACKGROUND FIX
+───────────────────────────────────────── */
+.admin-root {
+    background: linear-gradient(135deg, #0f1f4b 0%, #243b77 50%, #1a5276 100%) !important;
+    min-height: 100vh !important;
+}
+
+/* ─────────────────────────────────────────
+   MAIN CONTENT OFFSET FIX
+───────────────────────────────────────── */
+.main-content {
+    margin-left: 220px !important;
+    flex: 1 !important;
+    padding: 24px !important;
+    position: relative !important;
+    z-index: 1 !important;
+    min-height: 100vh !important;
+    background: transparent !important;
+}
+
+/* ─────────────────────────────────────────
+   COUPON PAGE LAYOUT FIX
+───────────────────────────────────────── */
+.coupon-layout {
+    display: grid !important;
+    grid-template-columns: 360px 1fr !important;
+    gap: 20px !important;
+    align-items: start !important;
+}
+
+/* ─────────────────────────────────────────
+   MUD MAIN CONTENT BACKGROUND FIX  
+───────────────────────────────────────── */
+.mud-main-content {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+body {
+    background: var(--background) !important;
+}

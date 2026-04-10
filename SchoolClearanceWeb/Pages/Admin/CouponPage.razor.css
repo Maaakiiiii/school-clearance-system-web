@@ -1,237 +1,96 @@
-﻿/* =============================================
-   ROOT — same as AdminDashboard
-   ============================================= */
-
-.admin-root {
-    display: flex;
+﻿.page-bg {
     min-height: 100vh;
-    background: linear-gradient(135deg, #0f1d45 0%, #1a2f6e 40%, #243b77 70%, #1e3a6e 100%);
+    background: linear-gradient(135deg, #0f1f4b 0%, #243b77 50%, #1a5276 100%);
+    display: flex;
     position: relative;
-    overflow: hidden;
-    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
 }
 
-/* =============================================
-   BLOBS
-   ============================================= */
-
-.blob {
+.orb {
     position: fixed;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.18;
+    opacity: 0.06;
+    background: white;
     pointer-events: none;
     z-index: 0;
 }
 
-.blob-1 {
-    width: 480px;
-    height: 480px;
-    background: #3b5fc0;
-    top: -120px;
-    right: -100px;
+.orb1 {
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    right: -200px;
 }
 
-.blob-2 {
-    width: 360px;
-    height: 360px;
-    background: #1e3a6e;
-    bottom: 60px;
-    left: -80px;
-}
-
-.blob-3 {
-    width: 280px;
-    height: 280px;
-    background: #EAB308;
-    bottom: 200px;
-    right: 15%;
-    opacity: 0.06;
-}
-
-/* =============================================
-   SIDEBAR — same as AdminDashboard
-   ============================================= */
-
-.sidebar {
-    width: 220px;
-    min-height: 100vh;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-}
-
-.sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 24px 20px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    margin-bottom: 8px;
+.orb2 {
+    width: 400px;
+    height: 400px;
+    bottom: -100px;
+    left: -100px;
 }
 
 .logo-img {
-    height: 34px;
-    width: auto;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
 }
 
-.logo-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: white;
-}
-
-.sidebar-nav {
+.brand-text {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 8px 12px;
-    flex: 1;
 }
 
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background 0.18s ease, color 0.18s ease;
+.nav-active {
+    background: rgba(255,255,255,0.15) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border-left: 3px solid rgba(255,255,255,0.6) !important;
 }
-
-    .nav-item:hover {
-        background: rgba(255, 255, 255, 0.09);
-        color: white;
-    }
-
-    .nav-item.active {
-        background: rgba(255, 255, 255, 0.14);
-        color: white;
-        font-weight: 700;
-    }
 
 .nav-icon {
-    font-size: 1.15rem !important;
+    color: inherit !important;
+    font-size: 20px !important;
 }
 
 .sidebar-footer {
-    padding: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 12px;
 }
 
 .logout-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.55);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    background: none;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-    transition: background 0.18s ease, color 0.18s ease;
+    color: rgba(255,255,255,0.5) !important;
 }
 
     .logout-item:hover {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
+        color: #f87171 !important;
+        background: rgba(239,68,68,0.1) !important;
     }
 
-/* =============================================
-   MAIN
-   ============================================= */
-
-.admin-main {
-    margin-left: 220px;
-    flex: 1;
-    padding: 36px 32px 60px;
-    position: relative;
-    z-index: 1;
-}
-
-/* =============================================
-   PAGE HEADER
-   ============================================= */
-
-.page-header {
-    margin-bottom: 28px;
-}
-
-.page-eyebrow {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    color: rgba(255, 255, 255, 0.45);
-    text-transform: uppercase;
-    margin: 0 0 4px;
-}
-
 .page-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: white;
-    margin: 0;
+    color: white !important;
+    font-weight: 700 !important;
 }
-
-/* =============================================
-   LAYOUT
-   ============================================= */
 
 .coupon-layout {
     display: grid;
-    grid-template-columns: 340px 1fr;
+    grid-template-columns: 360px 1fr;
     gap: 20px;
     align-items: start;
-}
-
-/* =============================================
-   GLASS BASE
-   ============================================= */
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-}
-
-/* =============================================
-   SECTION CARD
-   ============================================= */
-
-.section-card {
-    padding: 24px;
 }
 
 .section-card-header {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .section-icon-wrap {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(36,59,119,0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -239,42 +98,35 @@
 }
 
 .section-card-title {
-    font-size: 1rem;
-    font-weight: 700;
     color: white;
-    margin: 0 0 2px;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
 }
 
 .section-card-sub {
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255,255,255,0.45);
+    font-size: 12px;
     margin: 0;
 }
 
 .refresh-btn {
     margin-left: auto;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
-    width: 36px;
-    height: 36px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.6);
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: rgba(255,255,255,0.6);
     cursor: pointer;
-    transition: background 0.18s ease, color 0.18s ease;
-    flex-shrink: 0;
+    transition: all 0.15s;
 }
 
     .refresh-btn:hover {
-        background: rgba(255, 255, 255, 0.14);
+        background: rgba(255,255,255,0.08);
         color: white;
     }
-
-/* =============================================
-   FORM FIELDS
-   ============================================= */
 
 .form-fields {
     display: flex;
@@ -289,34 +141,33 @@
 }
 
 .field-label {
-    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 0.5px;
     text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 .glass-input {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 12px;
-    padding: 12px 16px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.18s ease, background 0.18s ease;
     width: 100%;
-    box-sizing: border-box;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border 0.15s;
 }
 
     .glass-input::placeholder {
-        color: rgba(255, 255, 255, 0.3);
+        color: rgba(255,255,255,0.3);
     }
 
     .glass-input:focus {
-        border-color: rgba(255, 255, 255, 0.35);
-        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255,255,255,0.35);
+        background: rgba(255,255,255,0.1);
     }
 
 .glass-select-wrap {
@@ -324,202 +175,257 @@
 }
 
 .glass-select {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 12px;
-    padding: 12px 40px 12px 16px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
     width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
     appearance: none;
     cursor: pointer;
-    transition: border-color 0.18s ease, background 0.18s ease;
 }
-
-    .glass-select:focus {
-        border-color: rgba(255, 255, 255, 0.35);
-        background: rgba(255, 255, 255, 0.1);
-    }
 
     .glass-select option {
-        background: #1a2f6e;
+        background: #1e2a45;
         color: white;
     }
-
-.select-chevron {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.4);
-    pointer-events: none;
-    font-size: 1.1rem !important;
-}
 
 .generate-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    width: 100%;
+    padding: 12px;
     border-radius: 12px;
-    padding: 13px 20px;
+    border: none;
+    background: linear-gradient(135deg, #1a2f6e, #243b77);
     color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
     margin-top: 4px;
 }
 
     .generate-btn:hover {
-        background: rgba(255, 255, 255, 0.22);
-        border-color: rgba(255, 255, 255, 0.4);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #243b77, #2e5090);
     }
 
-/* =============================================
-   TABLE
-   ============================================= */
+    .generate-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 
-.table-wrapper {
-    overflow-x: auto;
+.alert-error {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171;
+    font-size: 13px;
 }
 
-.coupon-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
+.alert-success {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(34,197,94,0.15);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #4ade80;
+    font-size: 13px;
 }
 
-    .coupon-table thead tr {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.custom-table {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.table-head {
+    display: grid;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.coupon-head {
+    grid-template-columns: 1.5fr 1.5fr 1fr 1fr 0.8fr 1fr 1fr;
+}
+
+.table-row {
+    display: grid;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    align-items: center;
+    transition: background 0.15s;
+}
+
+    .table-row:hover {
+        background: rgba(255,255,255,0.08);
     }
 
-    .coupon-table th {
-        text-align: left;
-        padding: 10px 12px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.4);
-        white-space: nowrap;
-    }
+.coupon-row {
+    grid-template-columns: 1.5fr 1.5fr 1fr 1fr 0.8fr 1fr 1fr;
+}
 
-    .coupon-table td {
-        padding: 13px 12px;
-        color: rgba(255, 255, 255, 0.8);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        white-space: nowrap;
-    }
+.row-code {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
 
-    .coupon-table tbody tr:hover td {
-        background: rgba(255, 255, 255, 0.04);
-    }
+.row-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
 
-    .coupon-table tbody tr:last-child td {
-        border-bottom: none;
-    }
+.row-cell {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+}
 
-/* Empty state */
-.empty-row td {
-    border-bottom: none !important;
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.chip-available {
+    background: rgba(34,197,94,0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,0.3);
+}
+
+.chip-absent {
+    background: rgba(239,68,68,0.15);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.3);
 }
 
 .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 48px 20px;
+    gap: 8px;
+    padding: 40px;
 }
 
-    .empty-state p {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.3);
-        margin: 0;
-        text-align: center;
-    }
-
-/* Status chips */
-.chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.72rem;
-    font-weight: 700;
+.empty-icon {
+    color: rgba(255,255,255,0.2) !important;
+    font-size: 36px !important;
 }
 
-.chip-available {
-    background: rgba(34, 197, 94, 0.2);
-    color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.3);
+.empty-text {
+    color: rgba(255,255,255,0.35);
+    font-size: 14px;
 }
 
-.chip-used {
-    background: rgba(239, 68, 68, 0.2);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
 }
 
-/* =============================================
-   DIALOG
-   ============================================= */
+.dialog-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    background: #1e2a45;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 400px;
+}
 
-.dialog-title-row {
+.dialog-header {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-bottom: 12px;
 }
 
-.dialog-body {
-    text-align: center;
-    padding: 12px 0 4px;
-}
-
-.dialog-hint {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0 0 16px;
+.dialog-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
     font-family: 'DM Sans', sans-serif;
 }
 
+.dialog-hint {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    margin-bottom: 14px;
+}
+
 .dialog-code {
-    font-family: monospace;
-    font-size: 1.8rem;
-    font-weight: 900;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
     color: white;
-    letter-spacing: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
-    padding: 16px 28px;
-    display: inline-block;
+    letter-spacing: 3px;
+    font-family: monospace;
+    margin-bottom: 20px;
 }
 
-/* =============================================
-   RESPONSIVE
-   ============================================= */
-
-@media (max-width: 1024px) {
-    .coupon-layout {
-        grid-template-columns: 1fr;
-    }
+.dialog-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-
-    .admin-main {
-        margin-left: 0;
-        padding: 20px 16px 48px;
-    }
+.dialog-cancel {
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
 }
+
+.dialog-confirm {
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.confirm-assign {
+    background: #243b77;
+    color: white;
+}
+
+    .confirm-assign:hover {
+        background: #2e5090;
+    }

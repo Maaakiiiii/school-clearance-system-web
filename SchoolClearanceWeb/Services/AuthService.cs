@@ -13,17 +13,17 @@ namespace SchoolClearanceWeb.Services
             _http = http;
         }
 
-        public async Task<ServiceResponse<object>> LoginStudent(StudentLoginRequest request)
+        public async Task<ServiceResponse<TokenResponse>> LoginStudent(StudentLoginRequest request)
         {
             try
             {
                 var response = await _http.PostAsJsonAsync($"{BaseUrl}/api/studentauth/login", request);
-                var result = await response.Content.ReadFromJsonAsync<ServiceResponse<object>>();
-                return result ?? new ServiceResponse<object> { Status = 0, Message = "No response from server." };
+                var result = await response.Content.ReadFromJsonAsync<ServiceResponse<TokenResponse>>();
+                return result ?? new ServiceResponse<TokenResponse> { Status = 0, Message = "No response from server." };
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<object> { Status = 0, Message = $"Connection error: {ex.Message}" };
+                return new ServiceResponse<TokenResponse> { Status = 0, Message = $"Connection error: {ex.Message}" };
             }
         }
 

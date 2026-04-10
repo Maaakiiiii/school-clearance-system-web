@@ -1,54 +1,55 @@
 ﻿@page "/admin/coupons"
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
 @using MudBlazor
 
 <PageTitle>Coupon Management</PageTitle>
 
-<div class="admin-root">
-
-    <!-- DECORATIVE BLOBS -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+<div class="page-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-logo">
-            <img src="images/aclc-logo.png" alt="ACLC" class="logo-img" />
-            <span class="logo-text">Admin</span>
+            <img src="aclc_logo.png" alt="ACLC" class="logo-img" />
+            <div class="brand-text">
+                <span class="brand-name">School Clearance</span>
+                <span class="brand-sub">Admin Panel</span>
+            </div>
         </div>
 
-        <nav class="sidebar-nav">
-            <a class="nav-item" href="/admin/dashboard">
-                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="nav-icon" />
-                <span>Dashboard</span>
-            </a>
-            <a class="nav-item active" href="/admin/coupons">
-                <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Class="nav-icon" />
-                <span>Coupons</span>
-            </a>
-            <a class="nav-item" href="/admin/staff">
-                <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Class="nav-icon" />
-                <span>Staff</span>
-            </a>
-        </nav>
+        <p class="nav-section">Main</p>
+        <div class="nav-item" @onclick='() => Navigation.NavigateTo("/admin/dashboard")'>
+            <MudIcon Icon="@Icons.Material.Filled.GridView" Class="nav-icon" />
+            <span>Dashboard</span>
+        </div>
+
+        <p class="nav-section">Management</p>
+        <div class="nav-item nav-active" @onclick='() => Navigation.NavigateTo("/admin/coupons")'>
+            <MudIcon Icon="@Icons.Material.Filled.CardGiftcard" Class="nav-icon" />
+            <span>Coupons</span>
+        </div>
+        <div class="nav-item" @onclick='() => Navigation.NavigateTo("/admin/staff")'>
+            <MudIcon Icon="@Icons.Material.Filled.People" Class="nav-icon" />
+            <span>Staff</span>
+        </div>
 
         <div class="sidebar-footer">
-            <button class="logout-item">
+            <div class="nav-item logout-item" @onclick="HandleLogout">
                 <MudIcon Icon="@Icons.Material.Filled.Logout" Class="nav-icon" />
                 <span>Logout</span>
-            </button>
+            </div>
         </div>
-    </aside>
+    </div>
 
     <!-- MAIN CONTENT -->
-    <main class="admin-main">
+    <div class="main-content">
 
-        <!-- PAGE HEADER -->
-        <div class="page-header">
-            <div>
-                <p class="page-eyebrow">ADMIN PANEL</p>
-                <h1 class="page-title">Coupon Management</h1>
-            </div>
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <MudText Typo="Typo.h5" Class="page-title">Coupon Management</MudText>
+            <div class="avatar-circle">A</div>
         </div>
 
         <!-- TWO COLUMN LAYOUT -->
@@ -71,41 +72,55 @@
                     <div class="form-fields">
                         <div class="field-group">
                             <label class="field-label">Full Name</label>
-                            <input class="glass-input" type="text" placeholder="e.g. Juan Dela Cruz" />
+                            <input class="glass-input" type="text" placeholder="e.g. Juan Dela Cruz"
+                                   @bind="fullName" />
                         </div>
 
                         <div class="field-group">
                             <label class="field-label">Position</label>
                             <div class="glass-select-wrap">
-                                <select class="glass-select">
+                                <select class="glass-select" @bind="position">
                                     <option value="" disabled selected>Select position</option>
                                     <option value="Teacher">Teacher</option>
                                     <option value="Registrar">Registrar</option>
                                     <option value="Cashier">Cashier</option>
                                     <option value="Grade Release">Grade Release</option>
                                 </select>
-                                <MudIcon Icon="@Icons.Material.Filled.ExpandMore"
-                                         Class="select-chevron" />
                             </div>
                         </div>
 
                         <div class="field-group">
                             <label class="field-label">Department</label>
                             <div class="glass-select-wrap">
-                                <select class="glass-select">
+                                <select class="glass-select" @bind="department">
                                     <option value="" disabled selected>Select department</option>
                                     <option value="College">College</option>
                                     <option value="Senior High School">Senior High School</option>
                                 </select>
-                                <MudIcon Icon="@Icons.Material.Filled.ExpandMore"
-                                         Class="select-chevron" />
                             </div>
                         </div>
 
-                        <button class="generate-btn">
-                            <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
-                                     Style="font-size: 1rem;" />
-                            Generate Coupon
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert-error">@errorMessage</div>
+                        }
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="alert-success">@successMessage</div>
+                        }
+
+                        <button class="generate-btn" @onclick="HandleGenerate" disabled="@isGenerating">
+                            @if (isGenerating)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-1" />
+                                <span>Generating...</span>
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
+                                         Style="font-size: 1rem;" />
+                                <span>Generate Coupon</span>
+                            }
                         </button>
                     </div>
                 </div>
@@ -123,80 +138,158 @@
                             <p class="section-card-title">All Coupons</p>
                             <p class="section-card-sub">Browse usage and status</p>
                         </div>
-                        <button class="refresh-btn">
+                        <button class="refresh-btn" @onclick="LoadCoupons">
                             <MudIcon Icon="@Icons.Material.Filled.Refresh"
                                      Style="font-size: 1.1rem;" />
                         </button>
                     </div>
 
-                    <!-- TABLE -->
                     <div class="table-wrapper">
-                        <table class="coupon-table">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Full Name</th>
-                                    <th>Position</th>
-                                    <th>Department</th>
-                                    <th>Status</th>
-                                    <th>Used By</th>
-                                    <th>Used At</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Empty state -->
-                                <tr class="empty-row">
-                                    <td colspan="7">
-                                        <div class="empty-state">
-                                            <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber"
-                                                     Style="font-size: 2.5rem; color: rgba(255,255,255,0.2);" />
-                                            <p>No coupons yet. Generate one to get started.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="custom-table">
+                            <div class="table-head coupon-head">
+                                <span>Code</span>
+                                <span>Full Name</span>
+                                <span>Position</span>
+                                <span>Department</span>
+                                <span>Status</span>
+                                <span>Used By</span>
+                                <span>Used At</span>
+                            </div>
+                            @if (isLoadingCoupons)
+                            {
+                                <div class="empty-state">
+                                    <MudProgressCircular Indeterminate="true" Size="Size.Medium" />
+                                </div>
+                            }
+                            else if (coupons.Count == 0)
+                            {
+                                <div class="empty-state">
+                                    <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Class="empty-icon" />
+                                    <span class="empty-text">No coupons yet. Generate one to get started.</span>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var c in coupons)
+                                {
+                                    <div class="table-row coupon-row">
+                                        <span class="row-code">@c.Code</span>
+                                        <span class="row-name">@c.FullName</span>
+                                        <span class="row-cell">@c.Position</span>
+                                        <span class="row-cell">@c.Department</span>
+                                        <span class="status-chip @(c.IsUsed ? "chip-absent" : "chip-available")">
+                                            @(c.IsUsed ? "Used" : "Available")
+                                        </span>
+                                        <span class="row-cell">@(c.UsedByUsername ?? "—")</span>
+                                        <span class="row-cell">@(c.UsedAt.HasValue ? c.UsedAt.Value.ToString("MMM dd, yyyy") : "—")</span>
+                                    </div>
+                                }
+                            }
+                        </div>
                     </div>
-
                 </div>
             </div>
-
         </div>
-
-    </main>
+    </div>
 </div>
 
-<!-- GENERATED COUPON DIALOG (UI only) -->
-<MudDialog @bind-IsOpen="_showDialog">
-    <TitleContent>
-        <div class="dialog-title-row">
+<!-- GENERATED COUPON DIALOG -->
+@if (showDialog)
+{
+    <div class="dialog-overlay" @onclick="CloseDialog"></div>
+    <div class="dialog-box" @onclick:stopPropagation="true">
+        <div class="dialog-header">
             <MudIcon Icon="@Icons.Material.Filled.CheckCircle"
                      Style="color: #22c55e; font-size: 1.4rem;" />
-            <MudText Typo="Typo.h6" Style="color: white; font-family: 'DM Sans', sans-serif; font-weight: 700;">
-                Coupon Generated!
-            </MudText>
+            <span class="dialog-title">Coupon Generated!</span>
         </div>
-    </TitleContent>
-    <DialogContent>
-        <div class="dialog-body">
-            <p class="dialog-hint">Share this code with the staff member:</p>
-            <div class="dialog-code">XXXX-XXXX-XXXX</div>
+        <p class="dialog-hint">Share this code with the staff member:</p>
+        <div class="dialog-code">@generatedCode</div>
+        <div class="dialog-actions">
+            <button class="dialog-cancel" @onclick="CopyCode">Copy Code</button>
+            <button class="dialog-confirm confirm-assign" @onclick="CloseDialog">Close</button>
         </div>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Variant="Variant.Outlined"
-                   StartIcon="@Icons.Material.Filled.ContentCopy"
-                   Style="border-color: rgba(255,255,255,0.3); color: white; border-radius: 10px; text-transform: none; font-family: 'DM Sans', sans-serif;">
-            Copy Code
-        </MudButton>
-        <MudButton Variant="Variant.Filled"
-                   Style="background: #243b77; color: white; border-radius: 10px; text-transform: none; font-family: 'DM Sans', sans-serif;"
-                   OnClick="() => _showDialog = false">
-            Close
-        </MudButton>
-    </DialogActions>
-</MudDialog>
+    </div>
+}
 
 @code {
-    private bool _showDialog = false;
+    private string fullName = "";
+    private string position = "";
+    private string department = "";
+    private string token = "";
+    private string errorMessage = "";
+    private string successMessage = "";
+    private string generatedCode = "";
+    private bool isGenerating = false;
+    private bool isLoadingCoupons = false;
+    private bool showDialog = false;
+
+    private List<GetAllCouponsResponse> coupons = new();
+
+    [Inject] AdminService AdminService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+        await LoadCoupons();
+    }
+
+    private async Task LoadCoupons()
+    {
+        isLoadingCoupons = true;
+        var result = await AdminService.GetAllCoupons(token);
+        if (result?.Status == 1 && result.Data != null)
+            coupons = result.Data;
+        else
+            coupons = new();
+        isLoadingCoupons = false;
+    }
+
+    private async Task HandleGenerate()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        if (string.IsNullOrWhiteSpace(fullName) ||
+            string.IsNullOrWhiteSpace(position) ||
+            string.IsNullOrWhiteSpace(department))
+        {
+            errorMessage = "All fields are required.";
+            return;
+        }
+
+        isGenerating = true;
+
+        var result = await AdminService.GenerateCoupon(new GenerateCouponRequest
+            {
+                FullName = fullName,
+                Position = position,
+                Department = department
+            }, token);
+
+        isGenerating = false;
+
+        if (result?.Status == 1 && result.Data != null)
+        {
+            generatedCode = result.Data.Code;
+            showDialog = true;
+            fullName = "";
+            position = "";
+            department = "";
+            await LoadCoupons();
+        }
+        else
+        {
+            errorMessage = result?.Message ?? "Failed to generate coupon.";
+        }
+    }
+
+    private async Task CopyCode()
+    {
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", generatedCode);
+        successMessage = "Code copied!";
+    }
+
+    private void CloseDialog() => showDialog = false;
+    private void HandleLogout() => Navigation.NavigateTo("/");
 }

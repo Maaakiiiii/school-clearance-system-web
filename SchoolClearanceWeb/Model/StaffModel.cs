@@ -13,6 +13,7 @@
         public string? StaffNote { get; set; }
         public string? AcceptanceWindow { get; set; }
         public DateTime? LastUpdatedAt { get; set; }
+        public string Role { get; set; }
     }
 
     public class StaffPostModel
