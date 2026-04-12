@@ -1,6 +1,6 @@
-﻿@page "/"
+﻿@page "/loginpage"
 @inject NavigationManager Navigation
-@inject AuthService AuthService
+@inject StudentService StudentService
 @inject IJSRuntime JS
 
 <div class="auth-bg">
@@ -107,7 +107,7 @@
 
         isLoading = true;
 
-        var result = await AuthService.LoginStudent(new StudentLoginRequest
+        var result = await StudentService.Login(new StudentLoginRequest
             {
                 Username = username,
                 Password = password

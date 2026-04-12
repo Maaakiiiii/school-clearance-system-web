@@ -1,4 +1,154 @@
-﻿/* ─────────────────────────────────────────
+﻿/* ── STEADY SIDEBAR ── */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(15,31,75,0.97);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+    .sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.sidebar-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.sidebar-brand-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.sidebar-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 12px 8px;
+}
+
+.sidebar-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2px;
+    padding: 16px 12px 6px;
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.15s;
+    margin-bottom: 2px;
+}
+
+    .sidebar-nav-item:hover {
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+    .sidebar-nav-item.active {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        font-weight: 600;
+        border-left: 3px solid rgba(255,255,255,0.6);
+    }
+
+.sidebar-nav-icon {
+    font-size: 20px !important;
+    color: inherit !important;
+}
+
+/* ── NAVBAR + CONTENT OFFSET ── */
+.dash-navbar {
+    left: 260px !important;
+}
+
+.dash-content {
+    margin-left: 260px !important;
+    max-width: unset !important;
+}
+
+/* ── NOTIF BTN ── */
+.notif-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+    .notif-btn:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+.notif-icon {
+    color: white !important;
+    font-size: 20px !important;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .dash-navbar {
+        left: 0 !important;
+    }
+
+    .dash-content {
+        margin-left: 0 !important;
+    }
+}
+
+
+/* ─────────────────────────────────────────
    PAGE BACKGROUND
 ───────────────────────────────────────── */
 

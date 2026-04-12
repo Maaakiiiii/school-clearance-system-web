@@ -9,6 +9,46 @@
         <div class="bg-shape bg-s3"></div>
     </div>
 
+    <!-- STEADY SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="sidebar-logo" />
+            <div class="sidebar-brand-wrap">
+                <span class="sidebar-brand">School Clearance</span>
+                <span class="sidebar-sub">Student Portal</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="sidebar-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="sidebar-section-label">OFFICES</div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="sidebar-nav-icon" />
+                <span>Registrar Office</span>
+            </div>
+            <div class="sidebar-nav-item active" @onclick='() => NavigateTo("/cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="sidebar-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/grade-release")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="sidebar-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="sidebar-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="sidebar-section-label">ACCOUNT</div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="sidebar-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- NAVBAR -->
     <div class="dash-navbar">
         <div class="navbar-left">
             <button class="hamburger-btn" @onclick="ToggleDrawer">
@@ -24,6 +64,9 @@
             </div>
         </div>
         <div class="navbar-right">
+            <div class="notif-btn">
+                <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+            </div>
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
@@ -45,11 +88,11 @@
         </div>
     </div>
 
+    <!-- MOBILE DRAWER -->
     @if (drawerOpen)
     {
         <div class="drawer-overlay" @onclick="CloseDrawer"></div>
     }
-
     <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
         <div class="drawer-header">
             <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
@@ -91,6 +134,7 @@
         </nav>
     </div>
 
+    <!-- PAGE CONTENT -->
     <div class="dash-content">
 
         <div class="profile-page-title">
@@ -235,7 +279,6 @@
         isLoading = true;
         try
         {
-            // TODO: Replace with StaffService.GetAllStaff() filtered by Position == "Cashier"
             await Task.CompletedTask;
         }
         catch (Exception)
@@ -332,7 +375,7 @@
     private void HandleLogout()
     {
         showProfileMenu = false;
-        Navigation.NavigateTo("/loginpage");
+        Navigation.NavigateTo("/");
     }
 
     private void GoToStaffProfile(int staffId)

@@ -1,6 +1,7 @@
 ﻿@page "/profile"
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject StudentService StudentService
 
 <div class="dash-page">
     <div class="bg-shapes">
@@ -112,7 +113,7 @@
             <div class="profile-cover"></div>
             <div class="profile-card-body">
                 <div class="profile-avatar-row">
-                    <div class="profile-avatar" @onclick="TriggerFileUpload">
+                    <div class="profile-avatar" @onclick="OpenAvatarOptionsModal">
                         @if (profileImageUrl != null)
                         {
                             <img src="@profileImageUrl" alt="Profile" class="profile-img" />
@@ -138,7 +139,7 @@
                 </div>
 
                 <div class="profile-identity">
-                    <span class="profile-fullname">Juan dela Cruz</span>
+                    <span class="profile-fullname">@fullName</span>
                     <div class="profile-chips-row">
                         <div class="profile-chip">
                             <MudIcon Icon="@Icons.Material.Filled.School" Class="chip-icon" />
@@ -146,15 +147,15 @@
                         </div>
                         <div class="profile-chip">
                             <MudIcon Icon="@Icons.Material.Filled.Badge" Class="chip-icon" />
-                            <span>2024-00123</span>
+                            <span>@studentNo</span>
                         </div>
                         <div class="profile-chip">
                             <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Class="chip-icon" />
-                            <span>Joined Mar 2026</span>
+                            <span>@joinedDate</span>
                         </div>
                         <div class="profile-chip clearance-chip">
                             <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="chip-icon" />
-                            <span>40% Cleared</span>
+                            <span>@clearedPercent% Cleared</span>
                         </div>
                     </div>
                 </div>
@@ -220,7 +221,7 @@
                     <MudButton Variant="Variant.Filled"
                                Class="profile-save-btn"
                                StartIcon="@Icons.Material.Filled.Save"
-                               OnClick="SaveInfo"
+                               OnClick="ShowSaveConfirm"
                                Disabled="@isSavingInfo">
                         @if (isSavingInfo)
                         {
@@ -232,7 +233,6 @@
                             <span>Save Changes</span>
                         }
                     </MudButton>
-                   
                 </div>
             </div>
         </div>
@@ -246,17 +246,17 @@
             <div class="clearance-summary-grid">
                 <div class="clearance-summary-item cleared">
                     <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="summary-icon" />
-                    <span class="summary-count">2</span>
+                    <span class="summary-count">@clearedCount</span>
                     <span class="summary-label">Cleared</span>
                 </div>
                 <div class="clearance-summary-item pending">
                     <MudIcon Icon="@Icons.Material.Filled.HourglassEmpty" Class="summary-icon" />
-                    <span class="summary-count">3</span>
+                    <span class="summary-count">@pendingCount</span>
                     <span class="summary-label">Pending</span>
                 </div>
                 <div class="clearance-summary-item total">
                     <MudIcon Icon="@Icons.Material.Filled.ListAlt" Class="summary-icon" />
-                    <span class="summary-count">5</span>
+                    <span class="summary-count">@totalCount</span>
                     <span class="summary-label">Total</span>
                 </div>
             </div>
@@ -359,17 +359,152 @@
         </div>
     }
 
+    <!-- SAVE INFO CONFIRMATION MODAL -->
+    @if (showSaveConfirmModal)
+    {
+        <div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:1000;" @onclick="CancelSaveInfo"></div>
+        <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;background:#1e2a45;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;width:100%;max-width:420px;box-shadow:0 24px 60px rgba(0,0,0,0.4);" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <MudIcon Icon="@Icons.Material.Filled.Save" Class="modal-title-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="modal-title-text">SAVE CHANGES</MudText>
+                </div>
+                <button class="modal-close-btn" @onclick="CancelSaveInfo">
+                    <MudIcon Icon="@Icons.Material.Filled.Close" Class="modal-close-icon" />
+                </button>
+            </div>
+            <MudText style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:1.5rem;line-height:1.6;">
+                Are you sure you want to save changes to your personal information?
+            </MudText>
+            <div class="profile-form-actions">
+                <MudButton Variant="Variant.Filled"
+                           Class="profile-save-btn"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           OnClick="ConfirmSaveInfo">
+                    Yes, Save
+                </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                           Class="profile-back-btn"
+                           OnClick="CancelSaveInfo">
+                    Cancel
+                </MudButton>
+            </div>
+        </div>
+    }
+
+    <!-- STEP 1: AVATAR OPTIONS MODAL (Change Photo / Remove) -->
+    @if (showAvatarOptionsModal)
+    {
+        <div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:1000;" @onclick="CloseAvatarOptionsModal"></div>
+        <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;background:#1e2a45;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.4);" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="modal-title-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="modal-title-text">PROFILE PHOTO</MudText>
+                </div>
+                <button class="modal-close-btn" @onclick="CloseAvatarOptionsModal">
+                    <MudIcon Icon="@Icons.Material.Filled.Close" Class="modal-close-icon" />
+                </button>
+            </div>
+
+            <!-- Current avatar preview -->
+            <div style="display:flex;justify-content:center;margin-bottom:1.5rem;">
+                <div style="width:90px;height:90px;border-radius:50%;background:rgba(36,59,119,0.9);border:3px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    @if (profileImageUrl != null)
+                    {
+                        <img src="@profileImageUrl" style="width:100%;height:100%;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Person" style="font-size:44px;color:white;" />
+                    }
+                </div>
+            </div>
+
+            <div class="profile-form-actions" style="flex-direction:column;gap:10px;">
+                <MudButton Variant="Variant.Filled"
+                           Class="profile-save-btn"
+                           StartIcon="@Icons.Material.Filled.CameraAlt"
+                           OnClick="OpenFilePicker"
+                           Style="width:100%;">
+                    Change Profile Photo
+                </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           OnClick="RemoveProfilePicture"
+                           Style="width:100%;color:rgba(255,80,80,0.85);border-color:rgba(255,80,80,0.4);text-transform:none;font-size:14px;font-weight:600;border-radius:10px;height:44px;">
+                    Remove Profile Picture
+                </MudButton>
+            </div>
+        </div>
+    }
+
+    <!-- STEP 2: PHOTO CONFIRM MODAL (after choosing a photo) -->
+    @if (showPhotoConfirmModal)
+    {
+        <div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:1000;" @onclick="CancelPhotoChange"></div>
+        <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;background:#1e2a45;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:2rem;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.4);" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <MudIcon Icon="@Icons.Material.Filled.CameraAlt" Class="modal-title-icon" />
+                    <MudText Typo="Typo.subtitle1" Class="modal-title-text">USE THIS PHOTO?</MudText>
+                </div>
+                <button class="modal-close-btn" @onclick="CancelPhotoChange">
+                    <MudIcon Icon="@Icons.Material.Filled.Close" Class="modal-close-icon" />
+                </button>
+            </div>
+
+            <!-- Preview of the newly chosen photo -->
+            <div style="display:flex;justify-content:center;margin-bottom:1.2rem;">
+                <img src="@pendingImageUrl" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.2);" />
+            </div>
+
+            <MudText style="color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:1.5rem;line-height:1.6;text-align:center;">
+                Do you want to use this as your profile photo?
+            </MudText>
+
+            <div class="profile-form-actions" style="flex-direction:column;gap:10px;">
+                <MudButton Variant="Variant.Filled"
+                           Class="profile-save-btn"
+                           StartIcon="@Icons.Material.Filled.Check"
+                           OnClick="ConfirmPhotoChange"
+                           Style="width:100%;">
+                    Yes, Use This Photo
+                </MudButton>
+                <MudButton Variant="Variant.Outlined"
+                           Class="profile-back-btn"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           OnClick="CancelPhotoChange"
+                           Style="width:100%;">
+                    Back
+                </MudButton>
+            </div>
+        </div>
+    }
+
 </div>
 
 @code {
     private string? profileImageUrl = null;
+    private string? pendingImageUrl = null;
     private bool drawerOpen = false;
     private bool showPasswordSection = false;
     private bool showProfileMenu = false;
+    private bool showSaveConfirmModal = false;
+    private bool showAvatarOptionsModal = false;
+    private bool showPhotoConfirmModal = false;
 
-    private string department = "College";
-    private string course = "BS Information Technology";
-    private string yearLevel = "2nd Year";
+    private string fullName = "";
+    private string studentNo = "";
+    private string joinedDate = "";
+    private int clearedPercent = 0;
+    private int clearedCount = 0;
+    private int pendingCount = 0;
+    private int totalCount = 0;
+
+    private string department = "";
+    private string course = "";
+    private string yearLevel = "";
     private bool isSavingInfo = false;
     private bool infoSaved = false;
 
@@ -383,14 +518,71 @@
     private bool passwordSaved = false;
     private string passwordError = "";
 
-    private List<string> courseOptions = new() { "BS Information Technology", "BS Computer Science", "BS Business Administration", "BS Accountancy", "BS Hospitality Management", "BS Tourism Management" };
-    private List<string> yearOptions = new() { "1st Year", "2nd Year", "3rd Year", "4th Year" };
+    private List<string> courseOptions = new();
+    private List<string> yearOptions = new();
 
-    private async Task TriggerFileUpload()
+    protected override async Task OnInitializedAsync()
     {
+        var token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+        var studentIdStr = await JS.InvokeAsync<string>("localStorage.getItem", "studentId");
+        int.TryParse(studentIdStr, out int studentId);
+
+        var result = await StudentService.GetProfile(studentId, token);
+        if (result?.Status == 1 && result.Data != null)
+        {
+            fullName = result.Data.FullName ?? "";
+            studentNo = result.Data.StudentNo ?? "";
+            department = result.Data.Department ?? "";
+            course = result.Data.CourseStrand ?? "";
+            yearLevel = result.Data.YearLevel ?? "";
+            joinedDate = "Joined " + result.Data.CreatedAt.ToString("MMM yyyy");
+
+            if (department == "College")
+            {
+                courseOptions = new() { "BS Information Technology", "BS Computer Science", "BS Business Administration", "BS Accountancy", "BS Hospitality Management", "BS Tourism Management" };
+                yearOptions = new() { "1st Year", "2nd Year", "3rd Year", "4th Year" };
+            }
+            else if (department == "Senior High School")
+            {
+                courseOptions = new() { "ABM", "HUMSS", "STEM", "TVL", "GAS" };
+                yearOptions = new() { "Grade 11", "Grade 12" };
+            }
+        }
+    }
+
+    // Runs after JS is ready — safely loads saved photo from localStorage
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var savedPhoto = await JS.InvokeAsync<string>("localStorage.getItem", "profileImageUrl");
+            if (!string.IsNullOrEmpty(savedPhoto))
+            {
+                profileImageUrl = savedPhoto;
+                StateHasChanged();
+            }
+        }
+    }
+
+    // STEP 1: Click avatar → show options modal (Change / Remove)
+    private void OpenAvatarOptionsModal()
+    {
+        showAvatarOptionsModal = true;
+    }
+
+    private void CloseAvatarOptionsModal()
+    {
+        showAvatarOptionsModal = false;
+    }
+
+    // STEP 2: User picks "Change Profile Photo" → close options modal, open file picker
+    private async Task OpenFilePicker()
+    {
+        showAvatarOptionsModal = false;
         await JS.InvokeVoidAsync("eval", "document.getElementById('profileFileInput').click()");
     }
 
+    // STEP 3: After file chosen → store as pending and show confirm modal with preview
     private async Task OnFileSelected(InputFileChangeEventArgs e)
     {
         var file = e.File;
@@ -398,7 +590,33 @@
         var buffer = new byte[file.Size];
         await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).ReadAsync(buffer);
         var base64 = Convert.ToBase64String(buffer);
-        profileImageUrl = $"data:{file.ContentType};base64,{base64}";
+        pendingImageUrl = $"data:{file.ContentType};base64,{base64}";
+        showPhotoConfirmModal = true;
+    }
+
+    // STEP 4a: User confirmed → apply and persist to localStorage
+    private async Task ConfirmPhotoChange()
+    {
+        profileImageUrl = pendingImageUrl;
+        pendingImageUrl = null;
+        showPhotoConfirmModal = false;
+        await JS.InvokeVoidAsync("localStorage.setItem", "profileImageUrl", profileImageUrl);
+    }
+
+    // STEP 4b: User clicked Back → discard chosen photo
+    private void CancelPhotoChange()
+    {
+        pendingImageUrl = null;
+        showPhotoConfirmModal = false;
+    }
+
+    // Remove profile picture from options modal
+    private async Task RemoveProfilePicture()
+    {
+        profileImageUrl = null;
+        pendingImageUrl = null;
+        showAvatarOptionsModal = false;
+        await JS.InvokeVoidAsync("localStorage.removeItem", "profileImageUrl");
     }
 
     private void OnDepartmentChanged(string val)
@@ -416,6 +634,26 @@
             courseOptions = new() { "ABM", "HUMSS", "STEM", "TVL", "GAS" };
             yearOptions = new() { "Grade 11", "Grade 12" };
         }
+    }
+
+    private void ShowSaveConfirm()
+    {
+        showSaveConfirmModal = true;
+    }
+
+    private async Task ConfirmSaveInfo()
+    {
+        showSaveConfirmModal = false;
+        isSavingInfo = true;
+        infoSaved = false;
+        await Task.Delay(600);
+        isSavingInfo = false;
+        infoSaved = true;
+    }
+
+    private void CancelSaveInfo()
+    {
+        showSaveConfirmModal = false;
     }
 
     private bool PasswordMismatch => !string.IsNullOrEmpty(confirmPassword) && newPassword != confirmPassword;
@@ -461,16 +699,7 @@
 
     private void NavigateTo(string url) { drawerOpen = false; Navigation.NavigateTo(url); }
     private void GoToProfile() { showProfileMenu = false; Navigation.NavigateTo("/profile"); }
-    private void HandleLogout() { showProfileMenu = false; Navigation.NavigateTo("/"); }
-
-    private async Task SaveInfo()
-    {
-        isSavingInfo = true;
-        infoSaved = false;
-        await Task.Delay(600);
-        isSavingInfo = false;
-        infoSaved = true;
-    }
+    private void HandleLogout() { showProfileMenu = false; Navigation.NavigateTo("/loginpage"); }
 
     private async Task SavePassword()
     {

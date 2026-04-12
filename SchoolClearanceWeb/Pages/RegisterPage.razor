@@ -1,6 +1,6 @@
 ﻿@page "/register"
 @inject NavigationManager Navigation
-@inject AuthService AuthService
+@inject StudentService StudentService
 
 <div class="auth-bg">
     <div class="floating-shapes">
@@ -239,7 +239,7 @@
 
         isLoading = true;
 
-        var result = await AuthService.RegisterStudent(new StudentRegisterRequest
+        var result = await StudentService.Register(new StudentRegisterRequest
             {
                 StudentNo = studentNo,
                 Username = username,

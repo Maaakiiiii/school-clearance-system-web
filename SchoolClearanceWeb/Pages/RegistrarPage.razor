@@ -9,6 +9,46 @@
         <div class="bg-shape bg-s3"></div>
     </div>
 
+    <!-- STEADY SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="sidebar-logo" />
+            <div class="sidebar-brand-wrap">
+                <span class="sidebar-brand">School Clearance</span>
+                <span class="sidebar-sub">Student Portal</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="sidebar-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="sidebar-section-label">OFFICES</div>
+            <div class="sidebar-nav-item active" @onclick='() => NavigateTo("/registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="sidebar-nav-icon" />
+                <span>Registrar Office</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="sidebar-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/grade-release")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="sidebar-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="sidebar-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="sidebar-section-label">ACCOUNT</div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="sidebar-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- NAVBAR -->
     <div class="dash-navbar">
         <div class="navbar-left">
             <button class="hamburger-btn" @onclick="ToggleDrawer">
@@ -24,6 +64,43 @@
             </div>
         </div>
         <div class="navbar-right">
+
+            <!-- NOTIF ICON -->
+            <div class="notif-btn" @onclick="ToggleNotifMenu">
+                <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+                @if (unreadNotifCount > 0)
+                {
+                    <span class="notif-badge">@unreadNotifCount</span>
+                }
+            </div>
+            @if (showNotifMenu)
+            {
+                <div class="notif-dropdown">
+                    <div class="notif-header">
+                        <span class="notif-title">Notifications</span>
+                        <span class="notif-clear" @onclick="ClearNotifs">Mark all read</span>
+                    </div>
+                    @if (notifications.Any())
+                    {
+                        @foreach (var notif in notifications)
+                        {
+                            <div class="notif-item @(notif.IsUnread ? "unread" : "")">
+                                <MudIcon Icon="@Icons.Material.Filled.Info" Class="notif-item-icon" />
+                                <div class="notif-item-body">
+                                    <span class="notif-item-text">@notif.Message</span>
+                                    <span class="notif-item-time">@notif.Time</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="notif-empty">No new notifications</div>
+                    }
+                </div>
+            }
+
+            <!-- AVATAR -->
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
@@ -45,11 +122,13 @@
         </div>
     </div>
 
+    <!-- MOBILE DRAWER OVERLAY -->
     @if (drawerOpen)
     {
         <div class="drawer-overlay" @onclick="CloseDrawer"></div>
     }
 
+    <!-- MOBILE DRAWER -->
     <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
         <div class="drawer-header">
             <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
@@ -91,6 +170,7 @@
         </nav>
     </div>
 
+    <!-- PAGE CONTENT -->
     <div class="dash-content">
 
         <div class="profile-page-title">
@@ -220,10 +300,20 @@
 @code {
     private bool drawerOpen = false;
     private bool showProfileMenu = false;
+    private bool showNotifMenu = false;
     private bool isLoading = true;
 
     private List<StaffListModel> registrarStaff = new();
     private StaffListModel? officeStaff = null;
+
+    private List<NotificationModel> notifications = new()
+    {
+        new NotificationModel { Message = "Registrar cleared your clearance.", Time = "2 mins ago", IsUnread = true },
+        new NotificationModel { Message = "New announcement posted.", Time = "1 hour ago", IsUnread = true },
+        new NotificationModel { Message = "Your profile was updated.", Time = "Yesterday", IsUnread = false },
+    };
+
+    private int unreadNotifCount => notifications.Count(n => n.IsUnread);
 
     protected override async Task OnInitializedAsync()
     {
@@ -233,21 +323,20 @@
     private async Task LoadData()
     {
         isLoading = true;
-        try
-        {
-            // TODO: Replace with actual API calls
-            // var allStaff = await StaffService.GetStaffByPositionAsync("Registrar");
-            // registrarStaff = allStaff;
-            // officeStaff = registrarStaff.FirstOrDefault(s => s.OfficeStatus != null);
-        }
-        catch (Exception)
-        {
-            Snackbar.Add("Failed to load office data. Please try again.", Severity.Error);
-        }
-        finally
-        {
-            isLoading = false;
-        }
+        try { }
+        catch (Exception) { Snackbar.Add("Failed to load office data. Please try again.", Severity.Error); }
+        finally { isLoading = false; }
+    }
+
+    private void ToggleNotifMenu()
+    {
+        showNotifMenu = !showNotifMenu;
+        if (showNotifMenu) showProfileMenu = false;
+    }
+
+    private void ClearNotifs()
+    {
+        foreach (var n in notifications) n.IsUnread = false;
     }
 
     private string GetOfficeStatusClass(string status) => status switch
@@ -317,7 +406,11 @@
 
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;
-    private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
+    private void ToggleProfileMenu()
+    {
+        showProfileMenu = !showProfileMenu;
+        if (showProfileMenu) showNotifMenu = false;
+    }
 
     private void NavigateTo(string url)
     {
@@ -340,5 +433,12 @@
     private void GoToStaffProfile(int staffId)
     {
         Navigation.NavigateTo($"/staff-profile/{staffId}");
+    }
+
+    private class NotificationModel
+    {
+        public string Message { get; set; } = "";
+        public string Time { get; set; } = "";
+        public bool IsUnread { get; set; }
     }
 }
