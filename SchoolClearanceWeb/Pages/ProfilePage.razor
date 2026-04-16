@@ -10,12 +10,52 @@
         <div class="bg-shape bg-s3"></div>
     </div>
 
-    <!-- TOP NAVBAR -->
+    <!-- STEADY SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="aclc_logo.png" alt="ACLC Logo" class="sidebar-logo" />
+            <div class="sidebar-brand-wrap">
+                <span class="sidebar-brand">School Clearance</span>
+                <span class="sidebar-sub">Student Portal</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Class="sidebar-nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <div class="sidebar-section-label">OFFICES</div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/registrar")'>
+                <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="sidebar-nav-icon" />
+                <span>Registrar Office</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/cashier")'>
+                <MudIcon Icon="@Icons.Material.Filled.Payments" Class="sidebar-nav-icon" />
+                <span>Cashier Office</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/grade-release")'>
+                <MudIcon Icon="@Icons.Material.Filled.Grade" Class="sidebar-nav-icon" />
+                <span>Grade Release</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/announcements")'>
+                <MudIcon Icon="@Icons.Material.Filled.Campaign" Class="sidebar-nav-icon" />
+                <span>Announcements</span>
+            </div>
+            <div class="sidebar-section-label">ACCOUNT</div>
+            <div class="sidebar-nav-item active" @onclick='() => NavigateTo("/profile")'>
+                <MudIcon Icon="@Icons.Material.Filled.Person" Class="sidebar-nav-icon" />
+                <span>Profile</span>
+            </div>
+            <div class="sidebar-nav-item" @onclick='() => NavigateTo("/settings")'>
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Class="sidebar-nav-icon" />
+                <span>Settings</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- NAVBAR -->
     <div class="dash-navbar">
         <div class="navbar-left">
-            <button class="hamburger-btn" @onclick="ToggleDrawer">
-                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
-            </button>
             <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
             <span class="nav-brand">School Clearance</span>
         </div>
@@ -26,6 +66,9 @@
             </div>
         </div>
         <div class="navbar-right">
+            <div class="notif-btn">
+                <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+            </div>
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
@@ -47,13 +90,13 @@
         </div>
     </div>
 
-    <!-- DRAWER OVERLAY -->
+    <!-- MOBILE DRAWER OVERLAY -->
     @if (drawerOpen)
     {
         <div class="drawer-overlay" @onclick="CloseDrawer"></div>
     }
 
-    <!-- SIDE DRAWER -->
+    <!-- MOBILE DRAWER -->
     <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
         <div class="drawer-header">
             <img src="aclc_logo.png" alt="ACLC Logo" class="drawer-logo" />
@@ -88,7 +131,7 @@
                 <span>Announcements</span>
             </div>
             <div class="drawer-section-label">ACCOUNT</div>
-            <div class="drawer-nav-item active" @onclick='() => NavigateTo("/profile")'>
+            <div class="drawer-nav-item drawer-nav-active" @onclick='() => NavigateTo("/profile")'>
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="drawer-nav-icon" />
                 <span>Profile</span>
             </div>
@@ -102,14 +145,13 @@
     <!-- PAGE CONTENT -->
     <div class="dash-content">
 
-        <!-- PAGE TITLE -->
         <div class="profile-page-title">
-            <MudText Typo="Typo.h5" Class="page-title-text">Profile</MudText>
-            <MudText Typo="Typo.body2" Class="page-title-sub">Manage your personal information and account details.</MudText>
+            <MudText Typo="Typo.h4" Class="page-title-text">Profile</MudText>
+            <MudText Typo="Typo.body1" Class="page-title-sub">Manage your personal information and account details.</MudText>
         </div>
 
         <!-- PROFILE CARD -->
-        <div class="profile-main-card">
+        <div class="glass-card">
             <div class="profile-cover"></div>
             <div class="profile-card-body">
                 <div class="profile-avatar-row">
@@ -407,7 +449,6 @@
                 </button>
             </div>
 
-            <!-- Current avatar preview -->
             <div style="display:flex;justify-content:center;margin-bottom:1.5rem;">
                 <div style="width:90px;height:90px;border-radius:50%;background:rgba(36,59,119,0.9);border:3px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;">
                     @if (profileImageUrl != null)
@@ -454,7 +495,6 @@
                 </button>
             </div>
 
-            <!-- Preview of the newly chosen photo -->
             <div style="display:flex;justify-content:center;margin-bottom:1.2rem;">
                 <img src="@pendingImageUrl" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.2);" />
             </div>
@@ -550,7 +590,6 @@
         }
     }
 
-    // Runs after JS is ready — safely loads saved photo from localStorage
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -564,25 +603,15 @@
         }
     }
 
-    // STEP 1: Click avatar → show options modal (Change / Remove)
-    private void OpenAvatarOptionsModal()
-    {
-        showAvatarOptionsModal = true;
-    }
+    private void OpenAvatarOptionsModal() => showAvatarOptionsModal = true;
+    private void CloseAvatarOptionsModal() => showAvatarOptionsModal = false;
 
-    private void CloseAvatarOptionsModal()
-    {
-        showAvatarOptionsModal = false;
-    }
-
-    // STEP 2: User picks "Change Profile Photo" → close options modal, open file picker
     private async Task OpenFilePicker()
     {
         showAvatarOptionsModal = false;
         await JS.InvokeVoidAsync("eval", "document.getElementById('profileFileInput').click()");
     }
 
-    // STEP 3: After file chosen → store as pending and show confirm modal with preview
     private async Task OnFileSelected(InputFileChangeEventArgs e)
     {
         var file = e.File;
@@ -594,7 +623,6 @@
         showPhotoConfirmModal = true;
     }
 
-    // STEP 4a: User confirmed → apply and persist to localStorage
     private async Task ConfirmPhotoChange()
     {
         profileImageUrl = pendingImageUrl;
@@ -603,14 +631,12 @@
         await JS.InvokeVoidAsync("localStorage.setItem", "profileImageUrl", profileImageUrl);
     }
 
-    // STEP 4b: User clicked Back → discard chosen photo
     private void CancelPhotoChange()
     {
         pendingImageUrl = null;
         showPhotoConfirmModal = false;
     }
 
-    // Remove profile picture from options modal
     private async Task RemoveProfilePicture()
     {
         profileImageUrl = null;
@@ -636,10 +662,8 @@
         }
     }
 
-    private void ShowSaveConfirm()
-    {
-        showSaveConfirmModal = true;
-    }
+    private void ShowSaveConfirm() => showSaveConfirmModal = true;
+    private void CancelSaveInfo() => showSaveConfirmModal = false;
 
     private async Task ConfirmSaveInfo()
     {
@@ -649,11 +673,6 @@
         await Task.Delay(600);
         isSavingInfo = false;
         infoSaved = true;
-    }
-
-    private void CancelSaveInfo()
-    {
-        showSaveConfirmModal = false;
     }
 
     private bool PasswordMismatch => !string.IsNullOrEmpty(confirmPassword) && newPassword != confirmPassword;

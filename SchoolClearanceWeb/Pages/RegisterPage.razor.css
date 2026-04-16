@@ -245,3 +245,38 @@
     fill: #000000 !important;
     color: #000000 !important;
 }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — MOBILE
+───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .auth-card {
+        flex-direction: column;
+        max-width: 100%;
+        max-height: unset;
+        min-height: unset;
+    }
+
+    .auth-left {
+        width: 100%;
+        box-sizing: border-box;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 32px 24px;
+    }
+
+    .auth-right {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 32px 24px;
+        overflow-y: visible;
+    }
+}
+
+@media (max-width: 400px) {
+    .auth-left,
+    .auth-right {
+        padding: 24px 16px;
+    }
+}

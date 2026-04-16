@@ -50,13 +50,7 @@
 
     <!-- NAVBAR -->
     <div class="dash-navbar">
-        <div class="navbar-left">
-            <button class="hamburger-btn" @onclick="ToggleDrawer">
-                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
-            </button>
-            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
-            <span class="nav-brand">School Clearance</span>
-        </div>
+
         <div class="navbar-center">
             <div class="search-wrapper">
                 <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
@@ -64,9 +58,45 @@
             </div>
         </div>
         <div class="navbar-right">
-            <div class="notif-btn">
-                <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+
+            <!-- NOTIF WRAP -->
+            <div class="notif-wrap">
+                <div class="notif-btn" @onclick="ToggleNotifMenu">
+                    <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+                    @if (unreadNotifCount > 0)
+                    {
+                        <span class="notif-badge">@unreadNotifCount</span>
+                    }
+                </div>
+                @if (showNotifMenu)
+                {
+                    <div class="notif-dropdown">
+                        <div class="notif-header">
+                            <span class="notif-title">Notifications</span>
+                            <span class="notif-clear" @onclick="ClearNotifs">Mark all read</span>
+                        </div>
+                        @if (notifications.Any())
+                        {
+                            @foreach (var notif in notifications)
+                            {
+                                <div class="notif-item @(notif.IsUnread ? "unread" : "")">
+                                    <MudIcon Icon="@Icons.Material.Filled.Info" Class="notif-item-icon" />
+                                    <div class="notif-item-body">
+                                        <span class="notif-item-text">@notif.Message</span>
+                                        <span class="notif-item-time">@notif.Time</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="notif-empty">No new notifications</div>
+                        }
+                    </div>
+                }
             </div>
+
+            <!-- PROFILE AVATAR -->
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
@@ -264,10 +294,20 @@
 @code {
     private bool drawerOpen = false;
     private bool showProfileMenu = false;
+    private bool showNotifMenu = false;
     private bool isLoading = true;
 
     private List<StaffListModel> cashierStaff = new();
     private StaffListModel? officeStaff = null;
+
+    private List<NotificationModel> notifications = new()
+    {
+        new NotificationModel { Message = "Registrar cleared your clearance.", Time = "2 mins ago", IsUnread = true },
+        new NotificationModel { Message = "New announcement posted.", Time = "1 hour ago", IsUnread = true },
+        new NotificationModel { Message = "Your profile was updated.", Time = "Yesterday", IsUnread = false },
+    };
+
+    private int unreadNotifCount => notifications.Count(n => n.IsUnread);
 
     protected override async Task OnInitializedAsync()
     {
@@ -289,6 +329,23 @@
         {
             isLoading = false;
         }
+    }
+
+    private void ToggleNotifMenu()
+    {
+        showNotifMenu = !showNotifMenu;
+        if (showNotifMenu) showProfileMenu = false;
+    }
+
+    private void ClearNotifs()
+    {
+        foreach (var n in notifications) n.IsUnread = false;
+    }
+
+    private void ToggleProfileMenu()
+    {
+        showProfileMenu = !showProfileMenu;
+        if (showProfileMenu) showNotifMenu = false;
     }
 
     private string GetOfficeStatusClass(string status) => status switch
@@ -358,7 +415,6 @@
 
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;
-    private void ToggleProfileMenu() => showProfileMenu = !showProfileMenu;
 
     private void NavigateTo(string url)
     {
@@ -381,5 +437,12 @@
     private void GoToStaffProfile(int staffId)
     {
         Navigation.NavigateTo($"/staff-profile/{staffId}");
+    }
+
+    private class NotificationModel
+    {
+        public string Message { get; set; } = "";
+        public string Time { get; set; } = "";
+        public bool IsUnread { get; set; }
     }
 }

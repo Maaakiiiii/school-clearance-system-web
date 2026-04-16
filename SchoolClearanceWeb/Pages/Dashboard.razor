@@ -58,14 +58,11 @@
 
     <!-- ═══ TOP NAVBAR ═══ -->
     <div class="dash-navbar">
-        <div class="navbar-left">
-            <!-- Hamburger only shown on mobile -->
-            <button class="hamburger-btn" @onclick="ToggleDrawer">
-                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
-            </button>
-            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
-            <span class="nav-brand">School Clearance</span>
-        </div>
+
+        <button class="hamburger-btn" @onclick="ToggleDrawer">
+            <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+        </button>
+
 
         <div class="navbar-center">
             <div class="search-wrapper">
@@ -102,11 +99,19 @@
         <div class="navbar-right">
 
             <!-- NOTIFICATION ICON -->
-            <div class="notif-btn" @onclick="ToggleNotifMenu">
-                <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
-                @if (unreadNotifCount > 0)
+            <div class="notif-wrap">
+                <div class="notif-btn" @onclick="ToggleNotifMenu">
+                    <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+                    @if (unreadNotifCount > 0)
+                    {
+                        <span class="notif-badge">@unreadNotifCount</span>
+                    }
+                </div>
+
+                @if (showNotifMenu)
                 {
-                    <span class="notif-badge">@unreadNotifCount</span>
+                    <div class="notif-dropdown">
+                    </div>
                 }
             </div>
 
@@ -307,12 +312,14 @@
             </div>
             <div class="progress-circle-wrap">
                 <div class="progress-circle">
-                    <svg class="circle-svg" viewBox="0 0 120 120">
-                        <circle class="circle-bg" cx="60" cy="60" r="50" />
-                        <circle class="circle-fill" cx="60" cy="60" r="50"
-                                stroke-dasharray="@($"{ClearancePercent * 3.1416:F1} 314.16")"
-                                stroke-dashoffset="0" />
-                    </svg>
+                        <svg class="circle-svg" viewBox="0 0 120 120">
+                            <circle class="circle-bg" cx="60" cy="60" r="50" fill="none" />
+                            <circle class="circle-fill" cx="60" cy="60" r="50"
+                                    fill="none"
+                                    stroke-dasharray="@($"{ClearancePercent * 3.1416:F1} 314.16")"
+                                    stroke-dashoffset="0"
+                                    transform="rotate(-90 60 60)" />
+                        </svg>
                     <div class="circle-label">
                         <span class="circle-pct">@ClearancePercent%</span>
                         <span class="circle-sub">Cleared</span>

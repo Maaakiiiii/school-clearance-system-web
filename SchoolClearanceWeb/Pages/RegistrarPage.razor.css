@@ -1,4 +1,154 @@
-﻿/* ─────────────────────────────────────────
+﻿/* ── STEADY SIDEBAR ── */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(15,31,75,0.97);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+    .sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.sidebar-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.sidebar-brand-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.sidebar-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 12px 8px;
+}
+
+.sidebar-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2px;
+    padding: 16px 12px 6px;
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.15s;
+    margin-bottom: 2px;
+}
+
+    .sidebar-nav-item:hover {
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+    .sidebar-nav-item.active {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        font-weight: 600;
+        border-left: 3px solid rgba(255,255,255,0.6);
+    }
+
+.sidebar-nav-icon {
+    font-size: 20px !important;
+    color: inherit !important;
+}
+
+/* ── NAVBAR + CONTENT OFFSET ── */
+.dash-navbar {
+    left: 260px !important;
+}
+
+.dash-content {
+    margin-left: 260px !important;
+    max-width: unset !important;
+}
+
+/* ── NOTIF BTN ── */
+.notif-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+    .notif-btn:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+.notif-icon {
+    color: white !important;
+    font-size: 20px !important;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .dash-navbar {
+        left: 0 !important;
+    }
+
+    .dash-content {
+        margin-left: 0 !important;
+    }
+}
+
+
+/* ─────────────────────────────────────────
    PAGE BACKGROUND
 ───────────────────────────────────────── */
 
@@ -7,8 +157,6 @@
     background: linear-gradient(135deg, #0f1f4b 0%, #243b77 50%, #1a5276 100%);
     position: relative;
     overflow-x: hidden;
-    display: flex;
-    overflow-y: auto;
 }
 
 .bg-shapes {
@@ -59,15 +207,19 @@
     }
 }
 
-/* ── NAVBAR ── */
+/* ─────────────────────────────────────────
+   NAVBAR
+───────────────────────────────────────── */
+
 .dash-navbar {
     position: fixed;
     top: 0;
-    left: 260px;
+    left: 0;
     right: 0;
     height: 64px;
-    background: rgba(15,31,75,0.85);
+    background: rgba(15, 31, 75, 0.85);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
@@ -84,12 +236,12 @@
 }
 
 .hamburger-btn {
-    display: none;
     background: rgba(255,255,255,0.08);
     border: none;
     border-radius: 8px;
     width: 36px;
     height: 36px;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -100,7 +252,7 @@
         background: rgba(255,255,255,0.15);
     }
 
-.hamburger-icon {
+::deep .hamburger-icon {
     color: white !important;
 }
 
@@ -126,7 +278,7 @@
     width: 100%;
 }
 
-.search-icon {
+::deep .search-icon {
     position: absolute;
     left: 12px;
     top: 50%;
@@ -160,11 +312,31 @@
 
 .navbar-right {
     position: relative;
+    min-width: 200px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
     display: flex;
     align-items: center;
-    gap: 10px;
-    justify-content: flex-end;
-    flex-shrink: 0;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .nav-avatar:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+::deep .avatar-icon {
+    color: white !important;
+    font-size: 20px !important;
 }
 
 /* ─────────────────────────────────────────
@@ -372,16 +544,15 @@
 ───────────────────────────────────────── */
 
 .dash-content {
-    margin-left: 260px;
     padding: 88px 24px 24px;
-    flex: 1 1 auto;
-    min-width: 0;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
     position: relative;
     z-index: 1;
-    box-sizing: border-box;
 }
 
 /* ─────────────────────────────────────────
@@ -826,112 +997,24 @@
     color: rgba(255,255,255,0.35);
 }
 
-/* ── STEADY SIDEBAR ── */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100vh;
-    background: rgba(15,31,75,0.97);
-    backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(255,255,255,0.1);
-    z-index: 150;
+/* Navbar right — add gap between notif and avatar */
+.navbar-right {
+    position: relative;
+    min-width: 200px;
     display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    scrollbar-width: none;
-}
-
-    .sidebar::-webkit-scrollbar {
-        display: none;
-    }
-
-.sidebar-header {
-    display: flex;
+    justify-content: flex-end;
     align-items: center;
-    gap: 12px;
-    padding: 20px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    flex-shrink: 0;
+    gap: 10px; /* ← adds space between notif btn and avatar */
 }
 
-.sidebar-logo {
-    width: 36px;
-    height: 36px;
-    object-fit: contain;
-    flex-shrink: 0;
-}
-
-.sidebar-brand-wrap {
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-brand {
-    color: white;
-    font-weight: 700;
-    font-size: 15px;
-}
-
-.sidebar-sub {
-    color: rgba(255,255,255,0.5);
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-.sidebar-nav {
-    flex: 1;
-    padding: 12px 8px;
-}
-
-.sidebar-section-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 2px;
-    padding: 16px 12px 6px;
-}
-
-.sidebar-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.7);
-    transition: all 0.15s;
-    margin-bottom: 2px;
-}
-
-    .sidebar-nav-item:hover {
-        background: rgba(255,255,255,0.1);
-        color: white;
-    }
-
-    .sidebar-nav-item.active {
-        background: rgba(255,255,255,0.15);
-        color: white;
-        font-weight: 600;
-        border-left: 3px solid rgba(255,255,255,0.6);
-    }
-
-.sidebar-nav-icon {
-    font-size: 20px !important;
-    color: inherit !important;
-}
-/* ── NOTIF ── */
+/* Make notif button match avatar style */
 .notif-btn {
     position: relative;
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.15); /* same as nav-avatar */
+    border: 2px solid rgba(255,255,255,0.25); /* same as nav-avatar */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -941,7 +1024,7 @@
 }
 
     .notif-btn:hover {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.25);
     }
 
 .notif-icon {
@@ -966,91 +1049,113 @@
     border: 2px solid #0f1f4b;
 }
 
+/* Make sidebar logo bigger */
+.sidebar-logo {
+    width: 52px; /* was 36px */
+    height: 52px; /* was 36px */
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Optionally adjust header padding to accommodate larger logo */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+/* Notification dropdown */
 .notif-dropdown {
     position: absolute;
     top: calc(100% + 12px);
-    right: 48px;
-    width: 300px;
-    background: #fff;
+    right: 0;
+    width: 320px;
+    background: rgba(15, 31, 75, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    z-index: 400;
     overflow: hidden;
-    z-index: 300;
 }
 
 .notif-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px 10px;
-    border-bottom: 1px solid #f3f4f6;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .notif-title {
+    color: white;
     font-size: 14px;
     font-weight: 700;
-    color: #111827;
 }
 
 .notif-clear {
+    color: #60a5fa;
     font-size: 12px;
-    color: #243b77;
-    cursor: pointer;
     font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
 }
 
     .notif-clear:hover {
-        text-decoration: underline;
+        color: #93c5fd;
     }
 
 .notif-item {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
     padding: 12px 16px;
-    border-bottom: 1px solid #f9fafb;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     transition: background 0.15s;
+    cursor: pointer;
 }
 
     .notif-item:hover {
-        background: #f9fafb;
+        background: rgba(255,255,255,0.06);
     }
 
     .notif-item.unread {
-        background: #eff2ff;
+        background: rgba(96,165,250,0.08);
+        border-left: 3px solid #60a5fa;
     }
 
-        .notif-item.unread:hover {
-            background: #e8ecff;
-        }
-
 .notif-item-icon {
-    color: #243b77 !important;
+    color: #60a5fa !important;
     font-size: 18px !important;
-    margin-top: 2px;
     flex-shrink: 0;
+    margin-top: 2px;
 }
 
 .notif-item-body {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
 }
 
 .notif-item-text {
+    color: white;
     font-size: 13px;
-    color: #111827;
     font-weight: 500;
+    line-height: 1.4;
 }
 
 .notif-item-time {
+    color: rgba(255,255,255,0.4);
     font-size: 11px;
-    color: #9ca3af;
 }
 
 .notif-empty {
-    padding: 20px 16px;
+    padding: 24px 16px;
     text-align: center;
+    color: rgba(255,255,255,0.4);
     font-size: 13px;
-    color: #9ca3af;
 }

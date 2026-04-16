@@ -50,13 +50,6 @@
 
     <!-- NAVBAR -->
     <div class="dash-navbar">
-        <div class="navbar-left">
-            <button class="hamburger-btn" @onclick="ToggleDrawer">
-                <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
-            </button>
-            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
-            <span class="nav-brand">School Clearance</span>
-        </div>
         <div class="navbar-center">
             <div class="search-wrapper">
                 <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
@@ -65,14 +58,23 @@
         </div>
         <div class="navbar-right">
 
-            <!-- NOTIF ICON -->
-            <div class="notif-btn" @onclick="ToggleNotifMenu">
-                <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
-                @if (unreadNotifCount > 0)
+            <!-- NOTIFICATION ICON -->
+            <div class="notif-wrap">
+                <div class="notif-btn" @onclick="ToggleNotifMenu">
+                    <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
+                    @if (unreadNotifCount > 0)
+                    {
+                        <span class="notif-badge">@unreadNotifCount</span>
+                    }
+                </div>
+
+                @if (showNotifMenu)
                 {
-                    <span class="notif-badge">@unreadNotifCount</span>
+                    <div class="notif-dropdown">
+                    </div>
                 }
             </div>
+
             @if (showNotifMenu)
             {
                 <div class="notif-dropdown">

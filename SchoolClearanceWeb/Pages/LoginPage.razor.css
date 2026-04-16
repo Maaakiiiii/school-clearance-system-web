@@ -243,3 +243,29 @@
     fill: #000000 !important;
     color: #000000 !important;
 }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — MOBILE
+───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .auth-card {
+        flex-direction: column;
+        max-width: 100%;
+        min-height: unset;
+    }
+
+    .auth-left {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 32px 24px;
+        box-sizing: border-box;
+    }
+
+    .auth-right {
+        width: 100%;
+        padding: 32px 24px;
+        box-sizing: border-box;
+    }
+}

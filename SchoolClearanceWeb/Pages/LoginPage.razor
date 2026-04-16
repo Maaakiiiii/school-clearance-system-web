@@ -1,4 +1,4 @@
-﻿@page "/loginpage"
+﻿@page "/login"
 @inject NavigationManager Navigation
 @inject StudentService StudentService
 @inject IJSRuntime JS
@@ -16,6 +16,7 @@
             <div class="logo-ring">
                 <img src="aclc_logo.png" alt="ACLC Logo" class="logo-img" />
             </div>
+
             <MudText Typo="Typo.h5" Class="app-title">School Clearance</MudText>
             <MudText Typo="Typo.caption" Class="app-subtitle">Student Portal</MudText>
             <div class="divider"></div>
@@ -82,7 +83,7 @@
             </MudText>
         </div>
     </div>
-</div>
+    </div>
 
 @code {
     private string username = "";
