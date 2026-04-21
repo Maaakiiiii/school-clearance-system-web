@@ -93,5 +93,28 @@ namespace SchoolClearanceWeb.Services
             var response = await _http.SendAsync(request);
             return await response.Content.ReadFromJsonAsync<ServiceResponse<string>>();
         }
+
+        // GET /api/admin/clearance-schedule — Token: Admin
+        public async Task<ServiceResponse<ClearanceSchedule>?> GetClearanceSchedule(string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                $"{BaseUrl}/api/admin/clearance-schedule");
+            request.Headers.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await _http.SendAsync(request);
+            return await response.Content.ReadFromJsonAsync<ServiceResponse<ClearanceSchedule>>();
+        }
+
+        // POST /api/admin/clearance-schedule — Token: Admin
+        public async Task<ServiceResponse<string>?> SetClearanceSchedule(SetClearanceScheduleRequest req, string token)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                $"{BaseUrl}/api/admin/clearance-schedule");
+            request.Headers.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            request.Content = JsonContent.Create(req);
+            var response = await _http.SendAsync(request);
+            return await response.Content.ReadFromJsonAsync<ServiceResponse<string>>();
+        }
     }
 }

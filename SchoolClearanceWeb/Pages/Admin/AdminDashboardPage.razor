@@ -9,6 +9,48 @@
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
 
+    <!-- MOBILE DRAWER OVERLAY -->
+    @if (drawerOpen)
+    {
+        <div class="drawer-overlay" @onclick="CloseDrawer"></div>
+    }
+
+    <!-- MOBILE DRAWER -->
+    <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
+        <div class="drawer-header">
+            <img src="aclc_logo.png" alt="ACLC" class="drawer-logo" />
+            <div class="drawer-brand-wrap">
+                <span class="drawer-brand">School Clearance</span>
+                <span class="drawer-sub">Admin Panel</span>
+            </div>
+            <button class="drawer-close-btn" @onclick="CloseDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Close" style="color:white; font-size:18px;" />
+            </button>
+        </div>
+        <nav style="padding: 12px 8px;">
+            <p class="nav-section">Main</p>
+            <div class="nav-item nav-active" @onclick='() => NavigateTo("/admin/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.GridView" Class="nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <p class="nav-section">Management</p>
+            <div class="nav-item" @onclick='() => NavigateTo("/admin/coupons")'>
+                <MudIcon Icon="@Icons.Material.Filled.CardGiftcard" Class="nav-icon" />
+                <span>Coupons</span>
+            </div>
+            <div class="nav-item" @onclick='() => NavigateTo("/admin/staff")'>
+                <MudIcon Icon="@Icons.Material.Filled.People" Class="nav-icon" />
+                <span>Staff</span>
+            </div>
+            <div style="margin-top:auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top:12px; margin-top: 20px;">
+                <div class="nav-item logout-item" @onclick="HandleLogout">
+                    <MudIcon Icon="@Icons.Material.Filled.Logout" Class="nav-icon" />
+                    <span>Logout</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-logo">
@@ -48,9 +90,15 @@
 
         <!-- TOPBAR -->
         <div class="topbar">
-            <MudText Typo="Typo.h5" Class="page-title">Dashboard</MudText>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <button class="hamburger-btn" @onclick="ToggleDrawer">
+                    <MudIcon Icon="@Icons.Material.Filled.Menu" style="color:white;" />
+                </button>
+            <MudText Typo="Typo.h5" Class="page-title"> Dashboard</MudText>
+        </div>
             <div class="avatar-circle">A</div>
         </div>
+
 
         <!-- GREETING CARD -->
         <div class="glass-card greeting-card">
@@ -101,6 +149,117 @@
             </div>
         </div>
 
+        <!-- CLEARANCE SCHEDULE -->
+        <p class="section-label">Clearance Schedule</p>
+        <div class="glass-card schedule-card">
+            <div class="schedule-header">
+                <div class="schedule-header-left">
+                    <div class="schedule-icon-wrap">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Class="schedule-icon" />
+                    </div>
+                    <div>
+                        <span class="schedule-title">Set Clearance Period</span>
+                        <span class="schedule-sub">Define the start and deadline date for student clearance</span>
+                    </div>
+                </div>
+                @if (currentSchedule != null)
+                {
+                    <div class="schedule-status-badge @GetScheduleStatusClass()">
+                        <MudIcon Icon="@GetScheduleStatusIcon()" Class="schedule-status-icon" />
+                        <span>@GetScheduleStatusText()</span>
+                    </div>
+                }
+            </div>
+
+            @if (scheduleError != "")
+            {
+                <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@scheduleError</MudAlert>
+            }
+            @if (scheduleSuccess != "")
+            {
+                <MudAlert Severity="Severity.Success" Dense="true" Class="mb-3">@scheduleSuccess</MudAlert>
+            }
+
+            <!-- CURRENT SCHEDULE DISPLAY -->
+            @if (currentSchedule != null)
+            {
+                <div class="current-schedule-row">
+                    <div class="current-schedule-item">
+                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Class="cs-icon cs-green" />
+                        <div>
+                            <span class="cs-label">Start Date</span>
+                            <span class="cs-value">@currentSchedule.StartDate.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="current-schedule-divider"></div>
+                    <div class="current-schedule-item">
+                        <MudIcon Icon="@Icons.Material.Filled.Flag" Class="cs-icon cs-red" />
+                        <div>
+                            <span class="cs-label">Deadline</span>
+                            <span class="cs-value">@currentSchedule.EndDate.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="current-schedule-divider"></div>
+                    <div class="current-schedule-item">
+                        <MudIcon Icon="@Icons.Material.Filled.Timer" Class="cs-icon cs-blue" />
+                        <div>
+                            <span class="cs-label">Days Remaining</span>
+                            <span class="cs-value">@GetDaysRemaining()</span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- SET SCHEDULE FORM -->
+            <div class="schedule-form">
+                <div class="schedule-fields">
+                    <div class="schedule-field">
+                        <label class="field-label">
+                            <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="field-label-icon" />
+                            Start Date
+                        </label>
+                        <MudDatePicker @bind-Date="newStartDate"
+                                       Variant="Variant.Outlined"
+                                       DateFormat="MM/dd/yyyy"
+                                       MinDate="DateTime.Today"
+                                       Placeholder="Select start date"
+                                       Class="schedule-picker" />
+                    </div>
+                    <div class="schedule-arrow">
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Class="arrow-icon" />
+                    </div>
+                    <div class="schedule-field">
+                        <label class="field-label">
+                            <MudIcon Icon="@Icons.Material.Filled.EventBusy" Class="field-label-icon" />
+                            Deadline Date
+                        </label>
+                        <MudDatePicker @bind-Date="newEndDate"
+                                       Variant="Variant.Outlined"
+                                       DateFormat="MM/dd/yyyy"
+                                       MinDate="@(newStartDate ?? DateTime.Today)"
+                                       Placeholder="Select deadline date"
+                                       Class="schedule-picker" />
+                    </div>
+                </div>
+
+                <MudButton Variant="Variant.Filled"
+                           Class="schedule-btn"
+                           OnClick="HandleSetSchedule"
+                           Disabled="@isSavingSchedule">
+                    @if (isSavingSchedule)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                        <span>Saving...</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Save" Class="mr-2" />
+                        <span>Save Schedule</span>
+                    }
+                </MudButton>
+            </div>
+        </div>
+
         <!-- QUICK ACTIONS -->
         <p class="section-label">Quick Actions</p>
         <div class="actions-grid">
@@ -133,19 +292,41 @@
     </div>
 </div>
 
-  @code {
+@code {
     private int totalCoupons = 0;
     private int usedCoupons = 0;
     private int totalStaff = 0;
     private int totalTeachers = 0;
-
     private string token = "";
+    private bool drawerOpen = false;
+    private void ToggleDrawer() => drawerOpen = !drawerOpen;
+    private void CloseDrawer() => drawerOpen = false;
+    private void NavigateTo(string url)
+    {
+        drawerOpen = false;
+        Navigation.NavigateTo(url);
+    }
 
-    [Inject] AdminService AdminService { get; set; }
+    // Clearance Schedule
+    private ClearanceSchedule? currentSchedule = null;
+    private DateTime? newStartDate = null;
+    private DateTime? newEndDate = null;
+    private bool isSavingSchedule = false;
+    private string scheduleError = "";
+    private string scheduleSuccess = "";
+
+    [Inject] AdminService AdminService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+
+        var role = await JS.InvokeAsync<string>("localStorage.getItem", "role");
+        if (role != "Admin")
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
 
         var couponsResult = await AdminService.GetAllCoupons(token);
         if (couponsResult?.Status == 1 && couponsResult.Data != null)
@@ -161,6 +342,101 @@
         var teachersResult = await AdminService.GetAllTeachers(token);
         if (teachersResult?.Status == 1 && teachersResult.Data != null)
             totalTeachers = teachersResult.Data.Count;
+
+        // Load current schedule
+        var scheduleResult = await AdminService.GetClearanceSchedule(token);
+        if (scheduleResult?.Status == 1 && scheduleResult.Data != null)
+        {
+            currentSchedule = scheduleResult.Data;
+            newStartDate = currentSchedule.StartDate;
+            newEndDate = currentSchedule.EndDate;
+        }
+    }
+
+    private async Task HandleSetSchedule()
+    {
+        scheduleError = "";
+        scheduleSuccess = "";
+
+        if (newStartDate == null)
+        {
+            scheduleError = "Please select a start date.";
+            return;
+        }
+
+        if (newEndDate == null)
+        {
+            scheduleError = "Please select a deadline date.";
+            return;
+        }
+
+        if (newEndDate <= newStartDate)
+        {
+            scheduleError = "Deadline must be after the start date.";
+            return;
+        }
+
+        isSavingSchedule = true;
+
+        var result = await AdminService.SetClearanceSchedule(new SetClearanceScheduleRequest
+            {
+                StartDate = newStartDate.Value,
+                EndDate = newEndDate.Value
+            }, token);
+
+        isSavingSchedule = false;
+
+        if (result?.Status == 1)
+        {
+            currentSchedule = new ClearanceSchedule
+                {
+                    StartDate = newStartDate.Value,
+                    EndDate = newEndDate.Value
+                };
+            scheduleSuccess = "Clearance schedule saved successfully!";
+        }
+        else
+        {
+            scheduleError = result?.Message ?? "Failed to save schedule. Please try again.";
+        }
+    }
+
+    private string GetScheduleStatusClass()
+    {
+        if (currentSchedule == null) return "";
+        var now = DateTime.Today;
+        if (now < currentSchedule.StartDate) return "status-upcoming";
+        if (now > currentSchedule.EndDate) return "status-ended";
+        return "status-active";
+    }
+
+    private string GetScheduleStatusIcon()
+    {
+        if (currentSchedule == null) return "";
+        var now = DateTime.Today;
+        if (now < currentSchedule.StartDate) return Icons.Material.Filled.Schedule;
+        if (now > currentSchedule.EndDate) return Icons.Material.Filled.Cancel;
+        return Icons.Material.Filled.CheckCircle;
+    }
+
+    private string GetScheduleStatusText()
+    {
+        if (currentSchedule == null) return "";
+        var now = DateTime.Today;
+        if (now < currentSchedule.StartDate) return "Upcoming";
+        if (now > currentSchedule.EndDate) return "Ended";
+        return "Active";
+    }
+
+    private string GetDaysRemaining()
+    {
+        if (currentSchedule == null) return "—";
+        var now = DateTime.Today;
+        if (now < currentSchedule.StartDate)
+            return $"Starts in {(currentSchedule.StartDate - now).Days} day(s)";
+        if (now > currentSchedule.EndDate)
+            return "Ended";
+        return $"{(currentSchedule.EndDate - now).Days} day(s) left";
     }
 
     private string GetGreetingTime()

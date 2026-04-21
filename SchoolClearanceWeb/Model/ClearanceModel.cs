@@ -16,3 +16,15 @@
         public bool IsCleared { get; set; }
     }
 }
+
+public class ClearanceSchedule
+{
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+}
+
+public class SetClearanceScheduleRequest
+{
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+}

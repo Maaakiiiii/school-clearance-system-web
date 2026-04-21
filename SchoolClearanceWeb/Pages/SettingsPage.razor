@@ -4,7 +4,6 @@
 
 <div class="page-wrapper">
 
-    <!-- Floating background shapes -->
     <div class="bg-shapes">
         <div class="bg-shape bg-s1"></div>
         <div class="bg-shape bg-s2"></div>
@@ -25,7 +24,7 @@
             <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
         </div>
 
-        <!-- ── ACCOUNT SECTION ── -->
+        <!-- ACCOUNT SECTION -->
         <div class="settings-section">
             <span class="section-label">ACCOUNT</span>
             <div class="glass-card">
@@ -33,39 +32,35 @@
                 <div class="settings-item" @onclick="GoToProfile">
                     <div class="settings-item-left">
                         <div class="settings-icon-wrap icon-blue">
-                            <MudIcon Icon="@Icons.Material.Filled.Person"
-                                     Class="settings-icon" />
+                            <MudIcon Icon="@Icons.Material.Filled.Person" Class="settings-icon" />
                         </div>
                         <div class="settings-item-text">
                             <span class="settings-item-title">Edit Profile</span>
                             <span class="settings-item-sub">Update your name, course, section</span>
                         </div>
                     </div>
-                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
-                             Class="chevron-icon" />
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="chevron-icon" />
                 </div>
 
                 <div class="settings-divider"></div>
 
-                <div class="settings-item" @onclick="GoToChangePassword">
+                <div class="settings-item" @onclick="OpenChangePasswordDialog">
                     <div class="settings-item-left">
                         <div class="settings-icon-wrap icon-purple">
-                            <MudIcon Icon="@Icons.Material.Filled.Lock"
-                                     Class="settings-icon" />
+                            <MudIcon Icon="@Icons.Material.Filled.Lock" Class="settings-icon" />
                         </div>
                         <div class="settings-item-text">
                             <span class="settings-item-title">Change Password</span>
                             <span class="settings-item-sub">Update your account password</span>
                         </div>
                     </div>
-                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
-                             Class="chevron-icon" />
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="chevron-icon" />
                 </div>
 
             </div>
         </div>
 
-        <!-- ── APP SECTION ── -->
+        <!-- APP SECTION -->
         <div class="settings-section">
             <span class="section-label">APP</span>
             <div class="glass-card">
@@ -73,16 +68,14 @@
                 <div class="settings-item" @onclick="OpenAboutDialog">
                     <div class="settings-item-left">
                         <div class="settings-icon-wrap icon-teal">
-                            <MudIcon Icon="@Icons.Material.Filled.Info"
-                                     Class="settings-icon" />
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Class="settings-icon" />
                         </div>
                         <div class="settings-item-text">
                             <span class="settings-item-title">About</span>
                             <span class="settings-item-sub">Learn more about this app</span>
                         </div>
                     </div>
-                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
-                             Class="chevron-icon" />
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="chevron-icon" />
                 </div>
 
                 <div class="settings-divider"></div>
@@ -90,8 +83,7 @@
                 <div class="settings-item non-clickable">
                     <div class="settings-item-left">
                         <div class="settings-icon-wrap icon-grey">
-                            <MudIcon Icon="@Icons.Material.Filled.Layers"
-                                     Class="settings-icon" />
+                            <MudIcon Icon="@Icons.Material.Filled.Layers" Class="settings-icon" />
                         </div>
                         <div class="settings-item-text">
                             <span class="settings-item-title">Version</span>
@@ -104,7 +96,7 @@
             </div>
         </div>
 
-        <!-- ── DANGER ZONE ── -->
+        <!-- DANGER ZONE -->
         <div class="settings-section">
             <span class="section-label danger-label">DANGER ZONE</span>
             <div class="glass-card danger-card">
@@ -112,16 +104,14 @@
                 <div class="settings-item danger-item" @onclick="OpenLogoutDialog">
                     <div class="settings-item-left">
                         <div class="settings-icon-wrap icon-red">
-                            <MudIcon Icon="@Icons.Material.Filled.Logout"
-                                     Class="settings-icon" />
+                            <MudIcon Icon="@Icons.Material.Filled.Logout" Class="settings-icon" />
                         </div>
                         <div class="settings-item-text">
                             <span class="settings-item-title danger-text">Log Out</span>
                             <span class="settings-item-sub">Sign out of your account</span>
                         </div>
                     </div>
-                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight"
-                             Class="chevron-icon danger-chevron" />
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="chevron-icon danger-chevron" />
                 </div>
 
             </div>
@@ -136,7 +126,82 @@
     </div>
 </div>
 
-<!-- ── ABOUT DIALOG ── -->
+<!-- CHANGE PASSWORD DIALOG -->
+<MudDialog @bind-Visible="_showChangePasswordDialog" Options="_dialogOptions">
+    <TitleContent>
+        <div class="dialog-title-row">
+            <MudIcon Icon="@Icons.Material.Filled.Lock" Class="dialog-title-icon" />
+            <span>Change Password</span>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        @if (!string.IsNullOrEmpty(_passwordError))
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_passwordError</MudAlert>
+        }
+        @if (!string.IsNullOrEmpty(_passwordSuccess))
+        {
+            <MudAlert Severity="Severity.Success" Dense="true" Class="mb-3">@_passwordSuccess</MudAlert>
+        }
+        <div class="field-gap">
+            <MudTextField @bind-Value="_currentPassword"
+                          Label="Current Password"
+                          Variant="Variant.Outlined"
+                          InputType="@_currentPasswordInput"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@_currentPasswordIcon"
+                          OnAdornmentClick="ToggleCurrentPassword"
+                          FullWidth="true" />
+        </div>
+        <div class="field-gap">
+            <MudTextField @bind-Value="_newPassword"
+                          Label="New Password"
+                          Variant="Variant.Outlined"
+                          InputType="@_newPasswordInput"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@_newPasswordIcon"
+                          OnAdornmentClick="ToggleNewPassword"
+                          FullWidth="true" />
+        </div>
+        <div class="field-gap">
+            <MudTextField @bind-Value="_confirmNewPassword"
+                          Label="Confirm New Password"
+                          Variant="Variant.Outlined"
+                          InputType="@_confirmNewPasswordInput"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@_confirmNewPasswordIcon"
+                          OnAdornmentClick="ToggleConfirmNewPassword"
+                          Error="@_passwordMismatch"
+                          ErrorText="Passwords do not match"
+                          FullWidth="true" />
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseChangePasswordDialog"
+                   Variant="Variant.Text"
+                   Color="Color.Default"
+                   Class="dialog-cancel-btn">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="HandleChangePassword"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Class="dialog-btn"
+                   Disabled="@_isChangingPassword">
+            @if (_isChangingPassword)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                <span>Saving...</span>
+            }
+            else
+            {
+                <span>Save Password</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- ABOUT DIALOG -->
 <MudDialog @bind-Visible="_showAboutDialog" Options="_dialogOptions">
     <TitleContent>
         <div class="dialog-title-row">
@@ -169,7 +234,7 @@
     </DialogActions>
 </MudDialog>
 
-<!-- ── LOGOUT CONFIRMATION DIALOG ── -->
+<!-- LOGOUT DIALOG -->
 <MudDialog @bind-Visible="_showLogoutDialog" Options="_dialogOptions">
     <TitleContent>
         <div class="dialog-title-row">
@@ -199,8 +264,35 @@
 </MudDialog>
 
 @code {
+    // Dialog visibility
     private bool _showAboutDialog = false;
     private bool _showLogoutDialog = false;
+    private bool _showChangePasswordDialog = false;
+
+    // Change password fields
+    private bool _isChangingPassword = false;
+    private string _currentPassword = "";
+    private string _newPassword = "";
+    private string _confirmNewPassword = "";
+    private string _passwordError = "";
+    private string _passwordSuccess = "";
+
+    private bool _showCurrentPassword = false;
+    private bool _showNewPassword = false;
+    private bool _showConfirmNewPassword = false;
+
+    private bool _passwordMismatch => !string.IsNullOrEmpty(_confirmNewPassword) && _newPassword != _confirmNewPassword;
+
+    private InputType _currentPasswordInput => _showCurrentPassword ? InputType.Text : InputType.Password;
+    private string _currentPasswordIcon => _showCurrentPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+    private InputType _newPasswordInput => _showNewPassword ? InputType.Text : InputType.Password;
+    private string _newPasswordIcon => _showNewPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+    private InputType _confirmNewPasswordInput => _showConfirmNewPassword ? InputType.Text : InputType.Password;
+    private string _confirmNewPasswordIcon => _showConfirmNewPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+
+    private void ToggleCurrentPassword() => _showCurrentPassword = !_showCurrentPassword;
+    private void ToggleNewPassword() => _showNewPassword = !_showNewPassword;
+    private void ToggleConfirmNewPassword() => _showConfirmNewPassword = !_showConfirmNewPassword;
 
     private DialogOptions _dialogOptions = new DialogOptions
         {
@@ -213,19 +305,64 @@
 
     private void GoBack() => Navigation.NavigateTo("/dashboard");
     private void GoToProfile() => Navigation.NavigateTo("/profile");
-    private void GoToChangePassword() => Navigation.NavigateTo("/profile");
 
+    // Change Password
+    private void OpenChangePasswordDialog() => _showChangePasswordDialog = true;
+    private void CloseChangePasswordDialog()
+    {
+        _showChangePasswordDialog = false;
+        _currentPassword = "";
+        _newPassword = "";
+        _confirmNewPassword = "";
+        _passwordError = "";
+        _passwordSuccess = "";
+    }
+
+    private async Task HandleChangePassword()
+    {
+        _passwordError = "";
+        _passwordSuccess = "";
+
+        if (string.IsNullOrWhiteSpace(_currentPassword) ||
+            string.IsNullOrWhiteSpace(_newPassword) ||
+            string.IsNullOrWhiteSpace(_confirmNewPassword))
+        {
+            _passwordError = "All fields are required.";
+            return;
+        }
+
+        if (_newPassword.Length < 8)
+        {
+            _passwordError = "New password must be at least 8 characters.";
+            return;
+        }
+
+        if (_passwordMismatch)
+        {
+            _passwordError = "Passwords do not match.";
+            return;
+        }
+
+        _isChangingPassword = true;
+        await Task.Delay(500); // Replace with actual API call
+        _isChangingPassword = false;
+
+        _passwordSuccess = "Password changed successfully!";
+        await Task.Delay(1500);
+        CloseChangePasswordDialog();
+    }
+
+    // About
     private void OpenAboutDialog() => _showAboutDialog = true;
     private void CloseAboutDialog() => _showAboutDialog = false;
 
+    // Logout
     private void OpenLogoutDialog() => _showLogoutDialog = true;
     private void CloseLogoutDialog() => _showLogoutDialog = false;
 
     private void ConfirmLogout()
     {
-        // TODO: Call AuthService.Logout() / TokenService.Clear() when wired up
         _showLogoutDialog = false;
         Navigation.NavigateTo("/");
     }
 }
-

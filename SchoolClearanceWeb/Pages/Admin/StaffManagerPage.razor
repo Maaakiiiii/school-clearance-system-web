@@ -3,6 +3,47 @@
 @using MudBlazor
 
 <div class="page-bg">
+
+    @if (drawerOpen)
+    {
+        <div class="drawer-overlay" @onclick="CloseDrawer"></div>
+    }
+
+    <div class="side-drawer @(drawerOpen ? "drawer-open" : "")">
+        <div class="drawer-header">
+            <img src="aclc_logo.png" alt="ACLC" class="drawer-logo" />
+            <div class="drawer-brand-wrap">
+                <span class="drawer-brand">School Clearance</span>
+                <span class="drawer-sub">Admin Panel</span>
+            </div>
+            <button class="drawer-close-btn" @onclick="CloseDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Close" style="color:white; font-size:18px;" />
+            </button>
+        </div>
+        <nav style="padding: 12px 8px;">
+            <p class="nav-section">Main</p>
+            <div class="nav-item" @onclick='() => NavigateTo("/admin/dashboard")'>
+                <MudIcon Icon="@Icons.Material.Filled.GridView" Class="nav-icon" />
+                <span>Dashboard</span>
+            </div>
+            <p class="nav-section">Management</p>
+            <div class="nav-item" @onclick='() => NavigateTo("/admin/coupons")'>
+                <MudIcon Icon="@Icons.Material.Filled.CardGiftcard" Class="nav-icon" />
+                <span>Coupons</span>
+            </div>
+            <div class="nav-item nav-active" @onclick='() => NavigateTo("/admin/staff")'>
+                <MudIcon Icon="@Icons.Material.Filled.People" Class="nav-icon" />
+                <span>Staff</span>
+            </div>
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top:12px;">
+                <div class="nav-item logout-item" @onclick="HandleLogout">
+                    <MudIcon Icon="@Icons.Material.Filled.Logout" Class="nav-icon" />
+                    <span>Logout</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
 
@@ -44,6 +85,9 @@
     <div class="main-content">
         <!-- TOPBAR -->
         <div class="topbar">
+            <button class="hamburger-btn" @onclick="ToggleDrawer">
+                <MudIcon Icon="@Icons.Material.Filled.Menu" style="color:white;" />
+            </button>
             <MudText Typo="Typo.h5" Class="page-title">Staff Management</MudText>
             <div class="avatar-circle">A</div>
         </div>
@@ -205,6 +249,14 @@
     private int selectedStaffId = 0;
     private string token = "";
     private string errorMessage = "";
+    private bool drawerOpen = false;
+    private void ToggleDrawer() => drawerOpen = !drawerOpen;
+    private void CloseDrawer() => drawerOpen = false;
+    private void NavigateTo(string url)
+    {
+        drawerOpen = false;
+        Navigation.NavigateTo(url);
+    }
 
     private List<StaffListModel> allStaff = new();
     private List<StaffListModel> teachers = new();

@@ -462,3 +462,38 @@
     color: white !important;
     font-size: 20px !important;
 }
+
+/* ─────────────────────────────────────────
+   FIELD GAP
+───────────────────────────────────────── */
+
+.field-gap {
+    margin-bottom: 12px;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE — MOBILE
+───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .page-wrapper {
+        padding: 20px 16px 40px;
+    }
+
+    .inner {
+        padding: 0;
+        gap: 18px;
+    }
+
+    .header-title {
+        font-size: 28px;
+    }
+
+    .settings-item {
+        padding: 14px 16px;
+    }
+
+    .settings-item-title {
+        font-size: 15px;
+    }
+}

@@ -440,3 +440,289 @@
 .tab-content {
     padding-top: 8px;
 }
+
+/* ─────────────────────────────────────────
+   SIDEBAR FULL
+───────────────────────────────────────── */
+
+* {
+    box-sizing: border-box;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    background: rgba(15,31,75,0.97);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+    .sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.brand-name {
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.brand-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.nav-section {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 16px 6px;
+    margin: 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    margin: 2px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.15s;
+}
+
+    .nav-item:hover {
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+.main-content {
+    margin-left: 240px;
+    flex: 1;
+    padding: 28px 32px;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+/* ─────────────────────────────────────────
+   HAMBURGER
+───────────────────────────────────────── */
+
+.hamburger-btn {
+    display: none;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    color: white;
+}
+
+    .hamburger-btn:hover {
+        background: rgba(255,255,255,0.15);
+    }
+
+/* ─────────────────────────────────────────
+   MOBILE DRAWER
+───────────────────────────────────────── */
+
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+}
+
+.side-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(15,31,75,0.97);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+    .side-drawer.drawer-open {
+        transform: translateX(0);
+    }
+
+.drawer-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.drawer-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.drawer-brand-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer-brand {
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.drawer-sub {
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.drawer-close-btn {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 16px;
+        width: 100vw;
+        max-width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .glass-card {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 16px;
+    }
+
+    .tab-btns-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tab-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    /* Tables scroll horizontally on mobile */
+    .custom-table {
+        min-width: 560px;
+        width: max-content;
+    }
+
+    /* Wrap table in scrollable container */
+    .tab-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+
+    .dialog-box {
+        width: calc(100vw - 32px);
+        max-width: 100%;
+        padding: 20px;
+    }
+
+    .table-header-row {
+        min-width: 560px;
+    }
+}

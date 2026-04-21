@@ -50,6 +50,9 @@
 
     <!-- NAVBAR -->
     <div class="dash-navbar">
+        <button class="hamburger-btn" @onclick="ToggleDrawer">
+            <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+        </button>
         <div class="navbar-center">
             <div class="search-wrapper">
                 <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
@@ -223,7 +226,7 @@
                         <div class="post-actions">
                             <div class="action-group">
                                 <button class="action-btn @(IsReacted(post.PostId) ? "reacted" : "")"
-                                        @onclick="() => ToggleReactionPicker(post.PostId)">
+                                @onclick="() => ToggleReactionPicker(post.PostId)">
                                     <MudIcon Icon="@Icons.Material.Outlined.EmojiEmotions" Class="action-icon" />
                                     <span>React</span>
                                 </button>
@@ -245,7 +248,7 @@
                                 @foreach (var emoji in _reactionEmojis)
                                 {
                                     <button class="emoji-btn @(GetMyReaction(post.PostId) == emoji ? "emoji-active" : "")"
-                                            @onclick="() => ReactToPost(post.PostId, emoji)">
+                                    @onclick="() => ReactToPost(post.PostId, emoji)">
                                         @emoji
                                     </button>
                                 }
@@ -279,13 +282,13 @@
                                 <div class="comment-input-row">
                                     <div class="comment-avatar">S</div>
                                     <input class="comment-input"
-                                           placeholder="Write a comment..."
-                                           value="@GetDraft(post.PostId)"
-                                           @oninput="e => _commentDrafts[post.PostId] = e.Value?.ToString() ?? string.Empty"
-                                           @onkeyup="e => HandleCommentKey(e, post.PostId)" />
+                                    placeholder="Write a comment..."
+                                    value="@GetDraft(post.PostId)"
+                                    @oninput="e => _commentDrafts[post.PostId] = e.Value?.ToString() ?? string.Empty"
+                                    @onkeyup="e => HandleCommentKey(e, post.PostId)" />
                                     <button class="comment-send-btn"
-                                            @onclick="() => SubmitComment(post.PostId)"
-                                            disabled="@(string.IsNullOrWhiteSpace(GetDraft(post.PostId)))">
+                                    @onclick="() => SubmitComment(post.PostId)"
+                                    disabled="@(string.IsNullOrWhiteSpace(GetDraft(post.PostId)))">
                                         <MudIcon Icon="@Icons.Material.Filled.Send" Class="send-icon" />
                                     </button>
                                 </div>
@@ -308,12 +311,7 @@
 
     private List<StaffPostModel> posts = new();
 
-    private List<NotificationModel> notifications = new()
-    {
-        new NotificationModel { Message = "Registrar cleared your clearance.", Time = "2 mins ago", IsUnread = true },
-        new NotificationModel { Message = "New announcement posted.", Time = "1 hour ago", IsUnread = true },
-        new NotificationModel { Message = "Your profile was updated.", Time = "Yesterday", IsUnread = false },
-    };
+    private List<NotificationModel> notifications = new();
 
     private int unreadNotifCount => notifications.Count(n => n.IsUnread);
 

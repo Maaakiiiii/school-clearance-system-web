@@ -132,22 +132,6 @@
     font-size: 20px !important;
 }
 
-/* ── MOBILE ── */
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-
-    .dash-navbar {
-        left: 0 !important;
-    }
-
-    .dash-content {
-        margin-left: 0 !important;
-    }
-}
-
-
 /* ─────────────────────────────────────────
    PAGE BACKGROUND
 ───────────────────────────────────────── */
@@ -1158,4 +1142,49 @@
     text-align: center;
     color: rgba(255,255,255,0.4);
     font-size: 13px;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .dash-navbar {
+        left: 0 !important;
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .dash-content {
+        margin-left: 0 !important;
+    }
+
+    .navbar-center {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .navbar-right {
+        min-width: unset;
+        gap: 8px;
+    }
+
+    .notif-dropdown {
+        width: 260px;
+        right: -8px;
+    }
+
+    .profile-dropdown {
+        right: -8px;
+    }
+}
+.hamburger-btn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex;
+    }
 }

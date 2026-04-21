@@ -55,10 +55,9 @@
 
     <!-- NAVBAR -->
     <div class="dash-navbar">
-        <div class="navbar-left">
-            <img src="aclc_logo.png" alt="ACLC Logo" class="nav-logo" />
-            <span class="nav-brand">School Clearance</span>
-        </div>
+         <button class="hamburger-btn" @onclick="ToggleDrawer">
+        <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+    </button>
         <div class="navbar-center">
             <div class="search-wrapper">
                 <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />

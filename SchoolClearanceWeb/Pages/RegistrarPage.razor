@@ -50,6 +50,9 @@
 
     <!-- NAVBAR -->
     <div class="dash-navbar">
+        <button class="hamburger-btn" @onclick="ToggleDrawer">
+            <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+        </button>
         <div class="navbar-center">
             <div class="search-wrapper">
                 <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
@@ -308,12 +311,7 @@
     private List<StaffListModel> registrarStaff = new();
     private StaffListModel? officeStaff = null;
 
-    private List<NotificationModel> notifications = new()
-    {
-        new NotificationModel { Message = "Registrar cleared your clearance.", Time = "2 mins ago", IsUnread = true },
-        new NotificationModel { Message = "New announcement posted.", Time = "1 hour ago", IsUnread = true },
-        new NotificationModel { Message = "Your profile was updated.", Time = "Yesterday", IsUnread = false },
-    };
+    private List<NotificationModel> notifications = new();
 
     private int unreadNotifCount => notifications.Count(n => n.IsUnread);
 

@@ -218,100 +218,100 @@
     </div>
 
     <!-- PAGE CONTENT -->
-<div class="dash-content">
+    <div class="dash-content">
 
-    <!-- GREETING -->
-    <div class="greeting-card">
-        <div class="greeting-left">
-            <div class="greeting-time-row">
-                <MudIcon Icon="@GetGreetingIcon()" Class="greeting-time-icon" />
-                <span class="greeting-time">@GetGreetingTime()</span>
+        <!-- GREETING -->
+        <div class="greeting-card">
+            <div class="greeting-left">
+                <div class="greeting-time-row">
+                    <MudIcon Icon="@GetGreetingIcon()" Class="greeting-time-icon" />
+                    <span class="greeting-time">@GetGreetingTime()</span>
+                </div>
+                <span class="greeting-name">Hello, @(dashboardData?.FullName ?? "Student")!</span>
+                <span class="greeting-sub">Here's your clearance status today.</span>
             </div>
-            <span class="greeting-name">Hello, @(dashboardData?.FullName ?? "Student")!</span>
-            <span class="greeting-sub">Here's your clearance status today.</span>
-        </div>
-        <div class="greeting-badge">
-            <span class="greeting-pct">@ClearancePercent%</span>
-            <span class="greeting-pct-label">Cleared</span>
-        </div>
-    </div>
-
-    <!-- OFFICE QUICK ACCESS -->
-    <div class="glass-card">
-        <div class="section-header">
-            <MudIcon Icon="@Icons.Material.Filled.Business" Class="section-icon" />
-            <MudText Typo="Typo.h6" Class="section-title">Office Quick Access</MudText>
-        </div>
-        <div class="office-grid">
-
-            <div class="office-card" @onclick='() => Navigation.NavigateTo("/registrar")'>
-                <div class="office-icon-wrap" style="background: rgba(96,165,250,0.2);">
-                    <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="office-icon" />
-                </div>
-                <div class="office-info">
-                    <span class="office-name">Registrar</span>
-                    <span class="office-status-badge badge-open">Open</span>
-                    <span class="office-schedule">
-                        <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
-                        8:00 AM – 5:00 PM
-                    </span>
-                    <span class="office-hours-detail">
-                        Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
-                    </span>
-                </div>
-                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+            <div class="greeting-badge">
+                <span class="greeting-pct">@ClearancePercent%</span>
+                <span class="greeting-pct-label">Cleared</span>
             </div>
-
-            <div class="office-card" @onclick='() => Navigation.NavigateTo("/cashier")'>
-                <div class="office-icon-wrap" style="background: rgba(234,179,8,0.2);">
-                    <MudIcon Icon="@Icons.Material.Filled.Payments" Class="office-icon" />
-                </div>
-                <div class="office-info">
-                    <span class="office-name">Cashier</span>
-                    <span class="office-status-badge badge-lunch">Lunch Break</span>
-                    <span class="office-schedule">
-                        <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
-                        8:00 AM – 5:00 PM
-                    </span>
-                    <span class="office-hours-detail">
-                        Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
-                    </span>
-                </div>
-                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
-            </div>
-
-            <div class="office-card" @onclick='() => Navigation.NavigateTo("/grade-release")'>
-                <div class="office-icon-wrap" style="background: rgba(34,197,94,0.2);">
-                    <MudIcon Icon="@Icons.Material.Filled.Grade" Class="office-icon" />
-                </div>
-                <div class="office-info">
-                    <span class="office-name">Grade Release</span>
-                    <span class="office-status-badge badge-open">Open</span>
-                    <span class="office-schedule">
-                        <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
-                        8:00 AM – 5:00 PM
-                    </span>
-                    <span class="office-hours-detail">
-                        Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
-                    </span>
-                </div>
-                <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
-            </div>
-
         </div>
-    </div>
 
-    <!-- PROGRESS + CHECKLIST SIDE BY SIDE -->
-    <div class="progress-checklist-row">
-
-        <!-- PROGRESS CARD -->
-        <div class="glass-card progress-graphic-card">
+        <!-- OFFICE QUICK ACCESS -->
+        <div class="glass-card">
             <div class="section-header">
-                <MudIcon Icon="@Icons.Material.Filled.DonutLarge" Class="section-icon" />
-                <MudText Typo="Typo.h6" Class="section-title">Progress</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Business" Class="section-icon" />
+                <MudText Typo="Typo.h6" Class="section-title">Office Quick Access</MudText>
             </div>
-            <div class="progress-circle-wrap">
-                <div class="progress-circle">
+            <div class="office-grid">
+
+                <div class="office-card" @onclick='() => Navigation.NavigateTo("/registrar")'>
+                    <div class="office-icon-wrap" style="background: rgba(96,165,250,0.2);">
+                        <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="office-icon" />
+                    </div>
+                    <div class="office-info">
+                        <span class="office-name">Registrar</span>
+                        <span class="office-status-badge badge-open">Open</span>
+                        <span class="office-schedule">
+                            <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
+                            8:00 AM – 5:00 PM
+                        </span>
+                        <span class="office-hours-detail">
+                            Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
+                        </span>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+                </div>
+
+                <div class="office-card" @onclick='() => Navigation.NavigateTo("/cashier")'>
+                    <div class="office-icon-wrap" style="background: rgba(234,179,8,0.2);">
+                        <MudIcon Icon="@Icons.Material.Filled.Payments" Class="office-icon" />
+                    </div>
+                    <div class="office-info">
+                        <span class="office-name">Cashier</span>
+                        <span class="office-status-badge badge-lunch">Lunch Break</span>
+                        <span class="office-schedule">
+                            <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
+                            8:00 AM – 5:00 PM
+                        </span>
+                        <span class="office-hours-detail">
+                            Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
+                        </span>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+                </div>
+
+                <div class="office-card" @onclick='() => Navigation.NavigateTo("/grade-release")'>
+                    <div class="office-icon-wrap" style="background: rgba(34,197,94,0.2);">
+                        <MudIcon Icon="@Icons.Material.Filled.Grade" Class="office-icon" />
+                    </div>
+                    <div class="office-info">
+                        <span class="office-name">Grade Release</span>
+                        <span class="office-status-badge badge-open">Open</span>
+                        <span class="office-schedule">
+                            <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
+                            8:00 AM – 5:00 PM
+                        </span>
+                        <span class="office-hours-detail">
+                            Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
+                        </span>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PROGRESS + CHECKLIST SIDE BY SIDE -->
+        <div class="progress-checklist-row">
+
+            <!-- PROGRESS CARD -->
+            <div class="glass-card progress-graphic-card">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.DonutLarge" Class="section-icon" />
+                    <MudText Typo="Typo.h6" Class="section-title">Progress</MudText>
+                </div>
+                <div class="progress-circle-wrap">
+                    <div class="progress-circle">
                         <svg class="circle-svg" viewBox="0 0 120 120">
                             <circle class="circle-bg" cx="60" cy="60" r="50" fill="none" />
                             <circle class="circle-fill" cx="60" cy="60" r="50"
@@ -320,65 +320,65 @@
                                     stroke-dashoffset="0"
                                     transform="rotate(-90 60 60)" />
                         </svg>
-                    <div class="circle-label">
-                        <span class="circle-pct">@ClearancePercent%</span>
-                        <span class="circle-sub">Cleared</span>
+                        <div class="circle-label">
+                            <span class="circle-pct">@ClearancePercent%</span>
+                            <span class="circle-sub">Cleared</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-stats-row">
+                    <div class="progress-stat-chip cleared-chip">
+                        <span class="stat-num">@clearedCount</span>
+                        <span class="stat-lbl">Done</span>
+                    </div>
+                    <div class="progress-stat-chip pending-chip">
+                        <span class="stat-num">@(clearanceItems.Count - clearedCount)</span>
+                        <span class="stat-lbl">Pending</span>
+                    </div>
+                    <div class="progress-stat-chip total-chip">
+                        <span class="stat-num">@clearanceItems.Count</span>
+                        <span class="stat-lbl">Total</span>
                     </div>
                 </div>
             </div>
-            <div class="progress-stats-row">
-                <div class="progress-stat-chip cleared-chip">
-                    <span class="stat-num">@clearedCount</span>
-                    <span class="stat-lbl">Done</span>
-                </div>
-                <div class="progress-stat-chip pending-chip">
-                    <span class="stat-num">@(clearanceItems.Count - clearedCount)</span>
-                    <span class="stat-lbl">Pending</span>
-                </div>
-                <div class="progress-stat-chip total-chip">
-                    <span class="stat-num">@clearanceItems.Count</span>
-                    <span class="stat-lbl">Total</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- CHECKLIST CARD -->
-        <div class="glass-card checklist-card">
-            <div class="section-header">
-                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="section-icon" />
-                <MudText Typo="Typo.h6" Class="section-title">My Clearance Checklist</MudText>
-            </div>
-            <div class="checklist">
-                @if (clearanceItems.Count == 0)
-                {
-                    <div class="checklist-empty">No clearance items found.</div>
-                }
-                else
-                {
-                    @foreach (var item in clearanceItems)
+            <!-- CHECKLIST CARD -->
+            <div class="glass-card checklist-card">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="section-icon" />
+                    <MudText Typo="Typo.h6" Class="section-title">My Clearance Checklist</MudText>
+                </div>
+                <div class="checklist">
+                    @if (clearanceItems.Count == 0)
                     {
-                        <div class="checklist-item @(item.IsCleared ? "cleared" : "")">
-                            <MudCheckBox @bind-Value="item.IsCleared" Color="Color.Success" />
-                            <div class="checklist-info">
-                                <span class="checklist-name">@item.Name</span>
-                                @if (!string.IsNullOrEmpty(item.Description))
+                        <div class="checklist-empty">No clearance items found.</div>
+                    }
+                    else
+                    {
+                        @foreach (var item in clearanceItems)
+                        {
+                            <div class="checklist-item @(item.IsCleared ? "cleared" : "")">
+                                <MudCheckBox @bind-Value="item.IsCleared" Color="Color.Success" />
+                                <div class="checklist-info">
+                                    <span class="checklist-name">@item.Name</span>
+                                    @if (!string.IsNullOrEmpty(item.Description))
+                                    {
+                                        <span class="checklist-desc">@item.Description</span>
+                                    }
+                                </div>
+                                @if (item.IsCleared && item.ClearedAt.HasValue)
                                 {
-                                    <span class="checklist-desc">@item.Description</span>
+                                    <span class="checklist-date">@item.ClearedAt.Value.ToString("MMM dd")</span>
                                 }
                             </div>
-                            @if (item.IsCleared && item.ClearedAt.HasValue)
-                            {
-                                <span class="checklist-date">@item.ClearedAt.Value.ToString("MMM dd")</span>
-                            }
-                        </div>
+                        }
                     }
-                }
+                </div>
             </div>
+
         </div>
 
     </div>
-
-</div>
 </div>
 
 @code {
@@ -393,13 +393,7 @@
     private StudentDashboardResponse? dashboardData;
     private List<ClearanceItemModel> clearanceItems = new();
 
-    // Sample notifications — replace with real data from your service
-    private List<NotificationModel> notifications = new()
-    {
-        new NotificationModel { Message = "Registrar cleared your clearance.", Time = "2 mins ago", IsUnread = true },
-        new NotificationModel { Message = "New announcement posted.", Time = "1 hour ago", IsUnread = true },
-        new NotificationModel { Message = "Your profile was updated.", Time = "Yesterday", IsUnread = false },
-    };
+    private List<NotificationModel> notifications = new();
 
     private int unreadNotifCount => notifications.Count(n => n.IsUnread);
 
@@ -486,16 +480,16 @@
     private string GetStatusDotClass(string status) => status switch
     {
         "Available" => "dot-green",
-        "On Break"  => "dot-yellow",
-        "Absent"    => "dot-red",
-        _           => "dot-grey"
+        "On Break" => "dot-yellow",
+        "Absent" => "dot-red",
+        _ => "dot-grey"
     };
 
     // Simple notification model — move to a shared models file if preferred
     private class NotificationModel
     {
         public string Message { get; set; } = "";
-        public string Time    { get; set; } = "";
-        public bool IsUnread  { get; set; }
+        public string Time { get; set; } = "";
+        public bool IsUnread { get; set; }
     }
 }
