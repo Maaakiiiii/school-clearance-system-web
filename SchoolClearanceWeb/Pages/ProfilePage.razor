@@ -1,4 +1,4 @@
-﻿@page "/profile"
+@page "/profile"
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @inject StudentService StudentService
@@ -55,14 +55,11 @@
 
     <!-- NAVBAR -->
     <div class="dash-navbar">
-         <button class="hamburger-btn" @onclick="ToggleDrawer">
-        <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
-    </button>
+        <button class="hamburger-btn" @onclick="ToggleDrawer">
+            <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
+        </button>
         <div class="navbar-center">
-            <div class="search-wrapper">
-                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
-                <input placeholder="Search staff..." class="search-input" />
-            </div>
+            <SearchBar />
         </div>
         <div class="navbar-right">
             <div class="notif-btn">
@@ -566,6 +563,7 @@
         var studentIdStr = await JS.InvokeAsync<string>("localStorage.getItem", "studentId");
         int.TryParse(studentIdStr, out int studentId);
 
+        // Load profile info
         var result = await StudentService.GetProfile(studentId, token);
         if (result?.Status == 1 && result.Data != null)
         {
@@ -586,6 +584,17 @@
                 courseOptions = new() { "ABM", "HUMSS", "STEM", "TVL", "GAS" };
                 yearOptions = new() { "Grade 11", "Grade 12" };
             }
+        }
+
+        // ✅ Load clearance data from dashboard endpoint (profile endpoint has no clearance info)
+        var dashResult = await StudentService.GetDashboard(studentId, token);
+        if (dashResult?.Status == 1 && dashResult.Data != null)
+        {
+            var items = dashResult.Data.ClearanceItems ?? new();
+            totalCount = items.Count;
+            clearedCount = items.Count(x => x.IsCleared);
+            pendingCount = totalCount - clearedCount;
+            clearedPercent = totalCount == 0 ? 0 : (int)Math.Round((double)clearedCount / totalCount * 100);
         }
     }
 
@@ -723,14 +732,40 @@
     {
         passwordError = "";
         passwordSaved = false;
+
         if (string.IsNullOrWhiteSpace(currentPassword)) { passwordError = "Current password is required."; return; }
         if (newPassword.Length < 8) { passwordError = "New password must be at least 8 characters."; return; }
         if (PasswordMismatch) { passwordError = "Passwords do not match."; return; }
+
         isSavingPassword = true;
-        await Task.Delay(600);
-        isSavingPassword = false;
-        passwordSaved = true;
-        await Task.Delay(1200);
-        ClosePasswordModal();
+        try
+        {
+            var token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+            var studentIdStr = await JS.InvokeAsync<string>("localStorage.getItem", "studentId");
+            int.TryParse(studentIdStr, out int studentId);
+
+            var result = await StudentService.ChangePassword(studentId, currentPassword, newPassword, token);
+            if (result?.Status == 1)
+            {
+                passwordSaved = true;
+                currentPassword = "";
+                newPassword = "";
+                confirmPassword = "";
+                await Task.Delay(1500);
+                ClosePasswordModal();
+            }
+            else
+            {
+                passwordError = result?.Message ?? "Failed to change password. Please try again.";
+            }
+        }
+        catch (Exception)
+        {
+            passwordError = "An error occurred. Please try again.";
+        }
+        finally
+        {
+            isSavingPassword = false;
+        }
     }
 }

@@ -1,0 +1,122 @@
+@inject StudentService StudentService
+@inject NavigationManager Navigation
+
+<div class="search-wrapper">
+    <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
+    <input value="@_searchQuery"
+           @oninput="e => SearchQuery = e.Value?.ToString() ?? string.Empty"
+           placeholder="Search staff..."
+           class="search-input" />
+
+    @if (showSearchResults)
+    {
+        <div class="search-backdrop" @onclick="CloseDropdown"></div>
+
+        <div class="search-dropdown">
+            @if (searchResults.Any())
+            {
+                @foreach (var staff in searchResults)
+                {
+                    <div class="search-item" @onclick="() => GoToStaff(staff.StaffId)">
+                        <div class="search-item-avatar">
+                            @if (!string.IsNullOrEmpty(staff.ProfilePicture))
+                            {
+                                <img src="@GetAvatarSrc(staff.ProfilePicture)" class="search-avatar-img" alt="@staff.FullName" />
+                            }
+                            else
+                            {
+                                <span class="search-avatar-initials">@GetInitials(staff.FullName)</span>
+                            }
+                        </div>
+                        <div class="search-item-info">
+                            <span class="search-item-name">@staff.FullName</span>
+                            <span class="search-item-pos">@staff.Position — @staff.Department</span>
+                        </div>
+                        <span class="status-dot @GetStatusDotClass(staff.StaffStatus)"></span>
+                    </div>
+                }
+            }
+            else if (_searchQuery.Length >= 2)
+            {
+                <div class="search-empty">No staff found</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string _searchQuery = "";
+    private string SearchQuery
+    {
+        get => _searchQuery;
+        set { _searchQuery = value; _ = OnSearchChanged(value); }
+    }
+
+    private System.Threading.CancellationTokenSource? _searchCts;
+    private bool showSearchResults = false;
+    private List<StaffListModel> searchResults = new();
+
+    private async Task OnSearchChanged(string query)
+    {
+        _searchCts?.Cancel();
+        _searchCts = new System.Threading.CancellationTokenSource();
+        var cts = _searchCts;
+
+        if (query.Length < 2)
+        {
+            showSearchResults = false;
+            searchResults = new();
+            StateHasChanged();
+            return;
+        }
+
+        try
+        {
+            await Task.Delay(300, cts.Token);
+            var result = await StudentService.SearchStaff(query);
+            if (!cts.IsCancellationRequested)
+            {
+                searchResults = result?.Status == 1 && result.Data != null ? result.Data : new();
+                showSearchResults = true;
+                StateHasChanged();
+            }
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    private void CloseDropdown()
+    {
+        showSearchResults = false;
+        StateHasChanged();
+    }
+
+    private void GoToStaff(int staffId)
+    {
+        showSearchResults = false;
+        _searchQuery = "";
+        Navigation.NavigateTo($"/staff-profile/{staffId}");
+    }
+
+    private string GetInitials(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "?";
+        var parts = fullName.Trim().Split(' ');
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}".ToUpper()
+            : fullName[..1].ToUpper();
+    }
+
+    private string GetAvatarSrc(string? base64)
+    {
+        if (string.IsNullOrEmpty(base64)) return "";
+        return base64.StartsWith("data:") ? base64 : $"data:image/jpeg;base64,{base64}";
+    }
+
+    private string GetStatusDotClass(string status) => status switch
+    {
+        "Available" => "dot-green",
+        "On Break"  => "dot-yellow",
+        "Absent"    => "dot-red",
+        _           => "dot-grey"
+    };
+}

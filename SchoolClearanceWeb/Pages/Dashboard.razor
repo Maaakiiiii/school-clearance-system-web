@@ -1,6 +1,7 @@
-﻿@page "/"
+﻿@page "/dashboard"
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject StudentService StudentService
 
 <div class="dash-page">
 
@@ -63,36 +64,8 @@
             <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
         </button>
 
-
         <div class="navbar-center">
-            <div class="search-wrapper">
-                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
-                <input @bind="searchQuery"
-                       @bind:event="oninput"
-                       placeholder="Search staff..."
-                       class="search-input" />
-                @if (showSearchResults && searchResults.Any())
-                {
-                    <div class="search-dropdown">
-                        @foreach (var staff in searchResults)
-                        {
-                            <div class="search-item" @onclick="() => GoToStaff(staff.StaffId)">
-                                <div class="search-item-info">
-                                    <span class="search-item-name">@staff.FullName</span>
-                                    <span class="search-item-pos">@staff.Position — @staff.Department</span>
-                                </div>
-                                <span class="status-dot @GetStatusDotClass(staff.StaffStatus)"></span>
-                            </div>
-                        }
-                    </div>
-                }
-                @if (showSearchResults && !searchResults.Any() && searchQuery.Length >= 2)
-                {
-                    <div class="search-dropdown">
-                        <div class="search-empty">No staff found</div>
-                    </div>
-                }
-            </div>
+            <SearchBar />
         </div>
 
         <!-- ═══ NAVBAR RIGHT: Notif + Avatar ═══ -->
@@ -107,12 +80,6 @@
                         <span class="notif-badge">@unreadNotifCount</span>
                     }
                 </div>
-
-                @if (showNotifMenu)
-                {
-                    <div class="notif-dropdown">
-                    </div>
-                }
             </div>
 
             @if (showNotifMenu)
@@ -244,56 +211,109 @@
             </div>
             <div class="office-grid">
 
+                @{
+                    var registrar = officeStatuses
+                    .Where(o => o.Position == "Registrar")
+                    .OrderByDescending(o => o.LastUpdatedAt ?? DateTime.MinValue)
+                    .FirstOrDefault();
+                    var cashier = officeStatuses
+                    .Where(o => o.Position == "Cashier")
+                    .OrderByDescending(o => o.LastUpdatedAt ?? DateTime.MinValue)
+                    .FirstOrDefault();
+                    var gradeRelease = gradeReleaseStaffList
+                    .OrderByDescending(o => o.LastUpdatedAt ?? DateTime.MinValue)
+                    .FirstOrDefault();
+                }
+
+                <!-- REGISTRAR -->
                 <div class="office-card" @onclick='() => Navigation.NavigateTo("/registrar")'>
                     <div class="office-icon-wrap" style="background: rgba(96,165,250,0.2);">
                         <MudIcon Icon="@Icons.Material.Filled.AssignmentInd" Class="office-icon" />
                     </div>
                     <div class="office-info">
                         <span class="office-name">Registrar</span>
-                        <span class="office-status-badge badge-open">Open</span>
-                        <span class="office-schedule">
-                            <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
-                            8:00 AM – 5:00 PM
+                        <span class="office-status-badge @GetOfficeStatusBadgeClass(registrar?.OfficeStatus)">
+                            @(registrar?.OfficeStatus ?? "Unknown")
                         </span>
-                        <span class="office-hours-detail">
-                            Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
-                        </span>
+                        @if (!string.IsNullOrEmpty(registrar?.CrowdStatus))
+                        {
+                            <span class="office-crowd-pill @GetCrowdStatusClass(registrar.CrowdStatus)">
+                                @GetCrowdStatusEmoji(registrar.CrowdStatus) @GetCrowdStatusLabel(registrar.CrowdStatus)
+                            </span>
+                        }
+                        @if (!string.IsNullOrEmpty(registrar?.StaffNote))
+                        {
+                            <span class="office-note">@registrar.StaffNote</span>
+                        }
+                        @if (!string.IsNullOrEmpty(registrar?.AcceptanceWindow))
+                        {
+                            <span class="office-schedule">
+                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
+                                @registrar.AcceptanceWindow
+                            </span>
+                        }
                     </div>
                     <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
                 </div>
 
+                <!-- CASHIER -->
                 <div class="office-card" @onclick='() => Navigation.NavigateTo("/cashier")'>
                     <div class="office-icon-wrap" style="background: rgba(234,179,8,0.2);">
                         <MudIcon Icon="@Icons.Material.Filled.Payments" Class="office-icon" />
                     </div>
                     <div class="office-info">
                         <span class="office-name">Cashier</span>
-                        <span class="office-status-badge badge-lunch">Lunch Break</span>
-                        <span class="office-schedule">
-                            <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
-                            8:00 AM – 5:00 PM
+                        <span class="office-status-badge @GetOfficeStatusBadgeClass(cashier?.OfficeStatus)">
+                            @(cashier?.OfficeStatus ?? "Unknown")
                         </span>
-                        <span class="office-hours-detail">
-                            Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
-                        </span>
+                        @if (!string.IsNullOrEmpty(cashier?.CrowdStatus))
+                        {
+                            <span class="office-crowd-pill @GetCrowdStatusClass(cashier.CrowdStatus)">
+                                @GetCrowdStatusEmoji(cashier.CrowdStatus) @GetCrowdStatusLabel(cashier.CrowdStatus)
+                            </span>
+                        }
+                        @if (!string.IsNullOrEmpty(cashier?.StaffNote))
+                        {
+                            <span class="office-note">@cashier.StaffNote</span>
+                        }
+                        @if (!string.IsNullOrEmpty(cashier?.AcceptanceWindow))
+                        {
+                            <span class="office-schedule">
+                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
+                                @cashier.AcceptanceWindow
+                            </span>
+                        }
                     </div>
                     <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
                 </div>
 
+                <!-- GRADE RELEASE -->
                 <div class="office-card" @onclick='() => Navigation.NavigateTo("/grade-release")'>
                     <div class="office-icon-wrap" style="background: rgba(34,197,94,0.2);">
                         <MudIcon Icon="@Icons.Material.Filled.Grade" Class="office-icon" />
                     </div>
                     <div class="office-info">
                         <span class="office-name">Grade Release</span>
-                        <span class="office-status-badge badge-open">Open</span>
-                        <span class="office-schedule">
-                            <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
-                            8:00 AM – 5:00 PM
+                        <span class="office-status-badge @GetOfficeStatusBadgeClass(gradeRelease?.OfficeStatus)">
+                            @(gradeRelease?.OfficeStatus ?? "Unknown")
                         </span>
-                        <span class="office-hours-detail">
-                            Opens: 8:00 AM &nbsp;|&nbsp; Closes: 5:00 PM
-                        </span>
+                        @if (!string.IsNullOrEmpty(gradeRelease?.CrowdStatus))
+                        {
+                            <span class="office-crowd-pill @GetCrowdStatusClass(gradeRelease.CrowdStatus)">
+                                @GetCrowdStatusEmoji(gradeRelease.CrowdStatus) @GetCrowdStatusLabel(gradeRelease.CrowdStatus)
+                            </span>
+                        }
+                        @if (!string.IsNullOrEmpty(gradeRelease?.StaffNote))
+                        {
+                            <span class="office-note">@gradeRelease.StaffNote</span>
+                        }
+                        @if (!string.IsNullOrEmpty(gradeRelease?.AcceptanceWindow))
+                        {
+                            <span class="office-schedule">
+                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="schedule-icon" />
+                                @gradeRelease.AcceptanceWindow
+                            </span>
+                        }
                     </div>
                     <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Class="office-arrow" />
                 </div>
@@ -358,7 +378,9 @@
                         @foreach (var item in clearanceItems)
                         {
                             <div class="checklist-item @(item.IsCleared ? "cleared" : "")">
-                                <MudCheckBox @bind-Value="item.IsCleared" Color="Color.Success" />
+                                <MudCheckBox Value="@item.IsCleared"
+                                             ValueChanged="@((bool val) => OnClearanceChanged(item, val))"
+                                             Color="Color.Success" />
                                 <div class="checklist-info">
                                     <span class="checklist-name">@item.Name</span>
                                     @if (!string.IsNullOrEmpty(item.Description))
@@ -382,43 +404,75 @@
 </div>
 
 @code {
-    private string searchQuery = "";
-    private bool showSearchResults = false;
     private bool drawerOpen = false;
     private bool showProfileMenu = false;
     private bool showNotifMenu = false;
     private string currentPage = "dashboard";
-    private List<StaffListModel> searchResults = new();
 
     private StudentDashboardResponse? dashboardData;
     private List<ClearanceItemModel> clearanceItems = new();
+    private List<OfficeStatusResponse> officeStatuses = new();
+    private List<GradeReleaseStaffModel> gradeReleaseStaffList = new();
+
+    private string token = "";
+    private int studentId = 0;
 
     private List<NotificationModel> notifications = new();
-
     private int unreadNotifCount => notifications.Count(n => n.IsUnread);
-
     private int clearedCount => clearanceItems.Count(x => x.IsCleared);
     private int ClearancePercent => clearanceItems.Count == 0 ? 0
         : (int)Math.Round((double)clearedCount / clearanceItems.Count * 100);
 
-    // Circle SVG dash calculation: circumference = 2 * π * r = 2 * 3.14159 * 50 ≈ 314.16
-    private string CircleDash => $"{ClearancePercent * 3.1416:F1} 314.16";
-
-    [Inject] private StudentService StudentService { get; set; } = default!;
-
     protected override async Task OnInitializedAsync()
     {
-        var token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+        token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
         var studentIdStr = await JS.InvokeAsync<string>("localStorage.getItem", "studentId");
-        int.TryParse(studentIdStr, out int studentId);
+        int.TryParse(studentIdStr, out studentId);
 
+        // Load dashboard
         var result = await StudentService.GetDashboard(studentId, token);
         if (result?.Status == 1 && result.Data != null)
         {
             dashboardData = result.Data;
             clearanceItems = dashboardData.ClearanceItems ?? new();
         }
+
+        // Load office statuses
+        var officeResult = await StudentService.GetAllOfficeStatus();
+        if (officeResult?.Status == 1 && officeResult.Data != null)
+        {
+            officeStatuses = officeResult.Data;
+        }
+
+        // Load grade release staff from dedicated endpoint (matches GradeReleaseOffice page)
+        var gradeReleaseResult = await StudentService.GetGradeReleaseStaff();
+        if (gradeReleaseResult?.Status == 1 && gradeReleaseResult.Data != null)
+        {
+            gradeReleaseStaffList = gradeReleaseResult.Data;
+        }
     }
+
+    private async Task OnClearanceChanged(ClearanceItemModel item, bool newValue)
+    {
+        item.IsCleared = newValue;
+        item.ClearedAt = newValue ? DateTime.Now : null;
+        StateHasChanged();
+
+        await StudentService.UpdateClearanceItem(new UpdateClearanceRequest
+        {
+            StudentId = studentId,
+            ItemId = item.ItemId,
+            IsCleared = newValue
+        }, token);
+    }
+
+    private string GetOfficeStatusBadgeClass(string? status) => status switch
+    {
+        "Open" => "badge-open",
+        "Lunch Break" => "badge-lunch",
+        "Closed" => "badge-closed",
+        _ => "badge-closed"
+    };
 
     private void ToggleDrawer() => drawerOpen = !drawerOpen;
     private void CloseDrawer() => drawerOpen = false;
@@ -456,13 +510,6 @@
         Navigation.NavigateTo("/loginpage");
     }
 
-    private void GoToStaff(int staffId)
-    {
-        showSearchResults = false;
-        searchQuery = "";
-        Navigation.NavigateTo($"/staff/{staffId}");
-    }
-
     private string GetGreetingTime()
     {
         var hour = DateTime.Now.Hour;
@@ -477,15 +524,30 @@
              : Icons.Material.Filled.Bedtime;
     }
 
-    private string GetStatusDotClass(string status) => status switch
+    private string GetCrowdStatusClass(string status) => status switch
     {
-        "Available" => "dot-green",
-        "On Break" => "dot-yellow",
-        "Absent" => "dot-red",
-        _ => "dot-grey"
+        "Open" => "crowd-open",
+        "Busy" => "crowd-busy",
+        "VeryBusy" => "crowd-very-busy",
+        _ => "crowd-open"
     };
 
-    // Simple notification model — move to a shared models file if preferred
+    private string GetCrowdStatusEmoji(string status) => status switch
+    {
+        "Open" => "🟢",
+        "Busy" => "🟡",
+        "VeryBusy" => "🔴",
+        _ => "🟢"
+    };
+
+    private string GetCrowdStatusLabel(string status) => status switch
+    {
+        "Open" => "Come On In",
+        "Busy" => "Short Wait Expected",
+        "VeryBusy" => "Expect a Long Wait",
+        _ => "Come On In"
+    };
+
     private class NotificationModel
     {
         public string Message { get; set; } = "";

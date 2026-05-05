@@ -1,6 +1,7 @@
-﻿@page "/grade-release"
+@page "/grade-release"
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject StudentService StudentService
 
 <div class="dash-page">
     <div class="bg-shapes">
@@ -54,10 +55,7 @@
             <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
         </button>
         <div class="navbar-center">
-            <div class="search-wrapper">
-                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
-                <input placeholder="Search staff..." class="search-input" />
-            </div>
+            <SearchBar />
         </div>
         <div class="navbar-right">
 
@@ -191,20 +189,20 @@
                 @if (officeStaff != null)
                 {
                     <div class="office-status-body">
-                        <div class="office-badges-row">
-                            <div class="office-badge-wrap">
-                                <span class="badge-label">Office</span>
-                                <span class="office-status-badge @GetOfficeStatusClass(officeStaff.OfficeStatus)">
-                                    <MudIcon Icon="@GetOfficeStatusIcon(officeStaff.OfficeStatus)" Class="badge-icon" />
-                                    @officeStaff.OfficeStatus
-                                </span>
+                        <div class="os-status-row">
+                            <div class="os-status-left">
+                                <span class="os-dot @GetOfficeStatusDotClass(officeStaff.OfficeStatus)"></span>
+                                <span class="os-status-text @GetOfficeStatusTextClass(officeStaff.OfficeStatus)">@officeStaff.OfficeStatus</span>
                             </div>
-                            <div class="office-badge-wrap">
-                                <span class="badge-label">Crowd</span>
-                                <span class="crowd-status-badge @GetCrowdStatusClass(officeStaff.CrowdStatus)">
-                                    @GetCrowdStatusEmoji(officeStaff.CrowdStatus) @GetCrowdStatusLabel(officeStaff.CrowdStatus)
-                                </span>
-                            </div>
+                            @if (officeStaff.LastUpdatedAt.HasValue)
+                            {
+                                <span class="os-timeago">@GetTimeAgo(officeStaff.LastUpdatedAt.Value)</span>
+                            }
+                        </div>
+                        <div class="os-crowd-row">
+                            <span class="crowd-status-badge @GetCrowdStatusClass(officeStaff.CrowdStatus)">
+                                @GetCrowdStatusEmoji(officeStaff.CrowdStatus) @GetCrowdStatusLabel(officeStaff.CrowdStatus)
+                            </span>
                         </div>
                         @if (!string.IsNullOrEmpty(officeStaff.StaffNote))
                         {
@@ -215,19 +213,9 @@
                         }
                         @if (!string.IsNullOrEmpty(officeStaff.AcceptanceWindow))
                         {
-                            <div class="office-window-row">
-                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="window-icon" />
-                                <div>
-                                    <span class="window-label">Acceptance Window</span>
-                                    <span class="window-value">@officeStaff.AcceptanceWindow</span>
-                                </div>
-                            </div>
-                        }
-                        @if (officeStaff.LastUpdatedAt.HasValue)
-                        {
-                            <div class="last-updated-row">
-                                <MudIcon Icon="@Icons.Material.Filled.Update" Class="updated-icon" />
-                                <span class="last-updated-text">Last updated: @GetTimeAgo(officeStaff.LastUpdatedAt.Value)</span>
+                            <div class="os-window-row">
+                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="os-window-icon" />
+                                <span class="os-window-text">@officeStaff.AcceptanceWindow</span>
                             </div>
                         }
                     </div>
@@ -262,7 +250,14 @@
                             <div class="staff-list-item" @onclick="() => GoToStaffProfile(staff.StaffId)">
                                 <div class="staff-avatar-wrap">
                                     <div class="staff-avatar">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="staff-avatar-icon" />
+                                        @if (!string.IsNullOrEmpty(staff.ProfilePicture))
+                                        {
+                                            <img src="@GetAvatarSrc(staff.ProfilePicture)" class="staff-avatar-img" alt="@staff.FullName" />
+                                        }
+                                        else
+                                        {
+                                            <span class="staff-avatar-initials">@GetInitials(staff.FullName)</span>
+                                        }
                                     </div>
                                     <span class="staff-status-dot @GetStaffStatusDotClass(staff.StaffStatus)"></span>
                                 </div>
@@ -273,7 +268,7 @@
                                     {
                                         <div class="staff-location">
                                             <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="location-icon" />
-                                            <span>@staff.CurrentLocation</span>
+                                            <span>@AppLocations.BuildLocationDisplay(staff.CurrentLocation)</span>
                                         </div>
                                     }
                                 </div>
@@ -299,8 +294,9 @@
     private bool showNotifMenu = false;
     private bool isLoading = true;
 
-    private List<StaffListModel> gradeReleaseStaff = new();
-    private StaffListModel? officeStaff = null;
+
+    private List<GradeReleaseStaffModel> gradeReleaseStaff = new();
+    private GradeReleaseStaffModel? officeStaff = null;
 
     private List<NotificationModel> notifications = new();
 
@@ -316,8 +312,13 @@
         isLoading = true;
         try
         {
-            // TODO: Replace with StaffService.GetAllStaff() filtered by Position == "Grade Release"
-            await Task.CompletedTask;
+            // ✅ Bug W5 fix — use dedicated grade-release-staff endpoint
+            var result = await StudentService.GetGradeReleaseStaff();
+            if (result?.Status == 1 && result.Data != null)
+            {
+                gradeReleaseStaff = result.Data;
+                officeStaff = gradeReleaseStaff.FirstOrDefault();
+            }
         }
         catch (Exception)
         {
@@ -327,6 +328,21 @@
         {
             isLoading = false;
         }
+    }
+
+    private string GetInitials(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "?";
+        var parts = fullName.Trim().Split(' ');
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}".ToUpper()
+            : fullName[..1].ToUpper();
+    }
+
+    private string GetAvatarSrc(string? base64)
+    {
+        if (string.IsNullOrEmpty(base64)) return "";
+        return base64.StartsWith("data:") ? base64 : $"data:image/jpeg;base64,{base64}";
     }
 
     private void ToggleNotifMenu()
@@ -384,6 +400,22 @@
         "Busy" => "Short Wait Expected",
         "VeryBusy" => "Expect a Long Wait",
         _ => "Come On In"
+    };
+
+    private string GetOfficeStatusDotClass(string status) => status switch
+    {
+        "Open" => "os-dot-open",
+        "Lunch Break" => "os-dot-lunch",
+        "Closed" => "os-dot-closed",
+        _ => "os-dot-closed"
+    };
+
+    private string GetOfficeStatusTextClass(string status) => status switch
+    {
+        "Open" => "os-text-open",
+        "Lunch Break" => "os-text-lunch",
+        "Closed" => "os-text-closed",
+        _ => "os-text-closed"
     };
 
     private string GetStaffStatusClass(string status) => status switch

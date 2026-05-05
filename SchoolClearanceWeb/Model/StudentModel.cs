@@ -26,6 +26,14 @@
         public string YearLevel { get; set; }
     }
 
+    public class ClearanceScheduleResponse
+    {
+        public int ScheduleId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime DeadlineDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
     public class OfficeStatusResponse
     {
         public int StaffId { get; set; }
@@ -38,5 +46,7 @@
         public string? StaffNote { get; set; }
         public string? AcceptanceWindow { get; set; }
         public DateTime? LastUpdatedAt { get; set; }
+        public string? StaffStatus { get; set; }  // ✅ Bug W4 fix
+        public string? ProfilePicture { get; set; } // ✅ Item 7 — from SP_GetAllStaff
     }
 }

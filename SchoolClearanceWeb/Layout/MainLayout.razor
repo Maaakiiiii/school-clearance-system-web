@@ -1,8 +1,58 @@
 ﻿@inherits LayoutComponentBase
+@inject StudentService StudentService
 
 <MudThemeProvider />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-@Body
+@if (showDeadlineBar && schedule != null)
+{
+    <div class="deadline-bar @GetDeadlineBarClass()">
+        <span>⏰ Clearance deadline in @GetDaysRemaining() day(s) — @schedule.DeadlineDate.ToString("MMMM dd, yyyy")</span>
+        <button @onclick="DismissBar" class="deadline-dismiss-btn">✕</button>
+    </div>
+    <div class="deadline-body-offset">
+        @Body
+    </div>
+}
+else
+{
+    @Body
+}
+
+@code {
+    private ClearanceScheduleResponse? schedule;
+    private bool showDeadlineBar = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await StudentService.GetClearanceSchedule();
+            if (result?.Status == 1 && result.Data != null)
+            {
+                schedule = result.Data;
+                if (schedule.DeadlineDate >= DateTime.Today)
+                    showDeadlineBar = true;
+            }
+        }
+        catch { /* No schedule set — silently hide bar */ }
+    }
+
+    private int GetDaysRemaining()
+    {
+        if (schedule == null) return 0;
+        return (int)(schedule.DeadlineDate.Date - DateTime.Today).TotalDays;
+    }
+
+    private string GetDeadlineBarClass()
+    {
+        var days = GetDaysRemaining();
+        if (days < 3) return "deadline-bar-red";
+        if (days <= 7) return "deadline-bar-yellow";
+        return "deadline-bar-green";
+    }
+
+    private void DismissBar() => showDeadlineBar = false;
+}

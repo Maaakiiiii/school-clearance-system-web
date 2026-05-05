@@ -1,6 +1,7 @@
-﻿@page "/announcements"
+@page "/announcements"
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject StudentService StudentService
 
 <div class="dash-page">
     <div class="bg-shapes">
@@ -54,14 +55,9 @@
             <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
         </button>
         <div class="navbar-center">
-            <div class="search-wrapper">
-                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
-                <input placeholder="Search staff..." class="search-input" />
-            </div>
+            <SearchBar />
         </div>
         <div class="navbar-right">
-
-            <!-- NOTIF WRAP -->
             <div class="notif-wrap">
                 <div class="notif-btn" @onclick="ToggleNotifMenu">
                     <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
@@ -97,8 +93,6 @@
                     </div>
                 }
             </div>
-
-            <!-- PROFILE AVATAR -->
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
@@ -194,106 +188,56 @@
             <div class="posts-list">
                 @foreach (var post in posts)
                 {
+                    var isLiked = _likedPosts.Contains(post.PostId);
+                    var likeCount = _likeCounts.GetValueOrDefault(post.PostId, 0);
+
                     <div class="post-card">
 
+                        <!-- HEADER -->
                         <div class="post-card-header">
-                            <div class="post-avatar">@GetInitials(post.FullName)</div>
+                            <div class="post-avatar">
+                                @if (!string.IsNullOrEmpty(post.ProfilePicture))
+                                {
+                                    <img src="@GetAvatarSrc(post.ProfilePicture)" class="post-avatar-img" alt="@post.FullName" />
+                                }
+                                else
+                                {
+                                    @GetInitials(post.FullName)
+                                }
+                            </div>
                             <div class="post-author-info">
                                 <span class="post-author-name">@post.FullName</span>
-                                <span class="post-author-position">@post.Position</span>
+                                <span class="post-author-meta">@post.Position • @post.PostedAt.ToString("MMM dd, yyyy") at @post.PostedAt.ToString("hh:mm tt")</span>
                             </div>
-                            <div class="post-meta-right">
-                                <span class="post-date-full">@post.PostedAt.ToString("MMM dd, yyyy")</span>
-                                <span class="post-time">@post.PostedAt.ToString("hh:mm tt")</span>
-                            </div>
+                            <span class="post-timeago">@GetTimeAgo(post.PostedAt)</span>
                         </div>
 
+                        <!-- DIVIDER -->
+                        <div class="post-divider"></div>
+
+                        <!-- BODY -->
                         <div class="post-card-body">
                             <span class="post-title">@post.Title</span>
                             <span class="post-content">@post.Content</span>
                         </div>
 
-                        @if (_reactionSummaries.ContainsKey(post.PostId) && _reactionSummaries[post.PostId].Any())
-                        {
-                            <div class="reaction-summary">
-                                @foreach (var r in _reactionSummaries[post.PostId])
-                                {
-                                    <span class="reaction-bubble">@r.Key @r.Value</span>
-                                }
-                            </div>
-                        }
-
-                        <div class="post-actions">
-                            <div class="action-group">
-                                <button class="action-btn @(IsReacted(post.PostId) ? "reacted" : "")"
-                                @onclick="() => ToggleReactionPicker(post.PostId)">
-                                    <MudIcon Icon="@Icons.Material.Outlined.EmojiEmotions" Class="action-icon" />
-                                    <span>React</span>
-                                </button>
-                                <button class="action-btn" @onclick="() => ToggleComments(post.PostId)">
-                                    <MudIcon Icon="@Icons.Material.Outlined.ChatBubbleOutline" Class="action-icon" />
-                                    <span>Comment @(_comments.ContainsKey(post.PostId) && _comments[post.PostId].Any() ? $"({_comments[post.PostId].Count})" : "")</span>
-                                </button>
-                                <button class="action-btn" @onclick="() => SharePost(post)">
-                                    <MudIcon Icon="@Icons.Material.Outlined.Share" Class="action-icon" />
-                                    <span>Share</span>
-                                </button>
-                            </div>
-                            <span class="post-timeago">@GetTimeAgo(post.PostedAt)</span>
+                        <!-- FOOTER -->
+                        <div class="post-footer">
+                            @if (likeCount > 0)
+                            {
+                                <span class="post-like-count">❤️ @likeCount</span>
+                            }
+                            else
+                            {
+                                <span></span>
+                            }
+                            <button class="heart-btn @(isLiked ? "heart-active" : "")"
+                                    @onclick="() => ToggleLike(post.PostId)">
+                                <MudIcon Icon="@(isLiked? Icons.Material.Filled.Favorite : Icons.Material.Outlined.FavoriteBorder)"
+                                         Class="heart-icon" />
+                                <span>@(isLiked ? "Liked" : "Like")</span>
+                            </button>
                         </div>
-
-                        @if (_activeReactionPicker == post.PostId)
-                        {
-                            <div class="reaction-picker">
-                                @foreach (var emoji in _reactionEmojis)
-                                {
-                                    <button class="emoji-btn @(GetMyReaction(post.PostId) == emoji ? "emoji-active" : "")"
-                                    @onclick="() => ReactToPost(post.PostId, emoji)">
-                                        @emoji
-                                    </button>
-                                }
-                            </div>
-                        }
-
-                        @if (_activeCommentSection == post.PostId)
-                        {
-                            <div class="comments-section">
-                                @if (_comments.ContainsKey(post.PostId) && _comments[post.PostId].Any())
-                                {
-                                    @foreach (var comment in _comments[post.PostId])
-                                    {
-                                        <div class="comment-item">
-                                            <div class="comment-avatar">S</div>
-                                            <div class="comment-body">
-                                                <div class="comment-header">
-                                                    <span class="comment-author">You</span>
-                                                    <span class="comment-time">@GetTimeAgo(comment.PostedAt)</span>
-                                                </div>
-                                                <span class="comment-text">@comment.Text</span>
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <span class="no-comments">No comments yet. Be the first!</span>
-                                }
-
-                                <div class="comment-input-row">
-                                    <div class="comment-avatar">S</div>
-                                    <input class="comment-input"
-                                    placeholder="Write a comment..."
-                                    value="@GetDraft(post.PostId)"
-                                    @oninput="e => _commentDrafts[post.PostId] = e.Value?.ToString() ?? string.Empty"
-                                    @onkeyup="e => HandleCommentKey(e, post.PostId)" />
-                                    <button class="comment-send-btn"
-                                    @onclick="() => SubmitComment(post.PostId)"
-                                    disabled="@(string.IsNullOrWhiteSpace(GetDraft(post.PostId)))">
-                                        <MudIcon Icon="@Icons.Material.Filled.Send" Class="send-icon" />
-                                    </button>
-                                </div>
-                            </div>
-                        }
 
                     </div>
                 }
@@ -310,21 +254,12 @@
     private bool isLoading = true;
 
     private List<StaffPostModel> posts = new();
-
     private List<NotificationModel> notifications = new();
 
+    private HashSet<int> _likedPosts = new();
+    private Dictionary<int, int> _likeCounts = new();
+
     private int unreadNotifCount => notifications.Count(n => n.IsUnread);
-
-    private Dictionary<int, Dictionary<string, int>> _reactionSummaries = new();
-    private Dictionary<int, string> _myReactions = new();
-    private int? _activeReactionPicker = null;
-    private int? _activeCommentSection = null;
-    private Dictionary<int, List<CommentItem>> _comments = new();
-    private Dictionary<int, string> _commentDrafts = new();
-
-    private readonly List<string> _reactionEmojis = new() { "👍", "❤️", "😮", "😂", "😢", "🙏" };
-
-    private record CommentItem(string Text, DateTime PostedAt);
 
     protected override async Task OnInitializedAsync()
     {
@@ -336,7 +271,13 @@
         isLoading = true;
         try
         {
-            await Task.CompletedTask;
+            var result = await StudentService.GetAllPosts();
+            if (result?.Status == 1 && result.Data != null)
+            {
+                posts = result.Data;
+                foreach (var p in posts)
+                    _likeCounts[p.PostId] = 0;
+            }
         }
         catch (Exception)
         {
@@ -345,6 +286,20 @@
         finally
         {
             isLoading = false;
+        }
+    }
+
+    private void ToggleLike(int postId)
+    {
+        if (_likedPosts.Contains(postId))
+        {
+            _likedPosts.Remove(postId);
+            _likeCounts[postId] = Math.Max(0, _likeCounts.GetValueOrDefault(postId, 1) - 1);
+        }
+        else
+        {
+            _likedPosts.Add(postId);
+            _likeCounts[postId] = _likeCounts.GetValueOrDefault(postId, 0) + 1;
         }
     }
 
@@ -365,76 +320,6 @@
         if (showProfileMenu) showNotifMenu = false;
     }
 
-    private void ToggleReactionPicker(int postId)
-    {
-        _activeReactionPicker = _activeReactionPicker == postId ? null : postId;
-    }
-
-    private void ReactToPost(int postId, string emoji)
-    {
-        if (!_reactionSummaries.ContainsKey(postId))
-            _reactionSummaries[postId] = new();
-
-        var previous = _myReactions.GetValueOrDefault(postId);
-
-        if (previous == emoji)
-        {
-            _myReactions.Remove(postId);
-            _reactionSummaries[postId][emoji]--;
-            if (_reactionSummaries[postId][emoji] <= 0)
-                _reactionSummaries[postId].Remove(emoji);
-        }
-        else
-        {
-            if (previous != null)
-            {
-                _reactionSummaries[postId][previous]--;
-                if (_reactionSummaries[postId][previous] <= 0)
-                    _reactionSummaries[postId].Remove(previous);
-            }
-            _myReactions[postId] = emoji;
-            if (!_reactionSummaries[postId].ContainsKey(emoji))
-                _reactionSummaries[postId][emoji] = 0;
-            _reactionSummaries[postId][emoji]++;
-        }
-
-        _activeReactionPicker = null;
-    }
-
-    private void ToggleComments(int postId)
-    {
-        _activeCommentSection = _activeCommentSection == postId ? null : postId;
-        if (!_commentDrafts.ContainsKey(postId))
-            _commentDrafts[postId] = string.Empty;
-    }
-
-    private void SubmitComment(int postId)
-    {
-        var draft = GetDraft(postId);
-        if (string.IsNullOrWhiteSpace(draft)) return;
-
-        if (!_comments.ContainsKey(postId))
-            _comments[postId] = new();
-
-        _comments[postId].Add(new CommentItem(draft.Trim(), DateTime.Now));
-        _commentDrafts[postId] = string.Empty;
-    }
-
-    private async Task HandleCommentKey(KeyboardEventArgs e, int postId)
-    {
-        if (e.Key == "Enter") SubmitComment(postId);
-        await Task.CompletedTask;
-    }
-
-    private void SharePost(StaffPostModel post)
-    {
-        Snackbar.Add($"Link copied: \"{post.Title}\"", Severity.Success);
-    }
-
-    private bool IsReacted(int postId) => _myReactions.ContainsKey(postId);
-    private string? GetMyReaction(int postId) => _myReactions.GetValueOrDefault(postId);
-    private string GetDraft(int postId) => _commentDrafts.GetValueOrDefault(postId, string.Empty);
-
     private string GetInitials(string fullName)
     {
         if (string.IsNullOrWhiteSpace(fullName)) return "?";
@@ -444,13 +329,19 @@
             : fullName[..1].ToUpper();
     }
 
+    private string GetAvatarSrc(string? base64)
+    {
+        if (string.IsNullOrEmpty(base64)) return "";
+        return base64.StartsWith("data:") ? base64 : $"data:image/jpeg;base64,{base64}";
+    }
+
     private string GetTimeAgo(DateTime dt)
     {
         var diff = DateTime.Now - dt;
         if (diff.TotalMinutes < 1) return "just now";
-        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes} min ago";
-        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours} hr ago";
-        if (diff.TotalDays < 7) return $"{(int)diff.TotalDays} day(s) ago";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m ago";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}h ago";
+        if (diff.TotalDays < 7) return $"{(int)diff.TotalDays}d ago";
         return dt.ToString("MMM dd, yyyy");
     }
 

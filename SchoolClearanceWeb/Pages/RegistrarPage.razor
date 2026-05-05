@@ -1,6 +1,8 @@
-﻿@page "/registrar"
+@page "/registrar"
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject IJSRuntime JS
+@inject StudentService StudentService
 
 <div class="dash-page">
     <div class="bg-shapes">
@@ -54,14 +56,9 @@
             <MudIcon Icon="@Icons.Material.Filled.Menu" Class="hamburger-icon" />
         </button>
         <div class="navbar-center">
-            <div class="search-wrapper">
-                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
-                <input placeholder="Search staff..." class="search-input" />
-            </div>
+            <SearchBar />
         </div>
         <div class="navbar-right">
-
-            <!-- NOTIFICATION ICON -->
             <div class="notif-wrap">
                 <div class="notif-btn" @onclick="ToggleNotifMenu">
                     <MudIcon Icon="@Icons.Material.Filled.Notifications" Class="notif-icon" />
@@ -70,42 +67,33 @@
                         <span class="notif-badge">@unreadNotifCount</span>
                     }
                 </div>
-
                 @if (showNotifMenu)
                 {
                     <div class="notif-dropdown">
+                        <div class="notif-header">
+                            <span class="notif-title">Notifications</span>
+                            <span class="notif-clear" @onclick="ClearNotifs">Mark all read</span>
+                        </div>
+                        @if (notifications.Any())
+                        {
+                            @foreach (var notif in notifications)
+                            {
+                                <div class="notif-item @(notif.IsUnread ? "unread" : "")">
+                                    <MudIcon Icon="@Icons.Material.Filled.Info" Class="notif-item-icon" />
+                                    <div class="notif-item-body">
+                                        <span class="notif-item-text">@notif.Message</span>
+                                        <span class="notif-item-time">@notif.Time</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="notif-empty">No new notifications</div>
+                        }
                     </div>
                 }
             </div>
-
-            @if (showNotifMenu)
-            {
-                <div class="notif-dropdown">
-                    <div class="notif-header">
-                        <span class="notif-title">Notifications</span>
-                        <span class="notif-clear" @onclick="ClearNotifs">Mark all read</span>
-                    </div>
-                    @if (notifications.Any())
-                    {
-                        @foreach (var notif in notifications)
-                        {
-                            <div class="notif-item @(notif.IsUnread ? "unread" : "")">
-                                <MudIcon Icon="@Icons.Material.Filled.Info" Class="notif-item-icon" />
-                                <div class="notif-item-body">
-                                    <span class="notif-item-text">@notif.Message</span>
-                                    <span class="notif-item-time">@notif.Time</span>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="notif-empty">No new notifications</div>
-                    }
-                </div>
-            }
-
-            <!-- AVATAR -->
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
                 <MudIcon Icon="@Icons.Material.Filled.Person" Class="avatar-icon" />
             </div>
@@ -200,21 +188,27 @@
                 @if (officeStaff != null)
                 {
                     <div class="office-status-body">
-                        <div class="office-badges-row">
-                            <div class="office-badge-wrap">
-                                <span class="badge-label">Office</span>
-                                <span class="office-status-badge @GetOfficeStatusClass(officeStaff.OfficeStatus)">
-                                    <MudIcon Icon="@GetOfficeStatusIcon(officeStaff.OfficeStatus)" Class="badge-icon" />
-                                    @officeStaff.OfficeStatus
-                                </span>
+
+                        <!-- STATUS ROW: dot + status name + time ago -->
+                        <div class="os-status-row">
+                            <div class="os-status-left">
+                                <span class="os-dot @GetOfficeStatusDotClass(officeStaff.OfficeStatus)"></span>
+                                <span class="os-status-text @GetOfficeStatusTextClass(officeStaff.OfficeStatus)">@officeStaff.OfficeStatus</span>
                             </div>
-                            <div class="office-badge-wrap">
-                                <span class="badge-label">Crowd</span>
-                                <span class="crowd-status-badge @GetCrowdStatusClass(officeStaff.CrowdStatus)">
-                                    @GetCrowdStatusEmoji(officeStaff.CrowdStatus) @GetCrowdStatusLabel(officeStaff.CrowdStatus)
-                                </span>
-                            </div>
+                            @if (officeStaff.LastUpdatedAt.HasValue)
+                            {
+                                <span class="os-timeago">@GetTimeAgo(officeStaff.LastUpdatedAt.Value)</span>
+                            }
                         </div>
+
+                        <!-- CROWD STATUS PILL -->
+                        <div class="os-crowd-row">
+                            <span class="crowd-status-badge @GetCrowdStatusClass(officeStaff.CrowdStatus)">
+                                @GetCrowdStatusEmoji(officeStaff.CrowdStatus) @GetCrowdStatusLabel(officeStaff.CrowdStatus)
+                            </span>
+                        </div>
+
+                        <!-- STAFF NOTE -->
                         @if (!string.IsNullOrEmpty(officeStaff.StaffNote))
                         {
                             <div class="office-note-row">
@@ -222,23 +216,16 @@
                                 <span class="office-note-text">@officeStaff.StaffNote</span>
                             </div>
                         }
+
+                        <!-- ACCEPTANCE WINDOW -->
                         @if (!string.IsNullOrEmpty(officeStaff.AcceptanceWindow))
                         {
-                            <div class="office-window-row">
-                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="window-icon" />
-                                <div>
-                                    <span class="window-label">Acceptance Window</span>
-                                    <span class="window-value">@officeStaff.AcceptanceWindow</span>
-                                </div>
+                            <div class="os-window-row">
+                                <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="os-window-icon" />
+                                <span class="os-window-text">@officeStaff.AcceptanceWindow</span>
                             </div>
                         }
-                        @if (officeStaff.LastUpdatedAt.HasValue)
-                        {
-                            <div class="last-updated-row">
-                                <MudIcon Icon="@Icons.Material.Filled.Update" Class="updated-icon" />
-                                <span class="last-updated-text">Last updated: @GetTimeAgo(officeStaff.LastUpdatedAt.Value)</span>
-                            </div>
-                        }
+
                     </div>
                 }
                 else
@@ -271,7 +258,14 @@
                             <div class="staff-list-item" @onclick="() => GoToStaffProfile(staff.StaffId)">
                                 <div class="staff-avatar-wrap">
                                     <div class="staff-avatar">
-                                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="staff-avatar-icon" />
+                                        @if (!string.IsNullOrEmpty(staff.ProfilePicture))
+                                        {
+                                            <img src="@GetAvatarSrc(staff.ProfilePicture)" class="staff-avatar-img" alt="@staff.FullName" />
+                                        }
+                                        else
+                                        {
+                                            <span class="staff-avatar-initials">@GetInitials(staff.FullName)</span>
+                                        }
                                     </div>
                                     <span class="staff-status-dot @GetStaffStatusDotClass(staff.StaffStatus)"></span>
                                 </div>
@@ -282,7 +276,7 @@
                                     {
                                         <div class="staff-location">
                                             <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="location-icon" />
-                                            <span>@staff.CurrentLocation</span>
+                                            <span>@AppLocations.BuildLocationDisplay(staff.CurrentLocation)</span>
                                         </div>
                                     }
                                 </div>
@@ -309,10 +303,8 @@
     private bool isLoading = true;
 
     private List<StaffListModel> registrarStaff = new();
-    private StaffListModel? officeStaff = null;
-
+    private OfficeStatusResponse? officeStaff = null;
     private List<NotificationModel> notifications = new();
-
     private int unreadNotifCount => notifications.Count(n => n.IsUnread);
 
     protected override async Task OnInitializedAsync()
@@ -323,9 +315,42 @@
     private async Task LoadData()
     {
         isLoading = true;
-        try { }
-        catch (Exception) { Snackbar.Add("Failed to load office data. Please try again.", Severity.Error); }
-        finally { isLoading = false; }
+        try
+        {
+            var result = await StudentService.GetAllOfficeStatus();
+            if (result?.Status == 1 && result.Data != null)
+            {
+                var allOffice = result.Data;
+
+                officeStaff = allOffice.FirstOrDefault(o => o.Position == "Registrar");
+
+                registrarStaff = allOffice
+                    .Where(o => o.Position == "Registrar")
+                    .Select(o => new StaffListModel
+                    {
+                        StaffId = o.StaffId,
+                        FullName = o.FullName,
+                        Position = o.Position,
+                        Department = o.Department,
+                        CurrentLocation = o.CurrentLocation,
+                        StaffStatus = o.StaffStatus ?? "Unknown",  // ✅ W4 fix — real value
+                        OfficeStatus = o.OfficeStatus,
+                        CrowdStatus = o.CrowdStatus,
+                        StaffNote = o.StaffNote,
+                        AcceptanceWindow = o.AcceptanceWindow,
+                        LastUpdatedAt = o.LastUpdatedAt,
+                        ProfilePicture = o.ProfilePicture // ✅ Item 10
+                    }).ToList();
+            }
+        }
+        catch (Exception)
+        {
+            Snackbar.Add("Failed to load office data. Please try again.", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private void ToggleNotifMenu()
@@ -337,6 +362,21 @@
     private void ClearNotifs()
     {
         foreach (var n in notifications) n.IsUnread = false;
+    }
+
+    private string GetInitials(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "?";
+        var parts = fullName.Trim().Split(' ');
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}".ToUpper()
+            : fullName[..1].ToUpper();
+    }
+
+    private string GetAvatarSrc(string? base64)
+    {
+        if (string.IsNullOrEmpty(base64)) return "";
+        return base64.StartsWith("data:") ? base64 : $"data:image/jpeg;base64,{base64}";
     }
 
     private string GetOfficeStatusClass(string status) => status switch
@@ -377,6 +417,22 @@
         "Busy" => "Short Wait Expected",
         "VeryBusy" => "Expect a Long Wait",
         _ => "Come On In"
+    };
+
+    private string GetOfficeStatusDotClass(string status) => status switch
+    {
+        "Open" => "os-dot-open",
+        "Lunch Break" => "os-dot-lunch",
+        "Closed" => "os-dot-closed",
+        _ => "os-dot-closed"
+    };
+
+    private string GetOfficeStatusTextClass(string status) => status switch
+    {
+        "Open" => "os-text-open",
+        "Lunch Break" => "os-text-lunch",
+        "Closed" => "os-text-closed",
+        _ => "os-text-closed"
     };
 
     private string GetStaffStatusClass(string status) => status switch

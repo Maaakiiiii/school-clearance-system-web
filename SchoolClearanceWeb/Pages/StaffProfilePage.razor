@@ -1,6 +1,7 @@
 ﻿@page "/staff-profile/{staffId:int}"
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject StudentService StudentService
 
 <div class="dash-page">
     <div class="bg-shapes">
@@ -19,10 +20,7 @@
             <span class="nav-brand">School Clearance</span>
         </div>
         <div class="navbar-center">
-            <div class="search-wrapper">
-                <MudIcon Icon="@Icons.Material.Filled.Search" Class="search-icon" />
-                <input placeholder="Search staff..." class="search-input" />
-            </div>
+            <SearchBar />
         </div>
         <div class="navbar-right">
             <div class="nav-avatar" @onclick="ToggleProfileMenu">
@@ -123,7 +121,14 @@
                 <div class="profile-cover-banner"></div>
                 <div class="profile-header-body">
                     <div class="profile-avatar-circle">
-                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="profile-avatar-icon" />
+                        @if (!string.IsNullOrEmpty(staff.ProfilePicture))
+                        {
+                            <img src="@GetAvatarSrc(staff.ProfilePicture)" class="profile-avatar-img" alt="@staff.FullName" />
+                        }
+                        else
+                        {
+                            <span class="profile-avatar-initials">@GetInitials(staff.FullName)</span>
+                        }
                     </div>
                     <div class="profile-header-info">
                         <span class="profile-fullname">@staff.FullName</span>
@@ -159,8 +164,16 @@
                         </div>
                         <div class="info-row-content">
                             <span class="info-row-label">Current Location</span>
-                            <span class="info-row-value">
-                                @(string.IsNullOrEmpty(staff.CurrentLocation) ? "No location set" : staff.CurrentLocation)
+                            <span class="info-row-value location-pill">
+                                @if (!string.IsNullOrEmpty(staff.CurrentLocation))
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="location-pill-icon" />
+                                    <span>@AppLocations.BuildLocationDisplay(staff.CurrentLocation)</span>
+                                }
+                                else
+                                {
+                                    <span class="no-location">No location set</span>
+                                }
                             </span>
                         </div>
                     </div>
@@ -245,17 +258,46 @@
                 <div class="section-header">
                     <MudIcon Icon="@Icons.Material.Filled.Article" Class="section-icon" />
                     <MudText Typo="Typo.subtitle1" Class="section-label">ANNOUNCEMENTS</MudText>
-                    @if (posts.Count > 0)
+                    @if (allPosts.Count > 0)
                     {
-                        <span class="posts-count-badge">@posts.Count</span>
+                        <span class="posts-count-badge">@posts.Count / @allPosts.Count</span>
                     }
                 </div>
+
+                @if (allPosts.Count > 0)
+                {
+                    <!-- FILTER ROW -->
+                    <div class="post-filter-row">
+                        <div class="post-search-wrap">
+                            <MudIcon Icon="@Icons.Material.Filled.Search" Class="post-search-icon" />
+                            <input class="post-search-input" placeholder="Search posts..."
+                                   value="@searchText"
+                                   @oninput="e => searchText = e.Value?.ToString() ?? string.Empty" />
+                        </div>
+                        <div class="post-date-wrap">
+                            <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="post-date-icon" />
+                            <input type="date" class="post-date-input"
+                                   value="@(filterFrom?.ToString("yyyy-MM-dd") ?? string.Empty)"
+                                   @onchange="e => filterFrom = string.IsNullOrEmpty(e.Value?.ToString()) ? null : DateTime.Parse(e.Value.ToString()!)" />
+                            <span class="post-date-sep">to</span>
+                            <input type="date" class="post-date-input"
+                                   value="@(filterTo?.ToString("yyyy-MM-dd") ?? string.Empty)"
+                                   @onchange="e => filterTo = string.IsNullOrEmpty(e.Value?.ToString()) ? null : DateTime.Parse(e.Value.ToString()!)" />
+                        </div>
+                        @if (HasActiveFilter)
+                        {
+                            <button class="post-clear-btn" @onclick="ClearFilters">Clear</button>
+                        }
+                    </div>
+                }
 
                 @if (posts.Count == 0)
                 {
                     <div class="empty-state">
                         <MudIcon Icon="@Icons.Material.Outlined.Article" Class="empty-icon" />
-                        <span class="empty-text">No posts yet from this staff member.</span>
+                        <span class="empty-text">
+                            @(allPosts.Count == 0 ? "No posts yet from this staff member." : "No posts match your filters.")
+                        </span>
                     </div>
                 }
                 else
@@ -265,8 +307,20 @@
                         {
                             <div class="post-card">
                                 <div class="post-header">
-                                    <span class="post-title">@post.Title</span>
-                                    <span class="post-date">@post.PostedAt.ToString("MMM dd, yyyy")</span>
+                                    <div class="post-avatar-small">
+                                        @if (!string.IsNullOrEmpty(staff.ProfilePicture))
+                                        {
+                                            <img src="@GetAvatarSrc(staff.ProfilePicture)" class="post-avatar-img" alt="@staff.FullName" />
+                                        }
+                                        else
+                                        {
+                                            <span class="post-avatar-initials-small">@GetInitials(staff.FullName)</span>
+                                        }
+                                    </div>
+                                    <div class="post-header-text">
+                                        <span class="post-title">@post.Title</span>
+                                        <span class="post-date">@post.PostedAt.ToString("MMM dd, yyyy")</span>
+                                    </div>
                                 </div>
                                 <p class="post-content">@post.Content</p>
                             </div>
@@ -287,7 +341,30 @@
     private bool isLoading = true;
 
     private StaffListModel? staff = null;
-    private List<StaffPostModel> posts = new();
+    private List<StaffPostModel> allPosts = new();
+
+    private DateTime? filterFrom;
+    private DateTime? filterTo;
+    private string searchText = "";
+
+    private List<StaffPostModel> posts => allPosts
+        .Where(p =>
+            (string.IsNullOrWhiteSpace(searchText) ||
+             p.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+             p.Content.Contains(searchText, StringComparison.OrdinalIgnoreCase)) &&
+            (!filterFrom.HasValue || p.PostedAt.Date >= filterFrom.Value.Date) &&
+            (!filterTo.HasValue || p.PostedAt.Date <= filterTo.Value.Date))
+        .OrderByDescending(p => p.PostedAt)
+        .ToList();
+
+    private bool HasActiveFilter => !string.IsNullOrWhiteSpace(searchText) || filterFrom.HasValue || filterTo.HasValue;
+
+    private void ClearFilters()
+    {
+        searchText = "";
+        filterFrom = null;
+        filterTo = null;
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -299,9 +376,13 @@
         isLoading = true;
         try
         {
-            // TODO: Replace with actual API calls
-            // staff = await StaffService.GetStaffByIdAsync(StaffId);
-            // posts = await StaffService.GetPostsByStaffIdAsync(StaffId);
+            var staffResult = await StudentService.GetStaffById(StaffId);
+            if (staffResult?.Status == 1 && staffResult.Data != null)
+                staff = staffResult.Data;
+
+            var postsResult = await StudentService.GetAllPosts();
+            if (postsResult?.Status == 1 && postsResult.Data != null)
+                allPosts = postsResult.Data.Where(p => p.StaffId == StaffId).ToList();
         }
         catch (Exception)
         {
@@ -315,6 +396,21 @@
 
     private bool IsOfficePosition(string position) =>
         position == "Registrar" || position == "Cashier" || position == "Grade Release";
+
+    private string GetInitials(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "?";
+        var parts = fullName.Trim().Split(' ');
+        return parts.Length >= 2
+            ? $"{parts[0][0]}{parts[^1][0]}".ToUpper()
+            : fullName[..1].ToUpper();
+    }
+
+    private string GetAvatarSrc(string? base64)
+    {
+        if (string.IsNullOrEmpty(base64)) return "";
+        return base64.StartsWith("data:") ? base64 : $"data:image/jpeg;base64,{base64}";
+    }
 
     private string GetStaffStatusClass(string status) => status switch
     {
